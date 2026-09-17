@@ -5,6 +5,7 @@ USER GOAL: Provide a clear minimalist applicant questionnaire with mixed text in
 CURRENT STATUS: Complete, mobile-adapted and verified.
 
 REPOSITORY: `https://github.com/mmAAIIdd/Hail-Mary` (`main`).
+PUBLIC SITE: `https://mmaaiidd.github.io/Hail-Mary/` (GitHub Pages workflow).
 
 IMPLEMENTED FLOW:
 - Step 1: first name, last name, grade 8–11, age
@@ -23,7 +24,7 @@ BEHAVIOUR:
 - Validation is applied before each step transition with a visible inline message.
 - Answers are normalized into `UserProfile` and stored in localStorage.
 - Existing demo and older stored profiles are converted defensively when the questionnaire opens.
-- The diagnosis displays the chosen performance label and applicant name instead of exposing a derived GPA.
+- The result uses only answers the user supplied and does not invent missing exam or activity requirements.
 
 VALIDATION:
 - `npm run build`: passed, 1601 modules transformed.

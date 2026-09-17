@@ -1,5 +1,5 @@
 {
-  "name": "locus-admitflow-frontend",
+  "name": "hail-mary-frontend",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -27,4 +27,3 @@
     "vite": "^6.1.0"
   }
 }
-

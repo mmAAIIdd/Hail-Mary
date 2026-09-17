@@ -27,13 +27,13 @@ export const TipsModal: React.FC<TipsModalProps> = ({
 
         <div className="mb-6 pr-11">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-            База знаний абитуриента
+            Коротко о главном
           </span>
           <h2 className="font-serif text-2xl sm:text-3xl font-normal text-slate-950 mt-1">
             Советы по поступлению
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-500">
-            Ключевые ориентиры для поступления на программы бакалавриата за рубежом.
+            Четыре вещи, которые лучше подготовить заранее.
           </p>
         </div>
 
@@ -41,47 +41,47 @@ export const TipsModal: React.FC<TipsModalProps> = ({
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
             <div className="flex items-center gap-2 font-semibold text-slate-900 text-sm">
               <Clock className="w-4 h-4 text-slate-700" />
-              <span>1. Таймлайн и ранние дедлайны</span>
+              <span>1. Сроки подачи</span>
             </div>
             <p className="leading-relaxed text-slate-600">
-              Подача на Early Action / Early Decision (октябрь–ноябрь) обычно имеет в 1.5–2 раза более высокий процент зачисления, чем регулярные дедлайны в январе. Начинайте собирать документы за 9–12 месяцев.
+              Составьте список программ и дедлайнов за 9–12 месяцев до подачи. У стипендий и ранних раундов даты часто наступают раньше основного срока.
             </p>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
             <div className="flex items-center gap-2 font-semibold text-slate-900 text-sm">
               <CheckCircle2 className="w-4 h-4 text-slate-700" />
-              <span>2. Баланс тестов: IELTS vs SAT</span>
+              <span>2. Язык и вступительные тесты</span>
             </div>
             <p className="leading-relaxed text-slate-600">
-              Языковой сертификат (IELTS 6.5+ / TOEFL 90+) — обязательное минимальное требование. SAT обязателен не везде, но для стипендий в США и Сингапуре балл 1450+ существенно повышает шансы на финансирование.
+              Проверьте требования каждой программы к IELTS, TOEFL, SAT или внутренним экзаменам. Минимальные баллы и правила отличаются между университетами.
             </p>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
             <div className="flex items-center gap-2 font-semibold text-slate-900 text-sm">
               <FileText className="w-4 h-4 text-slate-700" />
-              <span>3. Внеучебная деятельность (Spike vs Well-rounded)</span>
+              <span>3. Проекты и достижения</span>
             </div>
             <p className="leading-relaxed text-slate-600">
-              Ведущие мировые университеты ценят четкий фокус (spike): 2–3 глубоких проекта по вашей специальности (хакатоны, олимпиады, ресерч) выигрывают у 10 разрозненных активностей.
+              Выберите несколько занятий, связанных с будущим направлением, и зафиксируйте свой вклад: роль, результат, награду или созданный проект.
             </p>
           </div>
 
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5">
             <div className="flex items-center gap-2 font-semibold text-slate-900 text-sm">
               <Globe className="w-4 h-4 text-slate-700" />
-              <span>4. Финансовая стратегия и гранты</span>
+              <span>4. Бюджет и финансирование</span>
             </div>
             <p className="leading-relaxed text-slate-600">
-              Если бюджет до $20k/год, сразу ориентируйтесь на государственные вузы Европы (Германия, Италия с грантами DSU, Венгрия со Stipendium Hungaricum) либо селективные вузы США с need-blind/need-based aid.
+              Считайте вместе обучение, проживание, страховку и визовые расходы. Отдельно отмечайте сроки подачи на стипендии и финансовую помощь.
             </p>
           </div>
         </div>
 
         <div className="mt-6 flex flex-col items-stretch gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
           <span className="text-sm leading-5 text-slate-500">
-            Хотите персональный анализ под ваш профиль?
+            Хотите увидеть результат для своего профиля?
           </span>
           <button
             onClick={() => {

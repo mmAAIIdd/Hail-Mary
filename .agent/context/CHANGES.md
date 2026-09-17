@@ -36,6 +36,18 @@ Validation: `npm run build` passed.
 
 Record significant changes only. For each entry include date, goal, changed paths, reason, validation and remaining issue. Do not copy full diffs or logs here; use Git history when a future project has Git.
 
+## 2026-09-18 — Production polish and GitHub Pages
+
+Goal: turn the repository into a complete public site with concise product copy and reliable automatic deployment.
+
+Changed: added the Pages workflow, repository-aware Vite base path, favicon and social metadata; simplified result, advice and university copy; rebuilt diagnosis around fields the questionnaire actually collects; removed the unused API environment example and updated project naming.
+
+Reason: avoid broken assets under `/Hail-Mary/`, remove technical template language, avoid stale university claims, and stop showing missing IELTS/SAT as problems when those questions were never asked.
+
+Validation: Pages-mode production build passed. Local production preview at `/Hail-Mary/` loaded every asset with zero console errors. A fresh four-step profile completed successfully at 390 × 844 with no horizontal overflow and no IELTS/SAT warnings in the result.
+
+Remaining: wait for the first GitHub Pages workflow run and verify the public URL.
+
 ## 2026-09-17 — GitHub repository publication
 
 Goal: publish the complete Hail Mary project to `mmAAIIdd/Hail-Mary` on GitHub.

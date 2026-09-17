@@ -12,50 +12,30 @@ const SAMPLE_UNIVERSITIES = [
     name: 'Technical University of Munich (TUM)',
     country: 'Германия',
     city: 'Мюнхен',
-    tuition: '€4,000–6,000 / год',
-    requirements: 'IELTS 6.5+, высокий GPA, вступительный тест по математике',
-    satPolicy: 'Не требуется',
-    scholarships: 'Доступны стипендии DAAD и государственная поддержка',
     officialUrl: 'https://www.tum.de',
   },
   {
     name: 'University of Amsterdam (UvA)',
     country: 'Нидерланды',
     city: 'Амстердам',
-    tuition: '€12,000–16,000 / год',
-    requirements: 'IELTS 6.5–7.0, аттестат + 1 курс либо IB/A-Levels',
-    satPolicy: 'Test-Optional',
-    scholarships: 'Amsterdam Merit Scholarship',
     officialUrl: 'https://www.uva.nl',
   },
   {
     name: 'Bocconi University',
     country: 'Италия',
     city: 'Милан',
-    tuition: '€14,000 / год',
-    requirements: 'IELTS 6.5+, Bocconi Test или SAT (1350+), GPA',
-    satPolicy: 'SAT принимается взамен внутреннего теста',
-    scholarships: 'Need-based aid & 100% Merit Awards',
     officialUrl: 'https://www.unibocconi.eu',
   },
   {
     name: 'KAIST',
     country: 'Южная Корея',
     city: 'Тэджон',
-    tuition: 'Полный грант (100% покрытие + стипендия)',
-    requirements: 'IELTS 6.5+, SAT/ACT рекомендован, олимпиады по STEM',
-    satPolicy: 'Рекомендован для международных кандидатов',
-    scholarships: 'KAIST International Student Scholarship (100% tuition + allowance)',
     officialUrl: 'https://www.kaist.ac.kr',
   },
   {
     name: 'Purdue University',
     country: 'США',
     city: 'Уэст-Лафайетт',
-    tuition: '$31,104 / год',
-    requirements: 'IELTS 6.5–7.0 / TOEFL 88+, SAT Test-Required',
-    satPolicy: 'Обязателен (средний балл 1400–1520)',
-    scholarships: 'Ограниченные merit стипендии для иностранцев',
     officialUrl: 'https://www.purdue.edu',
   },
 ];
@@ -80,13 +60,13 @@ export const UniversitiesModal: React.FC<UniversitiesModalProps> = ({
 
         <div className="mb-6 pr-11">
           <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-            Каталог программ
+            Для начала поиска
           </span>
           <h2 className="font-serif text-2xl sm:text-3xl font-normal text-slate-950 mt-1">
-            Верифицированная база университетов
+            Примеры университетов
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-500">
-            Все требования, дедлайны и стоимость проверены по официальным первоисточникам. Никаких выдуманных данных.
+            Несколько вариантов из разных стран. Актуальные требования и стоимость всегда проверяйте на официальном сайте.
           </p>
         </div>
 
@@ -107,31 +87,15 @@ export const UniversitiesModal: React.FC<UniversitiesModalProps> = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-2 pt-1 text-sm sm:grid-cols-2">
-                <div>
-                  <span className="text-slate-500 font-medium">Обучение: </span>
-                  <span className="text-slate-900 font-semibold">{uni.tuition}</span>
-                </div>
-                <div>
-                  <span className="text-slate-500 font-medium">Политика SAT: </span>
-                  <span className="text-slate-800">{uni.satPolicy}</span>
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-slate-100 bg-white p-3 text-sm leading-6 text-slate-600">
-                <span className="font-semibold text-slate-700">Входные требования: </span>
-                {uni.requirements}
-              </div>
-
-              <div className="flex flex-col items-start justify-between gap-3 pt-1 text-sm sm:flex-row sm:items-center">
+              <div className="flex items-center justify-between gap-3 pt-2 text-sm">
                 <span className="leading-5 text-slate-500">
-                  Стипендии: {uni.scholarships}
+                  Требования, сроки и стоимость
                 </span>
                 <a
                   href={uni.officialUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-slate-700 hover:text-black font-medium underline underline-offset-2"
+                  className="inline-flex shrink-0 items-center gap-1 font-semibold text-slate-800 underline underline-offset-2 hover:text-black"
                 >
                   <span>Официальный сайт</span>
                   <ExternalLink className="w-3 h-3" />
@@ -143,7 +107,7 @@ export const UniversitiesModal: React.FC<UniversitiesModalProps> = ({
 
         <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
           <span className="text-sm leading-6 text-slate-500">
-            Заполните анкету, чтобы сервис подобрал вузы именно под ваш бюджет и оценки:
+            Заполните анкету, чтобы определить подходящие страны, бюджет и требования.
           </span>
           <button
             onClick={() => {

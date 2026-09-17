@@ -52,10 +52,10 @@ export const ExplainModal: React.FC<ExplainModalProps> = ({
           <div>
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
               {category === 'strength'
-                ? 'Обоснование сильной стороны'
+                ? 'Сильная сторона'
                 : category === 'gap'
-                ? 'Анализ точки роста'
-                : 'Внешнее ограничение'}
+                ? 'Подготовка'
+                : 'Условие выбора'}
             </span>
             <h3 className="text-base font-bold leading-tight text-slate-900">
               {title}
@@ -68,7 +68,7 @@ export const ExplainModal: React.FC<ExplainModalProps> = ({
           {grounding && (
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
               <span className="font-semibold text-slate-800 block mb-1">
-                Фактическое основание в вашей анкете:
+                На чём основан вывод:
               </span>
               <span className="text-slate-700">{grounding}</span>
             </div>
@@ -76,7 +76,7 @@ export const ExplainModal: React.FC<ExplainModalProps> = ({
 
           <div>
             <span className="font-semibold text-slate-800 block mb-1">
-              Почему это важно для приемной комиссии:
+              Почему это важно:
             </span>
             <p className="text-slate-600">{whyItMatters}</p>
           </div>
@@ -84,7 +84,7 @@ export const ExplainModal: React.FC<ExplainModalProps> = ({
           {admissionImpact && (
             <div>
               <span className="font-semibold text-slate-800 block mb-1">
-                Влияние на стратегию поступления:
+                Как это влияет на поступление:
               </span>
               <p className="text-slate-600">{admissionImpact}</p>
             </div>
@@ -93,7 +93,7 @@ export const ExplainModal: React.FC<ExplainModalProps> = ({
           {recommendedAction && (
             <div className="p-3 rounded-xl bg-slate-100 border border-slate-200 text-slate-900">
               <span className="font-bold block mb-1 flex items-center gap-1.5 text-slate-950">
-                <ArrowRight className="w-3.5 h-3.5" /> Рекомендуемое действие:
+                <ArrowRight className="w-3.5 h-3.5" /> Что сделать:
               </span>
               <p className="text-sm leading-6 text-slate-700">{recommendedAction}</p>
             </div>

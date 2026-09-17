@@ -61,20 +61,20 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
       case 'potential_gap':
         return (
           <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-[11px] font-semibold text-amber-700">
-            Потенциальный гэп
+            Стоит проверить
           </span>
         );
       case 'needs_improvement':
         return (
           <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 text-[11px] font-semibold text-blue-700">
-            Зона усиления
+            Можно улучшить
           </span>
         );
       case 'unknown':
       default:
         return (
           <span className="rounded-full border border-slate-200 bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-700">
-            Статус уточняется
+            Нужно уточнить
           </span>
         );
     }
@@ -85,19 +85,14 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-6">
         <div>
-          <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-              Диагностика профиля абитуриента
-            </span>
-            <span className="rounded-full border border-slate-200 bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-700">
-              Рассчитано по фактам
-            </span>
-          </div>
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            Результат анкеты
+          </span>
           <h1 className="mt-2 text-[28px] font-bold leading-[1.08] tracking-tight text-slate-900 sm:text-3xl">
-            Результаты независимого аудита
+            Ваш профиль поступления
           </h1>
           <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600">
-            Диагностика строится на реальных данных вашей анкеты и требованиях международных программ. Никаких субъективных ярлыков.
+            Здесь собраны ваши сильные стороны, задачи на подготовку и условия выбора университета.
           </p>
         </div>
 
@@ -126,14 +121,6 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
               </div>
             </div>
           </div>
-          <div className="text-right hidden sm:block">
-            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
-              Годовой бюджет
-            </span>
-            <span className="text-sm font-bold text-slate-900">
-              до ${diagnosis.summary.annual_budget_usd.toLocaleString()} / год
-            </span>
-          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-2.5 border-t border-slate-100 pt-4 text-sm sm:grid-cols-4 sm:gap-3">
@@ -147,23 +134,23 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
           </div>
 
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
-            <span className="mb-1 block text-xs text-slate-500">Английский</span>
-            <span className="font-bold text-slate-800 truncate block">
-              {diagnosis.summary.english_summary}
+            <span className="mb-1 block text-xs text-slate-500">Главный предмет</span>
+            <span className="block truncate font-bold text-slate-800">
+              {profile.academics.favorite_subjects[0] || 'Не указан'}
             </span>
           </div>
 
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
-            <span className="mb-1 block text-xs leading-tight text-slate-500">Стандартизованный тест</span>
-            <span className="font-bold text-slate-800">
-              {diagnosis.summary.sat_summary}
+            <span className="mb-1 block text-xs leading-tight text-slate-500">Страны</span>
+            <span className="block truncate font-bold text-slate-800">
+              {diagnosis.summary.preferred_countries.join(', ') || 'Не выбраны'}
             </span>
           </div>
 
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
-            <span className="mb-1 block text-xs leading-tight text-slate-500">Внеучебка и награды</span>
+            <span className="mb-1 block text-xs leading-tight text-slate-500">Бюджет в год</span>
             <span className="font-bold text-slate-800">
-              {diagnosis.summary.extracurricular_count} активностей • {diagnosis.summary.achievement_count} наград
+              до ${diagnosis.summary.annual_budget_usd.toLocaleString()}
             </span>
           </div>
         </div>
@@ -177,12 +164,9 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-emerald-600" />
               <h2 className="text-base font-bold text-slate-900">
-                Сильные стороны профиля ({diagnosis.strengths.length})
+                Сильные стороны ({diagnosis.strengths.length})
               </h2>
             </div>
-            <span className="hidden text-xs text-slate-400 sm:block">
-              Обосновано данными
-            </span>
           </div>
 
           {diagnosis.strengths.length === 0 ? (
@@ -239,7 +223,7 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
                     }
                     className="inline-flex min-h-10 items-center gap-1 text-sm font-semibold text-emerald-700 transition hover:text-emerald-800"
                   >
-                    <span>Обоснование отбора</span>
+                    <span>Почему это важно</span>
                     <ExternalLink className="w-3 h-3" />
                   </button>
                 </div>
@@ -254,12 +238,9 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
             <div className="flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-amber-600" />
               <h2 className="text-base font-bold text-slate-900">
-                Точки роста и гэпы ({diagnosis.gaps.length})
+                Что стоит улучшить ({diagnosis.gaps.length})
               </h2>
             </div>
-            <span className="hidden text-xs text-slate-400 sm:block">
-              С учетом контекста
-            </span>
           </div>
 
           {diagnosis.gaps.length === 0 ? (
@@ -290,7 +271,7 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
                         })
                       }
                       className="text-slate-400 hover:text-amber-600 transition shrink-0 p-0.5"
-                      title="Как закрыть этот гэп?"
+                      title="Что можно улучшить?"
                     >
                       <HelpCircle className="w-4 h-4" />
                     </button>
@@ -316,7 +297,7 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
                     }
                     className="inline-flex min-h-10 items-center gap-1 text-sm font-semibold text-slate-900 transition hover:text-black"
                   >
-                    <span>Подробный анализ ситуации</span>
+                    <span>Что делать дальше</span>
                     <ExternalLink className="w-3 h-3" />
                   </button>
                 </div>
@@ -326,23 +307,19 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
         </div>
       </div>
 
-      {/* 4. External Constraints (Strictly separated from personal weaknesses) */}
       <div className="space-y-4">
         <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2">
             <Lock className="w-5 h-5 text-slate-800" />
             <div>
               <h2 className="text-base font-bold text-slate-900">
-                Внешние ограничения (Constraints)
+                Условия выбора
               </h2>
               <div className="mt-1 text-sm leading-6 text-slate-500">
-                Фиксированные рамки, не зависящие от способностей кандидата (бюджет, визы, общежитие).
+                Бюджет, страны и бытовые условия, которые важно учитывать заранее.
               </div>
             </div>
           </div>
-          <span className="rounded bg-slate-100 px-2 py-1 text-[11px] font-bold uppercase text-slate-600">
-            Фильтры готовы
-          </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
@@ -360,7 +337,7 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
                       : 'bg-slate-100 text-slate-600'
                   }`}
                 >
-                  {con.is_hard ? 'Жесткий фильтр' : 'Пожелание'}
+                  {con.is_hard ? 'Обязательно' : 'Желательно'}
                 </span>
               </div>
               <p className="text-sm leading-6 text-slate-600">
@@ -376,7 +353,7 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
         <div>
           <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 mb-1">
             <Flag className="w-4 h-4" />
-            <span>Сформулированная цель абитуриента</span>
+            <span>Ваша цель</span>
           </div>
           <h3 className="text-lg font-bold text-white">
             {diagnosis.goal.major} ({diagnosis.goal.degree})
@@ -388,14 +365,6 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
           </p>
         </div>
 
-        <div className="text-left sm:text-right">
-          <div className="mb-2 text-sm font-medium text-slate-400">
-            Следующий модуль системы
-          </div>
-          <div className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-neutral-800 px-4 py-2.5 text-sm font-semibold text-white opacity-90 sm:w-auto">
-            <span>Подбор университетов (скоро)</span>
-          </div>
-        </div>
       </div>
 
       {/* Explainability Modal */}

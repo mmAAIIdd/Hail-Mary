@@ -1,238 +1,175 @@
 import {
-  UserProfile,
+  DiagnosticConstraint,
+  DiagnosticGap,
   DiagnosticProfileResult,
   DiagnosticStrength,
-  DiagnosticGap,
-  DiagnosticConstraint
+  UserProfile,
 } from '../types/profile';
+
+const performanceLabels = {
+  excellent: 'отличная',
+  good: 'хорошая',
+  average: 'средняя',
+  needs_support: 'требует улучшения',
+} as const;
 
 export function runProfileDiagnosis(profile: UserProfile): DiagnosticProfileResult {
   const strengths: DiagnosticStrength[] = [];
   const gaps: DiagnosticGap[] = [];
   const constraints: DiagnosticConstraint[] = [];
-
-  // --- 1. EVALUATE STRENGTHS (Evidence-based only) ---
-
-  // Academic standing
-  const gpa = profile.academics.gpa;
-  const scale = profile.academics.grading_scale;
   const performance = profile.academics.performance_level;
-  const performanceLabels = {
-    excellent: 'отличная',
-    good: 'хорошая',
-    average: 'средняя',
-    needs_support: 'требует улучшения',
-  } as const;
-  const isHighGpa = performance
-    ? performance === 'excellent'
-    : (scale === '5.0' && gpa >= 4.5) ||
-      (scale === '4.0' && gpa >= 3.6) ||
-      (scale === '100' && gpa >= 88);
+  const mainSubject = profile.academics.favorite_subjects[0] || 'главный предмет';
+  const applicationPreferences = profile.application_preferences;
 
-  if (isHighGpa) {
+  if (performance === 'excellent' || performance === 'good') {
     strengths.push({
-      id: 'str-gpa',
-      title: 'Высокая академическая успеваемость',
-      grounding: performance
-        ? `Самооценка успеваемости: ${performanceLabels[performance]}. Главный предмет: ${profile.academics.strong_subjects[0] || 'не указан'}.`
-        : `Текущий балл: ${gpa} по шкале ${scale}. Сильные предметы: ${profile.academics.strong_subjects.slice(0, 3).join(', ') || 'не указаны'}.`,
-      admission_impact: 'Открывает доступ к селективным университетам Европы, США и Азии с высокими входными порогами.',
-      why_it_matters: 'Приемные комиссии в первую очередь отсекают кандидатов по академической надежности. Высокий средний балл доказывает способность справляться с университетской нагрузкой.'
+      id: 'str-academics',
+      title: performance === 'excellent' ? 'Сильная успеваемость' : 'Стабильная успеваемость',
+      grounding: `Вы оценили свою успеваемость как «${performanceLabels[performance]}». Главный предмет — ${mainSubject}.`,
+      admission_impact: 'Это хорошая основа для выбора программ с подходящими академическими требованиями.',
+      why_it_matters: 'Университеты сравнивают оценки кандидата с требованиями конкретной программы и школьной системой.',
     });
   }
 
-  // English Proficiency
-  const ielts = profile.exams.ielts;
-  const toefl = profile.exams.toefl;
-  if (ielts.status === 'taken' && ielts.score && parseFloat(ielts.score.toString()) >= 6.5) {
+  if (profile.academics.academic_fields.length >= 2) {
     strengths.push({
-      id: 'str-english',
-      title: 'Подтвержденный высокий уровень английского языка',
-      grounding: `Сдан официальный экзамен IELTS с результатом ${ielts.score} (уровень ${profile.exams.english_level}).`,
-      admission_impact: 'Полностью покрывает стандартный входной барьер большинства международных англоязычных бакалавриатов (обычно 6.0–6.5).',
-      why_it_matters: 'Освобождает время перед дедлайнами: языковой порог уже закрыт, можно полностью сфокусироваться на портфолио и академических документах.'
-    });
-  } else if (toefl.status === 'taken' && toefl.score && parseFloat(toefl.score.toString()) >= 90) {
-    strengths.push({
-      id: 'str-toefl',
-      title: 'Подтвержденный языковой сертификат TOEFL',
-      grounding: `Сдан TOEFL iBT с баллом ${toefl.score}.`,
-      admission_impact: 'Превышает минимальные требования большинства вузов Северной Америки и Европы.',
-      why_it_matters: 'Соответствует стандартам прямого зачисления без подготовительных языковых курсов (foundation).'
+      id: 'str-interests',
+      title: 'Понятный круг интересов',
+      grounding: `Вы указали направления: ${profile.academics.academic_fields.slice(0, 4).join(', ')}.`,
+      admission_impact: 'Эти интересы помогут составить первый список специальностей и университетов.',
+      why_it_matters: 'Чёткий учебный фокус упрощает выбор программы и подготовку мотивационного письма.',
     });
   }
 
-  // Extracurricular Profile
-  const activities = profile.extracurriculars;
-  const majorKey = profile.academics.intended_major.toLowerCase();
-  const majorRelatedActs = activities.filter(a => 
-    (majorKey.includes('comput') || majorKey.includes('it') || majorKey.includes('data'))
-      ? (a.category === 'programming' || a.category === 'robotics' || a.category === 'olympiad' || a.category === 'startup')
-      : true
-  );
-
-  if (activities.length >= 2) {
-    const highTier = activities.some(a => a.level === 'national' || a.level === 'international');
-    const groundingList = majorRelatedActs.length > 0 ? majorRelatedActs : activities;
-    strengths.push({
-      id: 'str-activities',
-      title: highTier ? 'Релевантный внеучебный профиль национального/международного уровня' : 'Активная внеучебная деятельность (Holistic Profile)',
-      grounding: `${activities.length} подтвержденные активности (${groundingList.map(a => a.name).slice(0, 2).join('; ')}).`,
-      admission_impact: 'Критично для американских и ведущих азиатских вузов с холистической системой отбора (Holistic Review).',
-      why_it_matters: 'Университеты ищут студентов, которые не просто получают оценки, но и применяют знания на практике, проявляя лидерство и инициативу.'
-    });
-  }
-
-  // Major-specific achievements / Olympiads
-  const achievements = profile.achievements;
-  if (achievements.length > 0) {
-    strengths.push({
-      id: 'str-achievements',
-      title: 'Наличие документально подтвержденных достижений и наград',
-      grounding: `${achievements.length} достижение: ${achievements.map(a => a.title).slice(0, 2).join('; ')}.`,
-      admission_impact: 'Существенно усиливает заявку при отборе на конкурсные merit-based гранты и scholarships.',
-      why_it_matters: 'Победы в олимпиадах и хакатонах выделяют кандидата среди сотен других с аналогичным средним баллом.'
-    });
-  }
-
-  // Early preparation (Grade 8, 9 or 10)
   if (['8', '9', '10'].includes(profile.basic_info.grade)) {
     strengths.push({
-      id: 'str-timeline',
-      title: 'Заблаговременный старт подготовки (стратегическое преимущество)',
-      grounding: `Текущий класс: ${profile.basic_info.grade}-й, целевой год зачисления: ${profile.basic_info.target_intake_year}.`,
-      admission_impact: 'Запас времени от 1.5 до 2.5 лет для закрытия академических тестов и прокачки лидерских проектов.',
-      why_it_matters: 'Позволяет сдать тесты без стресса в несколько попыток и собрать сильные рекомендательные письма.'
+      id: 'str-time',
+      title: 'Есть время на подготовку',
+      grounding: `Сейчас вы учитесь в ${profile.basic_info.grade}-м классе.`,
+      admission_impact: 'Можно заранее проверить требования, подготовить язык и собрать необходимые документы.',
+      why_it_matters: 'Ранний старт оставляет время скорректировать план без спешки перед дедлайнами.',
     });
   }
 
-  // --- 2. EVALUATE GAPS (Contextual & constructive, not punitive) ---
-
-  // SAT requirement (depends on target countries and status)
-  const isUsTarget = profile.preferences.preferred_countries.some(c => 
-    c.toLowerCase().includes('сша') || c.toLowerCase().includes('usa') || c.toLowerCase().includes('united states')
-  );
-  const sat = profile.exams.sat;
-
-  if (isUsTarget) {
-    if (sat.status === 'not_taken') {
-      gaps.push({
-        id: 'gap-sat-not-taken',
-        title: 'Тест SAT еще не сдавался (целевая страна включает США)',
-        status: 'potential_gap',
-        context: 'Многие американские топовые вузы вернули обязательный SAT (Test-Required), а при подаче на merit-стипендии высокий балл является решающим фактором.',
-        why_it_matters: 'Хотя часть университетов сохраняет политику Test-Optional, отсутствие стандартизированного балла переносит весь фокус на оценки и эссе.',
-        recommended_action: 'Пройти бесплатный диагностический тест SAT (Bluebook) и запланировать официальную сдачу за 6-9 месяцев до дедлайна.'
-      });
-    } else if (sat.status === 'planned') {
-      gaps.push({
-        id: 'gap-sat-planned',
-        title: 'SAT запланирован к сдаче (требуется фиксация целевого балла)',
-        status: 'unknown',
-        context: `Сдача SAT запланирована на ${sat.planned_date || 'ближайшие сессии'}. Точный балл пока не определен.`,
-        why_it_matters: 'Итоговый список университетов (Reach, Target, Safety) будет зависеть от попадания в 50-й/75-й процентиль выбранного вуза.',
-        recommended_action: 'Ориентироваться на минимальный таргет 1400+ для selective вузов и 1500+ для top-tier программ по CS/Engineering.'
-      });
-    }
-  }
-
-  // English test status
-  if (ielts.status === 'not_taken' && toefl.status === 'not_taken') {
-    gaps.push({
-      id: 'gap-english-proof',
-      title: 'Отсутствует официальный языковой сертификат (IELTS / TOEFL)',
-      status: 'missing_requirement',
-      context: `Заявлен уровень ${profile.exams.english_level}, однако официальный сертификат еще не получен.`,
-      why_it_matters: 'Без подтвержденного сертификата международный отдел университета не сможет выдать безусловный оффер (Unconditional Offer).',
-      recommended_action: 'Зарегистрироваться на тест IELTS Academic или TOEFL iBT минимум за 3-4 месяца до первых дедлайнов подачи.'
-    });
-  } else if (ielts.status === 'planned') {
-    gaps.push({
-      id: 'gap-ielts-planned',
-      title: 'Экзамен IELTS находится в статусе подготовки',
-      status: 'unknown',
-      context: `Планируемая дата сдачи: ${ielts.planned_date || 'в ближайший год'}.`,
-      why_it_matters: 'Требуется подтвердить уровень не ниже 6.5 Overall (минимум 6.0 по каждой секции) для отсутствия языковых ограничений.',
-      recommended_action: 'Сдать пробный диагностический mock-test для определения слабых секций (чаще всего Writing или Speaking).'
+  if (profile.exams.ielts.status === 'taken' || profile.exams.toefl.status === 'taken') {
+    const exam = profile.exams.ielts.status === 'taken'
+      ? `IELTS ${profile.exams.ielts.score}`
+      : `TOEFL ${profile.exams.toefl.score}`;
+    strengths.push({
+      id: 'str-language-exam',
+      title: 'Есть языковой сертификат',
+      grounding: `В профиле указан результат ${exam}.`,
+      admission_impact: 'Его можно сопоставить с требованиями выбранных программ.',
+      why_it_matters: 'Требования к языку различаются, поэтому результат нужно проверять для каждой программы отдельно.',
     });
   }
 
-  // Extracurricular depth if sparse
-  if (profile.extracurriculars.length === 0) {
+  if (profile.extracurriculars.length > 0 || profile.achievements.length > 0) {
+    strengths.push({
+      id: 'str-experience',
+      title: 'Есть опыт вне школы',
+      grounding: `В профиле: ${profile.extracurriculars.length} активностей и ${profile.achievements.length} достижений.`,
+      admission_impact: 'Этот опыт можно использовать в резюме и мотивационных материалах.',
+      why_it_matters: 'Конкретные роли и результаты помогают показать интерес к выбранному направлению.',
+    });
+  }
+
+  if (performance === 'average' || performance === 'needs_support') {
     gaps.push({
-      id: 'gap-activities-empty',
-      title: 'Не указаны внеучебные активности и проекты',
+      id: 'gap-academics',
+      title: `Усилить предмет «${mainSubject}»`,
       status: 'needs_improvement',
-      context: 'Приемные комиссии англоязычных программ оценивают вклад студента в сообщество и инициативность.',
-      why_it_matters: 'Для поступления только оценок (GPA) недостаточно, особенно при претензии на гранты.',
-      recommended_action: 'Добавить школьные клубы, волонтерство, собственные мини-проекты или онлайн-курсы с подтвержденными сертификатами.'
+      context: `Текущая самооценка успеваемости: «${performanceLabels[performance]}».`,
+      why_it_matters: 'Для части программ профильные школьные предметы имеют отдельные минимальные требования.',
+      recommended_action: 'Проверить текущие оценки по предмету и составить короткий план улучшения на ближайшую четверть.',
     });
   }
 
-  // --- 3. EVALUATE EXTERNAL CONSTRAINTS (Separated from personal weaknesses) ---
-
-  // Budget
-  const totalBudget = profile.budget.max_total_usd_year;
-  const tuitionBudget = profile.budget.max_tuition_usd_year;
+  if (applicationPreferences?.timeline === 'six_months') {
+    gaps.push({
+      id: 'gap-deadline',
+      title: 'Сжатые сроки подготовки',
+      status: 'potential_gap',
+      context: 'Вы планируете подавать документы в ближайшие шесть месяцев.',
+      why_it_matters: 'За это время нужно успеть проверить требования, дедлайны, документы и варианты финансирования.',
+      recommended_action: 'На этой неделе выбрать 5–7 программ и выписать их требования и сроки в один список.',
+    });
+  } else if (applicationPreferences?.timeline === 'exploring') {
+    gaps.push({
+      id: 'gap-timeline',
+      title: 'Определить ориентировочный срок',
+      status: 'unknown',
+      context: 'Срок подачи пока не выбран.',
+      why_it_matters: 'От него зависит порядок подготовки языка, документов и финансирования.',
+      recommended_action: 'Выбрать примерный год поступления и пересмотреть его после составления списка стран.',
+    });
+  }
 
   constraints.push({
     id: 'con-budget',
-    title: `Бюджетный лимит: до $${totalBudget.toLocaleString()}/год (обучение до $${tuitionBudget.toLocaleString()}/год)`,
+    title: `Бюджет до $${profile.budget.max_total_usd_year.toLocaleString()} в год`,
     category: 'budget',
-    description: totalBudget < 30000 
-      ? 'Ограничивает прямое платное зачисление в США/Великобританию без существенного финансового покрытия. Вектор поиска: государственные вузы Европы (Германия, Италия, Нидерланды) или вузы США со 100% need-based/merit aid.'
-      : 'Комфортный бюджет для европейских и азиатских программ, но требует контроля дополнительных расходов на проживание и страховку.',
-    is_hard: true
+    description: 'При подборе нужно считать обучение и проживание вместе и отдельно проверять дополнительные сборы.',
+    is_hard: true,
   });
 
-  // Scholarship
-  if (profile.budget.scholarship_criticality === 'critical' || profile.budget.scholarship_criticality === 'important') {
+  if (profile.budget.scholarship_criticality !== 'not_needed') {
+    const scholarshipRequired = profile.budget.scholarship_criticality === 'critical';
     constraints.push({
       id: 'con-scholarship',
-      title: profile.budget.scholarship_criticality === 'critical'
-        ? 'Критическая необходимость стипендии / гранта (Scholarship Required)'
-        : 'Высокая важность получения финансовой помощи (Scholarship Dependent)',
+      title: scholarshipRequired ? 'Стипендия обязательна' : 'Стипендия важна',
       category: 'scholarship',
-      description: 'Подача заявок должна синхронизироваться со стипендиальными дедлайнами (которые часто на 1-2 месяца раньше основных).',
-      is_hard: profile.budget.scholarship_criticality === 'critical'
+      description: 'Сроки и условия стипендий нужно проверять отдельно от основной заявки.',
+      is_hard: scholarshipRequired,
     });
   }
 
-  // Housing / Dormitory
-  if (profile.budget.dormitory_needed) {
+  if (applicationPreferences && applicationPreferences.financial_aid !== 'no') {
     constraints.push({
-      id: 'con-dorm',
-      title: 'Обязательное наличие университетского общежития (Dormitory Required)',
-      category: 'housing',
-      description: 'Исключает программы, где первокурсники обязаны арендовать жилье в частном секторе (что повышает риски и стоимость жизни).',
-      is_hard: false
+      id: 'con-financial-aid',
+      title: 'Нужна финансовая помощь',
+      category: 'scholarship',
+      description: 'В список стоит включать программы с понятными условиями financial aid для иностранных студентов.',
+      is_hard: applicationPreferences.financial_aid === 'yes',
     });
   }
 
-  // Country exclusions or preferences
+  if (applicationPreferences && applicationPreferences.work_during_studies !== 'no') {
+    constraints.push({
+      id: 'con-work',
+      title: 'Важна возможность работать во время учёбы',
+      category: 'visa',
+      description: 'Правила подработки зависят от страны и типа студенческой визы, поэтому их нужно проверять до подачи.',
+      is_hard: applicationPreferences.work_during_studies === 'yes',
+    });
+  }
+
   if (profile.preferences.preferred_countries.length > 0) {
     constraints.push({
       id: 'con-countries',
-      title: `Географический фокус: ${profile.preferences.preferred_countries.join(', ')}`,
+      title: `Страны: ${profile.preferences.preferred_countries.join(', ')}`,
       category: 'country',
-      description: 'Алгоритм подбора фильтрует каталог исключительно по целевым юрисдикциям с учетом специфики визовых процедур.',
-      is_hard: true
+      description: 'Первый список программ будет ограничен выбранными странами.',
+      is_hard: true,
     });
   }
 
-  // --- 4. ASSEMBLE RESULT ---
   return {
     summary: {
       grade_label: `${profile.basic_info.grade}-й класс`,
       target_major: profile.academics.intended_major,
       preferred_countries: profile.preferences.preferred_countries,
       annual_budget_usd: profile.budget.max_total_usd_year,
-      english_summary: ielts.status === 'taken' 
-        ? `IELTS ${ielts.score} (${profile.exams.english_level})`
-        : toefl.status === 'taken'
-        ? `TOEFL ${toefl.score}`
-        : `${profile.exams.english_level} (сертификат ${ielts.status === 'planned' ? 'планируется' : 'не сдавался'})`,
-      sat_summary: sat.status === 'taken' ? `SAT ${sat.score}` : sat.status === 'planned' ? 'SAT планируется' : 'SAT не сдавался',
+      english_summary: profile.exams.ielts.status === 'taken'
+        ? `IELTS ${profile.exams.ielts.score}`
+        : profile.exams.toefl.status === 'taken'
+          ? `TOEFL ${profile.exams.toefl.score}`
+          : 'Нужно уточнить',
+      sat_summary: profile.exams.sat.status === 'taken'
+        ? `SAT ${profile.exams.sat.score}`
+        : profile.exams.sat.status === 'planned'
+          ? 'Запланирован'
+          : 'Нужно уточнить',
       extracurricular_count: profile.extracurriculars.length,
       achievement_count: profile.achievements.length,
     },
@@ -246,6 +183,6 @@ export function runProfileDiagnosis(profile: UserProfile): DiagnosticProfileResu
       target_intake: profile.basic_info.target_intake_year,
       preferred_countries: profile.preferences.preferred_countries,
       max_budget_usd: profile.budget.max_total_usd_year,
-    }
+    },
   };
 }

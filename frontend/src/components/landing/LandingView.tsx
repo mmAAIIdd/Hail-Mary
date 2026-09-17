@@ -15,7 +15,9 @@ export const LandingView: React.FC<LandingViewProps> = ({
   return (
     <section
       className="relative min-h-[calc(100vh-4rem)] min-h-[calc(100svh-4rem)] overflow-hidden bg-slate-950 bg-cover bg-[position:58%_center] sm:min-h-[calc(100vh-5rem)] sm:min-h-[calc(100svh-5rem)] lg:bg-[position:64%_center]"
-      style={{ backgroundImage: 'url("/university-campus-hero.jpg")' }}
+      style={{
+        backgroundImage: `url("${import.meta.env.BASE_URL}university-campus-hero.jpg")`,
+      }}
     >
       <div className="absolute inset-0 z-0 bg-slate-950/30" aria-hidden="true" />
       <div

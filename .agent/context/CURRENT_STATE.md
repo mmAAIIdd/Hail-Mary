@@ -11,13 +11,14 @@ Working:
    - Step 3: Целевые страны, сроки подачи и готовность рассматривать Foundation
    - Step 4: Годовой бюджет, стипендия, financial aid и работа во время учёбы
    - Каждый шаг валидируется отдельно; интерфейс использует крупные поля и очевидные варианты ответа.
-4. **Normalized Profile Engine & Rule-Based Diagnosis**:
-   - Evidence-grounded Strengths (linked to the selected performance level, activities and scores)
-   - Contextual Gaps (constructive, non-punitive, with recommended next steps)
-   - External Constraints (budget, visa, scholarship separated from personal weaknesses)
-   - Interactive Explainability Modals ("Why is this a strength/gap?")
+4. **Profile Result**:
+   - Strengths based on questionnaire answers and available profile evidence
+   - Preparation tasks based only on fields the user actually supplied
+   - Conditions covering budget, countries, funding and work preferences
+   - Short detail modals explaining why each item matters
 5. **State Persistence**: Full LocalStorage saving across reloads.
 6. **Build and browser verification**: `npm run build` exits 0 with zero TypeScript errors. Landing, questionnaire, diagnosis, navigation and modals were checked down to 320 × 700 and at 1440 × 900 with no horizontal overflow or console errors.
+7. **Publishing**: GitHub Pages is configured through `.github/workflows/deploy-pages.yml` for `https://mmaaiidd.github.io/Hail-Mary/`.
 
 Not implemented yet (Phase 2):
 - Universities recommendations engine, deep comparison matrix, roadmap tracker, next action engine, and FastAPI backend.
