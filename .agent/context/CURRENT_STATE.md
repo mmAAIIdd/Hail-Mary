@@ -1,5 +1,12 @@
 # Current state
 
+## 2026-09-19 — Dedicated personalized admissions roadmap (local)
+
+- Added a separate top-navigation section, “Путь к поступлению”, instead of hiding the roadmap below university recommendations. The recommendation page now focuses on selection and comparison and links directly to the roadmap.
+- The roadmap states which questionnaire facts it uses: intended direction, target university/program, intake/timeline and available weekly time. It highlights the first incomplete task, shows measurable outputs and stage checkpoints, and stores per-task completion locally for the exact profile/plan version.
+- Prompt rules now require each task to cite a questionnaire fact or missing datum, follow prerequisites, fit the user's weekly capacity and keep `next_actions` aligned with the first executable roadmap tasks. Cache contract is v10 and local plan storage is v4.
+- Frontend production build, API typecheck, Worker dry-run and `git diff --check` passed. Browser visual QA remains unavailable in the current environment.
+
 ## 2026-09-19 — Merge recovery and typography polish (ready to publish)
 
 - Resolved the unfinished merge between the local planner/chance-analysis work and the remote Admissions Atlas visual system. Planner, reminders, About/Resources pages, university map and the complete recommendation payload are all preserved.

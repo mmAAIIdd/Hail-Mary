@@ -2,7 +2,7 @@ import { AdmissionsPlan } from '../types/admissions';
 import { UserProfile } from '../types/profile';
 import { normalizeAdmissionsPlan } from './admissionsApi';
 
-const PLAN_KEY = 'hail_mary_admissions_plan_v3';
+const PLAN_KEY = 'hail_mary_admissions_plan_v4';
 
 interface StoredPlan {
   profile_updated_at: string;

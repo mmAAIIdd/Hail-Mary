@@ -73,7 +73,7 @@ function isRateLimited(request: Request): boolean {
 }
 
 async function cacheKey(profile: unknown): Promise<Request> {
-  const encoded = new TextEncoder().encode(`v9:${JSON.stringify(profile)}`);
+  const encoded = new TextEncoder().encode(`v10:${JSON.stringify(profile)}`);
   const digest = await crypto.subtle.digest('SHA-256', encoded);
   const hash = [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
   return new Request(`https://hail-mary-cache.internal/${hash}`);

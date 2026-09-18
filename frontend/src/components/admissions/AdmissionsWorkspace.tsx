@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowUpRight, Heart, LoaderCircle, RefreshCw } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, Circle, Heart, LoaderCircle, RefreshCw } from 'lucide-react';
 import { UserProfile } from '../../types/profile';
 import { AdmissionsPlan, RoadmapStage, UniversityRecommendation } from '../../types/admissions';
 import { AdmissionsApiError, generateAdmissionsPlan, recommendationsAvailable } from '../../lib/admissionsApi';
@@ -8,9 +8,11 @@ import { listAdmissionsHistory, loadHistoryPlan, saveHistoryPlan } from '../../l
 import { getCampusImage } from '../../lib/campusImages';
 import type { CampusImage } from '../../lib/campusImages';
 import { loadPlannerState, toggleFavoriteUniversity } from '../../lib/plannerStorage';
+import { loadRoadmapProgress, saveRoadmapProgress } from '../../lib/roadmapProgress';
 
 interface AdmissionsWorkspaceProps {
   profile: UserProfile;
+  mode?: 'recommendations' | 'roadmap';
 }
 
 const fitLabels = {
@@ -249,15 +251,72 @@ function Comparison({ plan }: { plan: AdmissionsPlan }) {
   );
 }
 
-function Roadmap({ plan }: { plan: AdmissionsPlan }) {
+function Roadmap({ plan, profile }: { plan: AdmissionsPlan; profile: UserProfile }) {
   const priorityLabels = { now: 'Начать сейчас', next: 'Следующий этап', later: 'Позже' } as const;
-  const taskCount = plan.roadmap.reduce((total, stage) => total + stage.tasks.length, 0);
+  const timelineLabels = {
+    six_months: 'до 6 месяцев',
+    one_year: 'около года',
+    one_two_years: '1–2 года',
+    exploring: 'срок ещё уточняется',
+  } as const;
+  const tasks = plan.roadmap.flatMap((stage) => stage.tasks.map((task, taskIndex) => ({
+    id: `${stage.id}:${taskIndex}`,
+    stage,
+    task,
+  })));
+  const planKey = `${profile.updated_at}:${plan.generated_at}:${plan.roadmap_target_university}`;
+  const [completedTaskIds, setCompletedTaskIds] = useState<Set<string>>(
+    () => new Set(loadRoadmapProgress(profile.id, planKey)),
+  );
+  const targetUniversity = plan.universities.find(
+    (university) => university.name.toLocaleLowerCase('ru-RU') === plan.roadmap_target_university.toLocaleLowerCase('ru-RU'),
+  );
+  const direction = profile.academics.target_program?.trim()
+    || targetUniversity?.program_name
+    || profile.academics.interests.join(', ');
+  const weeklyTime = profile.activities?.time_per_week;
+  const completedCount = completedTaskIds.size;
+  const progressPercent = tasks.length ? Math.round((completedCount / tasks.length) * 100) : 0;
+  const nextTask = tasks.find(({ id }) => !completedTaskIds.has(id));
+
+  const toggleTask = (taskId: string) => {
+    setCompletedTaskIds((current) => {
+      const next = new Set(current);
+      if (next.has(taskId)) next.delete(taskId);
+      else next.add(taskId);
+      saveRoadmapProgress(profile.id, planKey, [...next]);
+      return next;
+    });
+  };
 
   return (
-    <section className="mt-10 sm:mt-14" id="roadmap" aria-labelledby="roadmap-title">
-      <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">План подготовки</p>
-      <h2 id="roadmap-title" className="mt-2 font-brand text-2xl font-semibold leading-tight text-slate-950 sm:text-3xl">Путь к поступлению в {plan.roadmap_target_university}</h2>
-      <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600 sm:leading-7">Пять последовательных этапов и {taskCount} конкретных действий. Активности, проекты и олимпиады подобраны для усиления заявки именно в целевой университет. Фактические требования и дедлайны проверяйте на официальной странице программы.</p>
+    <section id="roadmap" aria-labelledby="roadmap-title">
+      <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Персональный roadmap</p>
+      <h2 id="roadmap-title" className="mt-2 max-w-4xl font-brand text-2xl font-semibold leading-tight text-slate-950 sm:text-4xl">Путь к поступлению в {plan.roadmap_target_university}</h2>
+      <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600 sm:leading-7">
+        {tasks.length} действий в пяти зависимых этапах: от проверки исходных данных до подачи, финансового решения и следующих шагов. Фактические требования без источника отмечены как то, что нужно перепроверить.
+      </p>
+
+      <dl className="mt-7 grid border-y border-slate-300 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="border-b border-slate-200 px-0 py-4 sm:border-r sm:px-4 lg:border-b-0 lg:first:pl-0"><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Направление</dt><dd className="mt-2 text-sm font-semibold leading-6 text-slate-950">{direction}</dd></div>
+        <div className="border-b border-slate-200 px-0 py-4 sm:px-4 lg:border-b-0 lg:border-r"><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Целевая программа</dt><dd className="mt-2 text-sm font-semibold leading-6 text-slate-950">{targetUniversity?.program_name || 'Уточнить после выбора программы'}</dd></div>
+        <div className="border-b border-slate-200 px-0 py-4 sm:border-b-0 sm:border-r sm:px-4"><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Срок</dt><dd className="mt-2 text-sm font-semibold leading-6 text-slate-950">{profile.basic_info.target_intake_year} · {timelineLabels[profile.application_preferences.timeline]}</dd></div>
+        <div className="px-0 py-4 sm:px-4 lg:pr-0"><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Время на подготовку</dt><dd className="mt-2 text-sm font-semibold leading-6 text-slate-950">{weeklyTime === null || weeklyTime === undefined ? 'Нужно уточнить' : weeklyTime === 0 ? 'Пока не выделено' : `${weeklyTime} час. в неделю`}</dd></div>
+      </dl>
+
+      <div className="mt-7 grid gap-5 border-l-4 border-terracotta bg-white px-5 py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-terracotta">{nextTask ? 'Ближайший шаг' : 'План выполнен'}</p>
+          <h3 className="mt-2 text-lg font-semibold leading-7 text-slate-950">{nextTask?.task.title || 'Все задачи отмечены'}</h3>
+          {nextTask && <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{nextTask.task.reason} <span className="font-semibold text-slate-800">Результат:</span> {nextTask.task.result}</p>}
+        </div>
+        {nextTask && <button type="button" onClick={() => toggleTask(nextTask.id)} className="min-h-11 border-b-2 border-slate-950 text-sm font-semibold text-slate-950">Отметить выполненным</button>}
+      </div>
+
+      <div className="mt-6" aria-label={`Выполнено ${completedCount} из ${tasks.length} задач`}>
+        <div className="flex items-center justify-between gap-4 text-sm"><span className="font-semibold text-slate-950">Прогресс</span><span className="text-slate-600">{completedCount} из {tasks.length}</span></div>
+        <div className="mt-2 h-2 bg-slate-200"><div className="h-full bg-terracotta transition-[width]" style={{ width: `${progressPercent}%` }} /></div>
+      </div>
 
       <ol className="relative mt-7 before:absolute before:bottom-4 before:left-[13px] before:top-4 before:w-px before:bg-slate-300 sm:mt-8 sm:before:left-[23px]">
         {plan.roadmap.map((stage, index) => (
@@ -276,20 +335,26 @@ function Roadmap({ plan }: { plan: AdmissionsPlan }) {
               </div>
 
               <ol className="mt-6 divide-y divide-slate-200 border-y border-slate-200">
-                {stage.tasks.map((task, taskIndex) => (
-                  <li key={`${stage.id}-${taskIndex}`} className="grid gap-2 py-4 sm:grid-cols-[150px_minmax(0,1fr)] sm:gap-3 sm:py-5">
-                    <div>
+                {stage.tasks.map((task, taskIndex) => {
+                  const taskId = `${stage.id}:${taskIndex}`;
+                  const isCompleted = completedTaskIds.has(taskId);
+                  return (
+                  <li key={taskId} className="grid grid-cols-[32px_minmax(0,1fr)] gap-3 py-4 sm:grid-cols-[32px_140px_minmax(0,1fr)] sm:py-5">
+                    <button type="button" onClick={() => toggleTask(taskId)} aria-pressed={isCompleted} aria-label={`${isCompleted ? 'Вернуть в работу' : 'Отметить выполненным'}: ${task.title}`} className="mt-0.5 inline-flex h-8 w-8 items-center justify-center text-slate-700">
+                      {isCompleted ? <CheckCircle2 className="h-5 w-5 text-terracotta" aria-hidden="true" /> : <Circle className="h-5 w-5" aria-hidden="true" />}
+                    </button>
+                    <div className="sm:col-auto">
                       <span className="text-xs font-bold uppercase tracking-wide text-slate-500">{categoryLabels[task.category]}</span>
                       <p className="mt-1 text-xs leading-5 text-slate-600">{task.deadline}</p>
                     </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-slate-950">{task.title}</h4>
+                    <div className="col-start-2 sm:col-start-auto">
+                      <h4 className={`text-sm font-semibold text-slate-950 ${isCompleted ? 'line-through decoration-slate-400' : ''}`}>{task.title}</h4>
                       <p className="mt-2 text-sm leading-6 text-slate-600 sm:leading-7">{task.reason}</p>
                       {task.result && <p className="mt-2 border-l-2 border-slate-300 pl-3 text-sm leading-6 text-slate-700"><span className="font-semibold">Готовый результат:</span> {task.result}</p>}
                       {task.source_url && <p className="mt-3"><SourceLink href={task.source_url}>Источник требования</SourceLink></p>}
                     </div>
                   </li>
-                ))}
+                );})}
               </ol>
 
               <div className="mt-5 bg-slate-100 px-4 py-4 text-sm leading-6 text-slate-700">
@@ -304,7 +369,7 @@ function Roadmap({ plan }: { plan: AdmissionsPlan }) {
   );
 }
 
-export const AdmissionsWorkspace: React.FC<AdmissionsWorkspaceProps> = ({ profile }) => {
+export const AdmissionsWorkspace: React.FC<AdmissionsWorkspaceProps> = ({ profile, mode = 'recommendations' }) => {
   const [plan, setPlan] = useState<AdmissionsPlan | null>(() => loadAdmissionsPlan(profile));
   const [selectedId, setSelectedId] = useState(() => plan?.universities[0]?.id || '');
   const [history, setHistory] = useState(listAdmissionsHistory);
@@ -362,12 +427,30 @@ export const AdmissionsWorkspace: React.FC<AdmissionsWorkspaceProps> = ({ profil
     return (
       <section className="border-t border-slate-300 py-10" aria-live="polite">
         {isLoading ? (
-          <><LoaderCircle className="h-6 w-6 animate-spin text-slate-700" aria-hidden="true" /><h2 className="mt-4 font-brand text-2xl font-semibold text-slate-950">Составляем рекомендации</h2><p className="mt-2 max-w-xl text-sm leading-6 text-slate-600">Подбираем университеты по анкете и собираем сравнение. Это может занять до минуты.</p></>
+          <><LoaderCircle className="h-6 w-6 animate-spin text-slate-700" aria-hidden="true" /><h2 className="mt-4 font-brand text-2xl font-semibold text-slate-950">{mode === 'roadmap' ? 'Составляем ваш путь' : 'Составляем рекомендации'}</h2><p className="mt-2 max-w-xl text-sm leading-6 text-slate-600">{mode === 'roadmap' ? 'Связываем специальность, сроки, экзамены и активности в единый план. Это может занять до минуты.' : 'Подбираем университеты по анкете и собираем сравнение. Это может занять до минуты.'}</p></>
         ) : (
           <><h2 className="font-brand text-2xl font-semibold text-slate-950">Рекомендации пока недоступны</h2><p role="alert" className="mt-2 max-w-xl text-sm leading-6 text-rose-700">{error || 'Не удалось загрузить результат.'}</p><button type="button" onClick={requestPlan} disabled={!recommendationsAvailable()} className="mt-5 min-h-11 border-b-2 border-slate-950 text-sm font-semibold text-slate-950 disabled:opacity-50">Попробовать снова</button></>
         )}
         {history.length > 0 && <div className="mt-6 border-t border-slate-200 pt-4"><p className="text-sm font-semibold text-slate-950">Сохранённые ответы</p><div className="mt-2 flex flex-wrap gap-4">{history.map((entry) => <button key={entry.id} type="button" onClick={() => { const saved = loadHistoryPlan(entry.id); if (saved) { setHistoricalPlan(saved); setSelectedId(saved.universities[0]?.id || ''); setDetailOpenId(''); } }} className="text-sm text-slate-700 underline underline-offset-4">{new Date(entry.created_at).toLocaleString('ru-RU')}</button>)}</div></div>}
       </section>
+    );
+  }
+
+  if (mode === 'roadmap') {
+    return (
+      <div className="editorial-page admissions-workspace">
+        <Roadmap plan={displayedPlan} profile={profile} />
+        {displayedPlan.personalization.length > 0 && (
+          <section className="mt-12 border-t border-slate-300 pt-7" aria-labelledby="roadmap-basis-title">
+            <h2 id="roadmap-basis-title" className="font-brand text-2xl font-semibold text-slate-950">Почему план именно такой</h2>
+            <ul className="mt-4 max-w-4xl space-y-3 text-sm leading-7 text-slate-700">{displayedPlan.personalization.map((reason, index) => <li key={`${index}-${reason}`} className="border-l-2 border-slate-300 pl-4">{reason}</li>)}</ul>
+          </section>
+        )}
+        <section className="mt-12 border-t border-slate-300 pt-7" aria-labelledby="roadmap-limits-title">
+          <h2 id="roadmap-limits-title" className="font-brand text-2xl font-semibold text-slate-950">Что нужно перепроверить</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">{displayedPlan.disclaimer || 'Требования, сроки и финансовые условия меняются. Перед выполнением шага сверьте его с официальной страницей программы.'}</p>
+        </section>
+      </div>
     );
   }
 
@@ -410,8 +493,6 @@ export const AdmissionsWorkspace: React.FC<AdmissionsWorkspaceProps> = ({ profil
       </section>
 
       <Comparison plan={displayedPlan} />
-      <Roadmap plan={displayedPlan} />
-
       <section className="mt-12 border-t border-slate-300 pt-7" aria-labelledby="sources-title">
         <h2 id="sources-title" className="font-brand text-2xl font-semibold text-slate-950">Источники и ограничения</h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">{displayedPlan.disclaimer || 'Данные о поступлении меняются. Перед подачей проверьте сроки и требования на официальном сайте программы.'}</p>

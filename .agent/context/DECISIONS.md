@@ -1,5 +1,9 @@
 # Decisions
 
+## 2026-09-19 — Roadmap is a first-class journey with versioned local progress
+
+The personal roadmap has its own navigation destination after recommendations. It reuses the saved admissions response rather than making a second AI request, and it exposes the questionnaire facts that shaped the plan. Completion state is local to the exact profile and generated-plan version so changed answers never inherit stale progress. A valid task must name its profile evidence or missing datum, respect prerequisites and available time, and leave a measurable result; unsupported admission requirements remain verification tasks rather than facts.
+
 ## 2026-09-19 — Planner is local and acceptance rate is source-gated
 
 Favorites, checklist progress, user notes and calendar dates are stored per profile in localStorage; they do not imply account sync, background push notifications or cross-device persistence. A reminder is shown inside the product for the nearest incomplete dated task. Acceptance rate is displayed only when grounded retrieval provides an official URL and explicit scope (`program` or `university`); otherwise it is “not published/found”. This statistic remains separate from the low-confidence personalized admission estimate.

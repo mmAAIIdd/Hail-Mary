@@ -1,5 +1,9 @@
 # Change history
 
+## 2026-09-19 — Dedicated path-to-admission experience
+
+Added a separate “Путь к поступлению” destination to desktop and mobile navigation. The focused roadmap shows its questionnaire basis, target program, timeline, workload, nearest executable task, measurable results, stage checkpoints and locally persisted completion progress. Removed the duplicated roadmap from recommendations. Strengthened Gemini guidance so every task is tied to a real profile fact or explicit unknown, respects prerequisites and weekly capacity, and aligns with `next_actions`. Bumped Worker cache and frontend plan storage versions. Frontend build, API typecheck, Worker dry-run and diff check passed.
+
 ## 2026-09-19 — Merge recovery and requested visual fixes
 
 Resolved all outstanding merge conflicts between the planner/chance-analysis branch and the Admissions Atlas visual branch. Preserved the planner, reminders, full recommendation request fields, About/Resources navigation, world map, responsive comparison and detailed roadmap. Removed the decorative line before the landing eyebrow and increased word spacing in the About-page principles. Frontend production build, API typecheck, Worker dry-run, conflict-marker scan and diff check passed; browser visual QA was unavailable in the current environment.

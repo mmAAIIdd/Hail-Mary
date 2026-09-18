@@ -3,8 +3,8 @@ import { RotateCcw, Menu, X } from 'lucide-react';
 import { UserProfile } from '../../types/profile';
 
 interface HeaderProps {
-  activeTab: 'landing' | 'profile' | 'diagnosis' | 'planner' | 'about' | 'resources';
-  setActiveTab: (tab: 'landing' | 'profile' | 'diagnosis' | 'planner' | 'about' | 'resources') => void;
+  activeTab: 'landing' | 'profile' | 'diagnosis' | 'roadmap' | 'planner' | 'about' | 'resources';
+  setActiveTab: (tab: 'landing' | 'profile' | 'diagnosis' | 'roadmap' | 'planner' | 'about' | 'resources') => void;
   profile: UserProfile | null;
   onReset: () => void;
 }
@@ -40,7 +40,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             </div>
 
-            <nav className="hidden items-center gap-5 md:flex" aria-label="Основная навигация">
+            <nav className="hidden items-center gap-3 lg:flex xl:gap-5" aria-label="Основная навигация">
               <button
                 onClick={() => setActiveTab('landing')}
                 aria-current={activeTab === 'landing' ? 'page' : undefined}
@@ -80,6 +80,15 @@ export const Header: React.FC<HeaderProps> = ({
               )}
               {profile && (
                 <button
+                  onClick={() => setActiveTab('roadmap')}
+                  aria-current={activeTab === 'roadmap' ? 'page' : undefined}
+                  className={`nav-link ${activeTab === 'roadmap' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}`}
+                >
+                  Путь к поступлению
+                </button>
+              )}
+              {profile && (
+                <button
                   onClick={() => setActiveTab('planner')}
                   aria-current={activeTab === 'planner' ? 'page' : undefined}
                   className={activeTab === 'planner' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}
@@ -103,7 +112,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   onClick={onReset}
                   title="Сбросить профиль"
-                  className="hidden rounded-xl border border-transparent p-2 text-slate-400 transition hover:border-rose-100 hover:bg-rose-50 hover:text-rose-600 md:inline-flex"
+                  className="hidden rounded-xl border border-transparent p-2 text-slate-400 transition hover:border-rose-100 hover:bg-rose-50 hover:text-rose-600 lg:inline-flex"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                 </button>
@@ -113,7 +122,7 @@ export const Header: React.FC<HeaderProps> = ({
                 aria-label={isMobileMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
                 aria-expanded={isMobileMenuOpen}
                 onClick={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-stone-200 bg-white text-slate-800 md:hidden"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-stone-200 bg-white text-slate-800 lg:hidden"
               >
                 {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
@@ -122,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {isMobileMenuOpen && (
-          <div className="absolute inset-x-0 top-full border-b border-stone-200 bg-[#faf8f5] shadow-lg md:hidden">
+          <div className="absolute inset-x-0 top-full border-b border-stone-200 bg-[#faf8f5] shadow-lg lg:hidden">
             <nav className="mx-auto grid max-w-7xl gap-1 px-4 py-3 text-sm font-semibold text-slate-800">
               <button
                 onClick={() => {
@@ -171,6 +180,18 @@ export const Header: React.FC<HeaderProps> = ({
                   className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
                 >
                   Рекомендации {activeTab === 'diagnosis' && '•'}
+                </button>
+              )}
+              {profile && (
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setActiveTab('roadmap');
+                  }}
+                  aria-current={activeTab === 'roadmap' ? 'page' : undefined}
+                  className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
+                >
+                  Путь к поступлению {activeTab === 'roadmap' && '•'}
                 </button>
               )}
               {profile && (

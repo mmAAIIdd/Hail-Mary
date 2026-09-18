@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Edit3 } from 'lucide-react';
+import { ArrowRight, Edit3 } from 'lucide-react';
 import { UserProfile } from '../../types/profile';
 import { AdmissionsWorkspace } from '../admissions/AdmissionsWorkspace';
 
@@ -7,9 +7,10 @@ interface DiagnosisViewProps {
   profile: UserProfile;
   onEditProfile: () => void;
   onAddContext: (context: string) => void;
+  onOpenRoadmap: () => void;
 }
 
-export const DiagnosisView: React.FC<DiagnosisViewProps> = ({ profile, onEditProfile, onAddContext }) => {
+export const DiagnosisView: React.FC<DiagnosisViewProps> = ({ profile, onEditProfile, onAddContext, onOpenRoadmap }) => {
   const [context, setContext] = useState(profile.additional_context ?? '');
   return (
   <main className="editorial-page diagnosis-page mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-10 lg:px-8">
@@ -20,17 +21,22 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({ profile, onEditPro
           Ваши рекомендации
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-          Университеты, сравнение и план подготовки по вашей анкете.
+          Университеты и сравнение вариантов по вашей анкете.
         </p>
       </div>
-      <button
-        type="button"
-        onClick={onEditProfile}
-        className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-950 hover:text-slate-950"
-      >
-        <Edit3 className="h-4 w-4" />
-        Изменить анкету
-      </button>
+      <div className="flex flex-wrap gap-3">
+        <button type="button" onClick={onOpenRoadmap} className="atlas-button inline-flex min-h-11 items-center justify-center gap-2 px-4 text-sm font-semibold text-white">
+          Открыть путь <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={onEditProfile}
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-950 hover:text-slate-950"
+        >
+          <Edit3 className="h-4 w-4" aria-hidden="true" />
+          Изменить анкету
+        </button>
+      </div>
     </header>
 
     <form className="context-form mb-8 border-b border-slate-200 pb-8" onSubmit={(event) => {

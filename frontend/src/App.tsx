@@ -5,6 +5,7 @@ import { Footer } from './components/layout/Footer';
 import { LandingView } from './components/landing/LandingView';
 import { Questionnaire } from './components/profile/Questionnaire';
 import { DiagnosisView } from './components/diagnosis/DiagnosisView';
+import { RoadmapView } from './components/admissions/RoadmapView';
 import { MyUniversitiesView } from './components/planner/MyUniversitiesView';
 import { InfoView } from './components/info/InfoView';
 import {
@@ -16,8 +17,9 @@ import { clearAdmissionsPlan } from './lib/admissionsStorage';
 import { clearAdmissionsHistory } from './lib/admissionsHistory';
 import { clearPlannerState, getNextPlannerReminder, PLANNER_UPDATED_EVENT } from './lib/plannerStorage';
 import { PlannerReminder } from './types/planner';
+import { clearRoadmapProgress } from './lib/roadmapProgress';
 
-type ActiveTab = 'landing' | 'profile' | 'diagnosis' | 'planner' | 'about' | 'resources';
+type ActiveTab = 'landing' | 'profile' | 'diagnosis' | 'roadmap' | 'planner' | 'about' | 'resources';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('landing');
@@ -42,6 +44,7 @@ export function App() {
       landing: 'Главная',
       profile: 'Анкета',
       diagnosis: 'Рекомендации',
+      roadmap: 'Путь к поступлению',
       planner: 'Мои университеты',
       about: 'О нас',
       resources: 'Ресурсы',
@@ -72,6 +75,7 @@ export function App() {
       clearAdmissionsPlan();
       clearAdmissionsHistory();
       if (profile) clearPlannerState(profile.id);
+      if (profile) clearRoadmapProgress(profile.id);
       setProfile(null);
       setActiveTab('landing');
     }
@@ -110,6 +114,10 @@ export function App() {
             <DiagnosisView
               profile={profile}
               onAddContext={handleAddContext}
+              onOpenRoadmap={() => {
+                setActiveTab('roadmap');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               onEditProfile={() => {
                 setActiveTab('profile');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -138,6 +146,16 @@ export function App() {
             setActiveTab('diagnosis');
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }} />
+        )}
+
+        {activeTab === 'roadmap' && profile && (
+          <RoadmapView
+            profile={profile}
+            onEditProfile={() => {
+              setActiveTab('profile');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
         )}
 
         {activeTab === 'about' && <InfoView section="about" onStartQuestionnaire={() => setActiveTab('profile')} />}
