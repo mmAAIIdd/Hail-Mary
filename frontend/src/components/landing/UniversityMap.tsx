@@ -33,7 +33,7 @@ export const UniversityMap: React.FC = () => {
   const [activeLocation, setActiveLocation] = useState<UniversityLocation | null>(LOCATIONS[1]);
 
   return (
-    <section className="border-t border-slate-200 bg-[#f6f8f7] px-5 py-16 sm:px-8 sm:py-20 lg:px-12" aria-labelledby="map-title">
+    <section className="map-section border-t border-slate-200 bg-[#f6f8f7] px-5 py-16 sm:px-8 sm:py-20 lg:px-12" aria-labelledby="map-title">
       <div className="mx-auto max-w-7xl">
         <div className="max-w-2xl">
           <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">География возможностей</p>
@@ -41,7 +41,7 @@ export const UniversityMap: React.FC = () => {
           <p className="mt-4 text-base leading-7 text-slate-600">Выберите университет на карте, чтобы увидеть его город, страну и основные направления.</p>
         </div>
 
-        <div className="relative mt-10 overflow-hidden border border-slate-300 bg-[#b9d8dc] shadow-sm">
+        <div className="map-panel relative mt-10 overflow-hidden border border-slate-300 bg-[#b9d8dc] shadow-sm">
           <ComposableMap
             projection="geoEqualEarth"
             projectionConfig={{ scale: 152, center: [10, 12] }}

@@ -28,7 +28,7 @@ export const InfoView: React.FC<InfoViewProps> = ({ section, onStartQuestionnair
   const isAbout = section === 'about';
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 py-14 sm:px-8 sm:py-20 lg:px-12">
+    <main className="editorial-page info-page mx-auto w-full max-w-6xl px-5 py-14 sm:px-8 sm:py-20 lg:px-12">
       <div className="max-w-3xl">
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
           {isAbout ? 'О проекте' : 'Полезные материалы'}

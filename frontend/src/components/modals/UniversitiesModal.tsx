@@ -16,7 +16,7 @@ export const UniversitiesModal: React.FC<UniversitiesModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 sm:items-center sm:p-4">
-      <div className="relative w-full max-w-xl rounded-t-3xl border border-slate-200 bg-white p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-2xl sm:rounded-3xl sm:p-8">
+      <div className="modal-surface relative w-full max-w-xl rounded-t-3xl border border-slate-200 bg-white p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-2xl sm:rounded-3xl sm:p-8">
         <button
           type="button"
           onClick={onClose}

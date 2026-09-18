@@ -57,7 +57,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="app-shell min-h-screen flex flex-col bg-paper text-ink">
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}

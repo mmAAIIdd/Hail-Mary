@@ -1,5 +1,14 @@
 # Current state
 
+## 2026-09-19 — Admissions Atlas visual system (local)
+
+- Frontend visual language is now documented in `DESIGN.md`.
+- Inspo archive recommendation `split-studio` informed a warm editorial admissions-atlas direction.
+- Shared visual tokens and accessibility-safe focus/reduced-motion rules live in `frontend/src/index.css`; Tailwind brand colors now use terracotta instead of indigo.
+- Landing, navigation, map, questionnaire, diagnosis, admissions workspace, info pages, footer and modal surfaces now share paper/ink/rule/accent treatment.
+- Frontend production build passed with 1884 modules transformed.
+- Desktop and 390px mobile browser screenshots show the revised hierarchy; mobile document width stays within viewport and console has no warnings/errors.
+
 ## 2026-09-18 — Liter, explicit exam scores and sourced campus imagery (local)
 
 - The questionnaire shows a prominent “+ Добавить свои данные” control on its first step and accepts up to six custom aspects.

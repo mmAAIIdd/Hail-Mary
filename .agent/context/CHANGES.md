@@ -1,5 +1,17 @@
 # Change history
 
+## 2026-09-19 — Admissions Atlas visual system
+
+Goal: enhance the entire frontend with a coherent design language informed by the Inspo archive.
+
+Changed: added `DESIGN.md`; introduced warm paper/ink/terracotta tokens, editorial focus states, reduced-motion handling and light depth in `frontend/src/index.css`; updated Tailwind theme colors; refreshed app shell, header, footer, landing hero ledger, geography section, questionnaire surface, diagnosis, admissions workspace and modal surfaces with shared visual hooks.
+
+Reason: move from restrained generic utility styling to a memorable admissions-atlas identity while preserving the existing cardless information architecture and truthful recommendation states.
+
+Validation: `npm.cmd run build` passed with 1884 modules transformed. Browser screenshots checked at default desktop and 390px mobile widths; mobile overflow check passed and browser console had zero warnings/errors.
+
+Remaining: none for this visual pass; physical-device font rendering can still vary.
+
 ## 2026-09-18 — Exam results, Liter typography and sourced university images
 
 Moved the custom-data button to the first questionnaire step, added structured IELTS/TOEFL/SAT/ЕНТ scores with a not-taken state and exam-specific validation, self-hosted the requested Liter font, and added sourced university imagery through exact Wikidata matching plus Commons metadata. Validated Pages build, API types and Worker dry-run; not deployed.

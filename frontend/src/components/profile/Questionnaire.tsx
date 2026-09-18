@@ -496,7 +496,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
   };
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-8 sm:py-14">
+    <main className="editorial-page questionnaire-page mx-auto w-full max-w-5xl px-4 py-8 sm:px-8 sm:py-14">
       <header className="mb-10">
         <div className="mb-5 flex items-center justify-between gap-4">
           <span className="text-sm font-semibold text-slate-500">
@@ -506,7 +506,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
             {Math.round(progress)}% заполнено
           </span>
         </div>
-        <div className="h-1.5 overflow-hidden bg-slate-200">
+        <div className="progress-track h-1.5 overflow-hidden bg-slate-200">
           <div
             className="h-full bg-slate-950 transition-[width] duration-300"
             style={{ width: `${progress}%` }}
@@ -514,7 +514,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
         </div>
       </header>
 
-      <section className="border border-slate-200 bg-white px-5 py-7 sm:px-10 sm:py-10">
+      <section className="questionnaire-panel border border-slate-200 bg-white px-5 py-7 sm:px-10 sm:py-10">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">
             {initialProfile ? 'Редактирование анкеты' : 'Анкета абитуриента'}

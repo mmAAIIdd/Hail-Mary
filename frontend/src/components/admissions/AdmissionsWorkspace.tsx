@@ -183,7 +183,7 @@ function Comparison({ plan }: { plan: AdmissionsPlan }) {
       <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Сравнение</p>
       <h2 id="comparison-title" className="mt-2 font-brand text-3xl font-semibold text-slate-950">Все варианты рядом</h2>
       <p className="mt-2 text-sm text-slate-600">Таблица прокручивается по горизонтали на узком экране. Балл соответствия не равен шансу поступления.</p>
-      <div className="mt-5 overflow-x-auto border-y border-slate-300">
+          <div className="comparison-table mt-5 overflow-x-auto border-y border-slate-300">
         <table className="min-w-[920px] w-full border-collapse text-left text-sm">
           <thead><tr><th scope="col" className="w-40 p-3 text-xs font-bold uppercase text-slate-500">Критерий</th>{plan.universities.map((university) => <th scope="col" key={university.id} className="min-w-36 p-3 align-top font-semibold text-slate-950">{university.name}</th>)}</tr></thead>
           <tbody>{rows.map((row) => <tr key={row.title} className="border-t border-slate-200"><th scope="row" className="p-3 align-top font-semibold text-slate-600">{row.title}</th>{plan.universities.map((university) => <td key={university.id} className="p-3 align-top leading-5 text-slate-700">{row.value(university)}</td>)}</tr>)}</tbody>
@@ -199,7 +199,7 @@ function Roadmap({ plan }: { plan: AdmissionsPlan }) {
       <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">План подготовки</p>
       <h2 id="roadmap-title" className="mt-2 font-brand text-3xl font-semibold text-slate-950">От анкеты до подачи</h2>
       {plan.roadmap.map((stage, index) => (
-        <div key={stage.id} className="grid gap-4 border-t border-slate-300 py-7 first:mt-6 lg:grid-cols-[220px_1fr]">
+        <div key={stage.id} className="roadmap-stage grid gap-4 border-t border-slate-300 py-7 first:mt-6 lg:grid-cols-[220px_1fr]">
           <div><p className="text-xs font-bold uppercase tracking-wide text-slate-500">Этап {index + 1} · {stage.period}</p><h3 className="mt-2 text-lg font-semibold text-slate-950">{stage.title}</h3></div>
           <ol className="divide-y divide-slate-200">
             {stage.tasks.map((task, taskIndex) => (
@@ -282,7 +282,7 @@ export const AdmissionsWorkspace: React.FC<AdmissionsWorkspaceProps> = ({ profil
   }
 
   return (
-    <div>
+    <div className="editorial-page admissions-workspace">
       {history.length > 0 && (
         <section className="mb-8 border-b border-slate-200 pb-6" aria-label="История рекомендаций">
           <h2 className="text-sm font-semibold text-slate-950">История рекомендаций</h2>
@@ -305,7 +305,7 @@ export const AdmissionsWorkspace: React.FC<AdmissionsWorkspaceProps> = ({ profil
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Подборка по анкете</p>
         <h2 id="universities-title" className="mt-2 font-brand text-3xl font-semibold text-slate-950">Университеты</h2>
         <div className="mt-7 grid gap-8 lg:grid-cols-[340px_minmax(0,1fr)]">
-          <nav aria-label="Подобранные университеты" className="divide-y divide-slate-200 border-y border-slate-300">
+            <nav aria-label="Подобранные университеты" className="university-list divide-y divide-slate-200 border-y border-slate-300">
             {displayedPlan.universities.map((university, index) => (
               <div key={university.id} className="flex items-center gap-3 py-4">
                 <span className="w-5 shrink-0 text-xs font-semibold text-slate-400">{String(index + 1).padStart(2, '0')}</span>
