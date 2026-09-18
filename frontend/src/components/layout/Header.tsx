@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { RotateCcw, ArrowLeft, ArrowRight, Menu, X } from 'lucide-react';
+import { RotateCcw, Menu, X } from 'lucide-react';
 import { UserProfile } from '../../types/profile';
-import { TipsModal } from '../modals/TipsModal';
-import { UniversitiesModal } from '../modals/UniversitiesModal';
 
 interface HeaderProps {
   activeTab: 'landing' | 'profile' | 'diagnosis';
@@ -17,8 +15,6 @@ export const Header: React.FC<HeaderProps> = ({
   profile,
   onReset,
 }) => {
-  const [isTipsOpen, setIsTipsOpen] = useState(false);
-  const [isUnisOpen, setIsUnisOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleStartQuestionnaire = () => {
@@ -44,52 +40,41 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
             </div>
 
-            {/* Navigation links requested by user: "Советы", "Университеты" */}
-            <nav className="hidden items-center space-x-3 md:flex">
+            <nav className="hidden items-center gap-5 md:flex" aria-label="Основная навигация">
               <button
-                onClick={() => setIsTipsOpen(true)}
-                className="px-3 py-1.5 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-black hover:bg-slate-100/80 transition"
+                onClick={() => setActiveTab('landing')}
+                aria-current={activeTab === 'landing' ? 'page' : undefined}
+                className={activeTab === 'landing' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}
               >
-                Советы
+                Главная
               </button>
-
               <button
-                onClick={() => profile ? setActiveTab('diagnosis') : setIsUnisOpen(true)}
-                className="px-3 py-1.5 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-black hover:bg-slate-100/80 transition"
+                onClick={handleStartQuestionnaire}
+                aria-current={activeTab === 'profile' ? 'page' : undefined}
+                className={activeTab === 'profile' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}
               >
-                Университеты
+                Анкета
               </button>
-
-              {activeTab !== 'landing' && (
+              {profile && (
                 <button
-                  onClick={() => setActiveTab('landing')}
-                  className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-medium text-slate-500 hover:text-black transition"
+                  onClick={() => setActiveTab('diagnosis')}
+                  aria-current={activeTab === 'diagnosis' ? 'page' : undefined}
+                  className={activeTab === 'diagnosis' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>На главную</span>
+                  Рекомендации
                 </button>
               )}
             </nav>
 
             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-              {profile && activeTab === 'landing' && (
+              {activeTab === 'landing' && (
                 <button
-                  onClick={() => setActiveTab('diagnosis')}
-                  className="hidden sm:inline-block text-xs font-semibold px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 transition"
+                  onClick={profile ? () => setActiveTab('diagnosis') : handleStartQuestionnaire}
+                  className="hidden min-h-10 items-center rounded-xl bg-black px-4 text-xs font-semibold text-white transition hover:bg-neutral-800 sm:inline-flex sm:text-sm"
                 >
-                  Моя стратегия
+                  {profile ? 'Мои рекомендации' : 'Пройти анкету'}
                 </button>
               )}
-
-              {/* Main prominent CTA Button requested: "Пройти анкету" */}
-              <button
-                onClick={handleStartQuestionnaire}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-black px-3.5 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-neutral-800 active:scale-[0.98] sm:px-5 sm:text-sm"
-              >
-                <span className="sm:hidden">Анкета</span>
-                <span className="hidden sm:inline">Пройти анкету</span>
-                <ArrowRight className="hidden h-3.5 w-3.5 text-slate-400 sm:block" />
-              </button>
 
               {profile && (
                 <button
@@ -120,42 +105,30 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  setIsTipsOpen(true);
+                  setActiveTab('landing');
                 }}
+                aria-current={activeTab === 'landing' ? 'page' : undefined}
                 className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
               >
-                Советы
+                Главная {activeTab === 'landing' && '•'}
               </button>
               <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  if (profile) setActiveTab('diagnosis');
-                  else setIsUnisOpen(true);
-                }}
+                onClick={handleStartQuestionnaire}
+                aria-current={activeTab === 'profile' ? 'page' : undefined}
                 className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
               >
-                Университеты
+                Анкета {activeTab === 'profile' && '•'}
               </button>
-              {profile && activeTab !== 'diagnosis' && (
+              {profile && (
                 <button
                   onClick={() => {
                     setIsMobileMenuOpen(false);
                     setActiveTab('diagnosis');
                   }}
+                  aria-current={activeTab === 'diagnosis' ? 'page' : undefined}
                   className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
                 >
-                  Моя стратегия
-                </button>
-              )}
-              {activeTab !== 'landing' && (
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    setActiveTab('landing');
-                  }}
-                  className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
-                >
-                  На главную
+                  Рекомендации {activeTab === 'diagnosis' && '•'}
                 </button>
               )}
               {profile && (
@@ -174,18 +147,6 @@ export const Header: React.FC<HeaderProps> = ({
         )}
       </header>
 
-      {/* Modals for Советы & Университеты */}
-      <TipsModal
-        isOpen={isTipsOpen}
-        onClose={() => setIsTipsOpen(false)}
-        onStartQuestionnaire={handleStartQuestionnaire}
-      />
-
-      <UniversitiesModal
-        isOpen={isUnisOpen}
-        onClose={() => setIsUnisOpen(false)}
-        onStartQuestionnaire={handleStartQuestionnaire}
-      />
     </>
   );
 };

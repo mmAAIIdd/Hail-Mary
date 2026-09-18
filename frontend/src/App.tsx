@@ -17,11 +17,15 @@ export function App() {
   const [profile, setProfile] = useState<UserProfile | null>(() => loadStoredProfile());
 
   useEffect(() => {
-    // If profile exists on load and user refreshed on diagnosis, stay there
     if (profile) {
       saveStoredProfile(profile);
     }
   }, [profile]);
+
+  useEffect(() => {
+    const pageNames = { landing: 'Главная', profile: 'Анкета', diagnosis: 'Рекомендации' };
+    document.title = `${pageNames[activeTab]} — Hail Mary`;
+  }, [activeTab]);
 
   const handleProfileComplete = (completedProfile: UserProfile) => {
     setProfile(completedProfile);

@@ -1,5 +1,9 @@
 # Decisions
 
+## 2026-09-18 — Source claims in model-only mode
+
+Without online retrieval, Gemini output cannot be treated as verified evidence. The API clears generated source URLs and unknown financial/deadline facts in model-only mode; the frontend also applies this rule when reading legacy production responses. University links remain explicitly labelled as unverified addresses. The product must show uncertainty instead of inventing citations or presenting estimated admission percentages as statistical probabilities. A paid grounding mode or independent official-source ingestion is needed before claiming fully verified current admissions facts.
+
 ## 2026-09-18 — Chance estimates and factual provenance
 
 The user requested a percentage for each university. It is displayed only as an illustrative, non-calibrated assessment based on known questionnaire fields, separate from `fit_score`. Because the form does not capture precise grades, exam scores or documents, the API forces low confidence. University deadlines and factual roadmap requirements have individual source fields; absent URLs trigger an explicit verification notice rather than an implied source. Model-only output must never be described as web-verified. The admissions profile redesign does not imply completion of the separate LOCUS CASE 01 visual-campus requirements.

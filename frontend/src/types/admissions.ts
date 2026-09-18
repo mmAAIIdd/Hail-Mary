@@ -18,7 +18,7 @@ export interface UniversityRecommendation {
       score: number;
       note: string;
     }>;
-  };
+  } | null;
   why_fit: string[];
   concerns: string[];
   annual_cost: {
@@ -39,7 +39,7 @@ export interface RoadmapStage {
   title: string;
   priority: 'now' | 'next' | 'later';
   tasks: Array<{
-    category: 'deadlines' | 'academics' | 'activities' | 'exams' | 'grades' | 'olympiads' | 'portfolio' | 'personality' | 'documents' | 'finance';
+    category: 'general' | 'deadlines' | 'academics' | 'activities' | 'exams' | 'grades' | 'olympiads' | 'portfolio' | 'personality' | 'documents' | 'finance';
     title: string;
     reason: string;
     deadline: string;

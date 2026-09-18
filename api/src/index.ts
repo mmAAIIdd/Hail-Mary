@@ -108,7 +108,7 @@ async function generateAdmissionsPlan(
   const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
   const response = await ai.models.generateContent({
     model,
-    contents: buildAdmissionsPrompt(profile),
+    contents: buildAdmissionsPrompt(profile, useGoogleSearch),
     config: {
       systemInstruction: SYSTEM_INSTRUCTION,
       ...(useGoogleSearch ? { tools: [{ googleSearch: {} }] } : {}),
@@ -197,8 +197,25 @@ async function handlePlan(request: Request, env: Env, origin: string | null): Pr
     }
     if (!plan) throw lastError ?? new Error('All Gemini models failed');
 
-    const result = {
+    const verifiedPlan = usedGoogleSearch ? plan : {
       ...plan,
+      sources: [],
+      universities: plan.universities.map((university) => ({
+        ...university,
+        annual_cost: { min_usd: 0, max_usd: 0, note: 'Не подтверждено официальным источником' },
+        scholarships: [],
+        deadline_note: 'Уточнить на официальном сайте программы',
+        deadline_source_url: '',
+        foundation_note: 'Не подтверждено',
+        work_rules_note: 'Не подтверждено',
+      })),
+      roadmap: plan.roadmap.map((stage) => ({
+        ...stage,
+        tasks: stage.tasks.map((task) => ({ ...task, source_url: '' })),
+      })),
+    };
+    const result = {
+      ...verifiedPlan,
       disclaimer: usedGoogleSearch
         ? plan.disclaimer
         : `${plan.disclaimer} Онлайн-проверка источников временно недоступна; перепроверьте цены, сроки и требования на официальных сайтах.`,

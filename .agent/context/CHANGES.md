@@ -1,5 +1,9 @@
 # Change history
 
+## 2026-09-18 — Immediate results and truthful failure states
+
+Made recommendation generation automatic on questionnaire completion; added legacy-response normalization, API error/retry UI and a render fallback. Replaced card-heavy result layout with a university list, narrative analysis, six-way comparison and plain roadmap. Made active page visible in navigation/title. Model-only responses no longer surface AI-supplied URLs or unsupported cost/deadline claims as verified facts. Validated old/new/error responses in Playwright and built frontend/Worker locally. Worker deployment intentionally deferred until a live generation test.
+
 ## 2026-09-18 — Admissions centre replaces the prior diagnosis view
 
 Removed the old strengths/gaps/constraints presentation and old comparison tabs. Added a two-column university/recommendation analysis, per-university chance diagrams with factor explanations, direct university links, a comprehensive stage-based roadmap and source/uncertainty messaging. Expanded the Worker and frontend response contracts; versioned the plan storage and cache. Updated landing/navigation copy. Verified frontend build, API typecheck, Worker dry-run and fixture-based browser layout at desktop/mobile. Live Gemini generation with the expanded schema was not tested and nothing was deployed.

@@ -1,5 +1,13 @@
 # Current state
 
+## 2026-09-18 — Automatic recommendations and blank-screen fix
+
+- Finishing the four-step questionnaire now opens recommendations and starts generation automatically; there is no intermediate generate button.
+- The frontend normalizes both the old deployed Worker response and the expanded response. Missing chance data shows an honest no-estimate state instead of crashing. API failure shows a retry path; a render error boundary prevents a completely blank screen.
+- Main navigation and browser title identify the current page. Recommendations, a six-option comparison table and the roadmap share one editorial page without decorative card grids.
+- In `model_only` mode, the frontend suppresses AI-supplied source URLs, exact cost/deadline assertions and other unsupported facts. The updated Worker prompt and output sanitizer do the same when deployed. Paid Google Search grounding remains disabled, so live fact verification is not yet available.
+- Browser checks with mocked legacy/new/error responses passed: automatic transition, comparison, retry state, active navigation, no React console errors in successful flows and no horizontal overflow at 390px/1440px. Frontend build, API typecheck and Worker dry-run passed. The frontend is intended for GitHub Pages release; the changed Worker has not been deployed.
+
 ## 2026-09-18 — Admissions centre redesign (local, not deployed)
 
 - The old diagnosis cards have been replaced by a single admissions-centre view. The left column lists six recommended universities, individual illustrative chance diagrams and links supplied as official university sites; selecting one opens a textual analysis with factors, risks, costs and a deadline note.

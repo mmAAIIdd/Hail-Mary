@@ -1,5 +1,6 @@
 import { AdmissionsPlan } from '../types/admissions';
 import { UserProfile } from '../types/profile';
+import { normalizeAdmissionsPlan } from './admissionsApi';
 
 const PLAN_KEY = 'hail_mary_admissions_plan_v3';
 
@@ -17,7 +18,7 @@ export function loadAdmissionsPlan(profile: UserProfile): AdmissionsPlan | null 
       localStorage.removeItem(PLAN_KEY);
       return null;
     }
-    return stored.plan;
+    return normalizeAdmissionsPlan(stored.plan);
   } catch {
     localStorage.removeItem(PLAN_KEY);
     return null;

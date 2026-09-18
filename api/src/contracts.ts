@@ -35,7 +35,7 @@ export const profileSchema = z.object({
 
 const moneySchema = z.object({
   min_usd: z.number().int().nonnegative(),
-  max_usd: z.number().int().positive(),
+  max_usd: z.number().int().nonnegative(),
   note: z.string().trim().min(1).max(240),
 });
 
@@ -93,7 +93,7 @@ export const admissionsPlanSchema = z.object({
   universities: z.array(universitySchema).length(6),
   roadmap: z.array(roadmapStageSchema).min(3).max(5),
   next_actions: z.array(z.string().trim().min(2).max(200)).min(3).max(5),
-  sources: z.array(sourceSchema).min(3).max(20),
+  sources: z.array(sourceSchema).max(20),
   disclaimer: z.string().trim().min(10).max(400),
 });
 
@@ -147,7 +147,7 @@ export const responseJsonSchema = {
             type: 'object',
             properties: {
               min_usd: { type: 'integer', minimum: 0 },
-              max_usd: { type: 'integer', minimum: 1 },
+              max_usd: { type: 'integer', minimum: 0 },
               note: { type: 'string' },
             },
             required: ['min_usd', 'max_usd', 'note'],
@@ -196,7 +196,7 @@ export const responseJsonSchema = {
     next_actions: { type: 'array', minItems: 3, maxItems: 5, items: { type: 'string' } },
     sources: {
       type: 'array',
-      minItems: 3,
+      minItems: 0,
       maxItems: 20,
       items: {
         type: 'object',

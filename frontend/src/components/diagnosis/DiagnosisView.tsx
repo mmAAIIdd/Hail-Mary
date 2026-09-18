@@ -12,14 +12,12 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({ profile, onEditPro
   <main className="mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-10 lg:px-8">
     <header className="mb-8 flex flex-col gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
-          Персональный центр поступления
-        </span>
+        <p className="text-xs font-semibold text-slate-500">Анкета завершена <span aria-hidden="true">/</span> <span className="text-slate-950">Рекомендации</span>{profile.basic_info.first_name && <span> · {profile.basic_info.first_name}</span>}</p>
         <h1 className="mt-2 max-w-3xl font-brand text-3xl font-semibold leading-tight text-slate-950 sm:text-5xl">
-          Стратегия поступления для {profile.basic_info.first_name || 'вашего профиля'}
+          Ваши рекомендации
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
-          Университеты, оценка шансов, аргументы и пошаговый план — в одном разборе.
+          Университеты, сравнение и план подготовки по вашей анкете.
         </p>
       </div>
       <button
