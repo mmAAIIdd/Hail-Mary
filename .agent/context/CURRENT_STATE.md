@@ -1,6 +1,6 @@
 # Current state
 
-Status: основной frontend опубликован; новый модуль рекомендаций проверен локально и ожидает серверные credentials для production.
+Status: основной frontend опубликован; Cloudflare Worker развёрнут, секрет настроен и production API проверен реальным Gemini-запросом.
 
 Working:
 1. Полноэкранный адаптивный лендинг с одним основным действием — пройти анкету.
@@ -32,9 +32,9 @@ Validation:
 - API `tsc --noEmit` and `wrangler deploy --dry-run`: passed.
 - Playwright: recommendations, comparison and roadmap checked at desktop and 390 × 844; no horizontal overflow or console errors with a valid response fixture.
 - API boundary: malformed profile returns 400, disallowed origin returns 403, missing server secret returns 503.
+- Production Worker health returns 200; реальный запрос вернул 6 университетов, 3 этапа пути и 6 источников.
+- При перегрузке Gemini 3.6 Flash запрос успешно переключился на `gemini-3.5-flash-lite`.
 
 Pending production setup:
-- complete Cloudflare OAuth;
-- set a newly issued Gemini auth key as Worker secret;
-- deploy Worker and set GitHub variable `VITE_ADMISSIONS_API_URL`;
-- publish the updated frontend.
+- publish the updated frontend and verify the live GitHub Pages flow.
+- enable Gemini billing before turning on Google Search grounding.

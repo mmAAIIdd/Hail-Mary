@@ -27,6 +27,8 @@ The profile schema is versioned as `hail_mary_profile_v2` and contains only fiel
 
 ## 2026-09-18 — Grounded recommendations behind a server API
 
-The browser never receives the Gemini key. GitHub Pages calls a Cloudflare Worker that validates a minimized profile without the applicant's name, invokes Gemini 2.5 Flash with Google Search grounding and a strict JSON schema, validates the response and caches it for six hours.
+The browser never receives the Gemini key. GitHub Pages calls a Cloudflare Worker that validates a minimized profile without the applicant's name, invokes Gemini 3.6 Flash with a strict JSON schema, validates the response and caches it for six hours. The Worker falls back to stable Flash Lite models when the primary model is overloaded.
+
+Google Search grounding is controlled by `ENABLE_GOOGLE_SEARCH`. It remains disabled while the Gemini project is on the free tier because the provider does not expose Search grounding there. Model-only results carry an explicit warning to verify costs, deadlines and requirements on official sites.
 
 Recommendations provide six options across ambitious, balanced and more realistic categories. The score means fit with known questionnaire facts and never represents admission probability. Current costs, deadlines and rules remain linked to official sources for user verification.

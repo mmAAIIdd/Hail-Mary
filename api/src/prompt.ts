@@ -11,7 +11,9 @@ export const SYSTEM_INSTRUCTION = `Ты — консультант по пост
 Все URL должны вести на HTTPS-страницы официальных университетов или государственных источников.`;
 
 export function buildAdmissionsPrompt(profile: AdmissionsProfile): string {
-  return `Составь персональный список университетов, сравнимые факты и план подготовки.
+  return `Return exactly one JSON object with these top-level keys: strategy_summary, universities, roadmap, next_actions, sources, disclaimer. Never return a top-level array.
+
+Составь персональный список университетов, сравнимые факты и план подготовки.
 
 Анкета:
 ${JSON.stringify(profile, null, 2)}

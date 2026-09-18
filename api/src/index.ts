@@ -9,11 +9,26 @@ import { buildAdmissionsPrompt, SYSTEM_INSTRUCTION } from './prompt';
 interface Env {
   GEMINI_API_KEY: string;
   GEMINI_MODEL: string;
+  ENABLE_GOOGLE_SEARCH: string;
   ALLOWED_ORIGINS: string;
 }
 
 const requestLog = new Map<string, number[]>();
 const MAX_REQUESTS_PER_MINUTE = 4;
+
+function compactJsonSchema(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(compactJsonSchema);
+  if (!value || typeof value !== 'object') return value;
+
+  const omittedKeys = new Set(['description', 'minItems', 'maxItems', 'minimum', 'maximum']);
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([key]) => !omittedKeys.has(key))
+      .map(([key, nestedValue]) => [key, compactJsonSchema(nestedValue)]),
+  );
+}
+
+const compactResponseJsonSchema = compactJsonSchema(responseJsonSchema);
 
 function edgeCache(): Cache {
   return (caches as unknown as { default: Cache }).default;
@@ -83,6 +98,29 @@ function sanitizePlan(rawText: string) {
   };
 }
 
+async function generateAdmissionsPlan(
+  profile: Parameters<typeof buildAdmissionsPrompt>[0],
+  env: Env,
+  model: string,
+  useGoogleSearch: boolean,
+) {
+  const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
+  const response = await ai.models.generateContent({
+    model,
+    contents: buildAdmissionsPrompt(profile),
+    config: {
+      systemInstruction: SYSTEM_INSTRUCTION,
+      ...(useGoogleSearch ? { tools: [{ googleSearch: {} }] } : {}),
+      responseMimeType: 'application/json',
+      responseJsonSchema: compactResponseJsonSchema,
+      maxOutputTokens: 8_192,
+    },
+  });
+
+  if (!response.text) throw new Error('Gemini returned an empty response');
+  return sanitizePlan(response.text);
+}
+
 async function handlePlan(request: Request, env: Env, origin: string | null): Promise<Response> {
   const contentLength = Number(request.headers.get('Content-Length') || 0);
   if (contentLength > 20_000) {
@@ -124,26 +162,48 @@ async function handlePlan(request: Request, env: Env, origin: string | null): Pr
   }
 
   try {
-    const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
-    const response = await ai.models.generateContent({
-      model: env.GEMINI_MODEL || 'gemini-2.5-flash',
-      contents: buildAdmissionsPrompt(validation.data),
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        tools: [{ googleSearch: {} }],
-        responseMimeType: 'application/json',
-        responseJsonSchema,
-        temperature: 0.2,
-        maxOutputTokens: 8_192,
-      },
-    });
+    const primaryModel = env.GEMINI_MODEL || 'gemini-3.6-flash';
+    const fallbackModels = [...new Set([primaryModel, 'gemini-3.5-flash-lite', 'gemini-3.1-flash-lite'])];
+    let plan: Awaited<ReturnType<typeof generateAdmissionsPlan>> | undefined;
+    let modelUsed = primaryModel;
+    let usedGoogleSearch = false;
+    let lastError: unknown;
 
-    if (!response.text) throw new Error('Gemini returned an empty response');
-    const plan = sanitizePlan(response.text);
+    if (env.ENABLE_GOOGLE_SEARCH === 'true') {
+      try {
+        plan = await generateAdmissionsPlan(validation.data, env, primaryModel, true);
+        usedGoogleSearch = true;
+      } catch (error) {
+        lastError = error;
+        console.warn('Google Search grounding unavailable; using model-only fallback');
+      }
+    }
+
+    if (!plan) {
+      for (const model of fallbackModels) {
+        try {
+          plan = await generateAdmissionsPlan(validation.data, env, model, false);
+          modelUsed = model;
+          break;
+        } catch (error) {
+          lastError = error;
+          console.warn(
+            `Admissions generation failed with ${model}`,
+            error instanceof Error ? error.message : String(error),
+          );
+        }
+      }
+    }
+    if (!plan) throw lastError ?? new Error('All Gemini models failed');
+
     const result = {
       ...plan,
+      disclaimer: usedGoogleSearch
+        ? plan.disclaimer
+        : `${plan.disclaimer} Онлайн-проверка источников временно недоступна; перепроверьте цены, сроки и требования на официальных сайтах.`,
       generated_at: new Date().toISOString(),
-      model: env.GEMINI_MODEL || 'gemini-2.5-flash',
+      model: modelUsed,
+      research_mode: usedGoogleSearch ? 'google_search' : 'model_only',
     };
     const responseBody = JSON.stringify(result);
     const cacheResponse = new Response(responseBody, {

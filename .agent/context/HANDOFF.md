@@ -2,7 +2,7 @@
 
 USER GOAL: персональные рекомендации университетов, сравнение и путь поступления через Gemini в удобном минималистичном интерфейсе.
 
-CURRENT STATUS: код и локальная проверка готовы; production-публикация заблокирована только внешней авторизацией Cloudflare и новым Gemini secret.
+CURRENT STATUS: Cloudflare Worker развёрнут, Gemini secret установлен, production API успешно вернул валидный персональный результат; frontend готовится к публикации с URL Worker.
 
 REPOSITORY: `https://github.com/mmAAIIdd/Hail-Mary` (`main`).
 PUBLIC SITE: `https://mmaaiidd.github.io/Hail-Mary/`.
@@ -43,4 +43,4 @@ VALIDATION:
 - zero browser console errors and warnings.
 - GitHub Pages workflow run `35352260885` completed successfully; the public page was checked after deployment.
 
-NEXT STEP: complete Cloudflare login, add a newly rotated `GEMINI_API_KEY` as a Worker secret, deploy API, set the GitHub Pages API URL variable and verify the live flow.
+NEXT STEP: завершить GitHub Pages workflow и проверить живой путь от анкеты до рекомендаций. Для Google Search grounding позже подключить Gemini Paid Tier и выставить `ENABLE_GOOGLE_SEARCH=true`.

@@ -2,7 +2,7 @@
 
 Project: Hail Mary — сервис первичной диагностики для поступления в зарубежный университет.
 
-Status: frontend MVP опубликован; персональные рекомендации и серверный Gemini API реализованы локально и готовы к публикации после настройки секретов.
+Status: frontend MVP опубликован; Cloudflare Worker с персональными Gemini-рекомендациями развёрнут и подключается к GitHub Pages.
 
 Purpose: помочь школьнику 8–11 класса собрать исходные данные и получить понятный первый разбор сильных сторон, задач и ограничений.
 
@@ -11,7 +11,8 @@ Stack:
 - `localStorage` для сохранения заполненной анкеты.
 - GitHub Actions и GitHub Pages для публикации.
 - Cloudflare Worker для защищённого вызова Gemini API.
-- Gemini 2.5 Flash, Google Search grounding и структурированный JSON-ответ.
+- Gemini 3.6 Flash с автоматическим переходом на Flash Lite и структурированным JSON-ответом.
+- Google Search grounding предусмотрен для Gemini Paid Tier; сейчас используется режим без онлайн-поиска с явной перепроверкой источников.
 
 Architecture boundaries:
 - `frontend/src/types/profile.ts`: компактная модель реальной анкеты и результата.

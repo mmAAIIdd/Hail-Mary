@@ -42,4 +42,5 @@ export interface AdmissionsPlan {
   disclaimer: string;
   generated_at: string;
   model: string;
+  research_mode?: 'google_search' | 'model_only';
 }
