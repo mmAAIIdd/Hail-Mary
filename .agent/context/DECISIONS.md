@@ -1,5 +1,9 @@
 # Decisions
 
+## 2026-09-19 — Compact, truthful first response
+
+Show a deterministic profile-based quick assessment immediately, labeled as non-AI, while the detailed Gemini plan is pending. Generate three differentiated university options rather than six but retain the five-stage admissions path and rationale for each recommendation. Accept a smaller honest set of factors/tasks instead of filling gaps with invented advice. Treat 25 seconds as a performance target, not a guarantee against provider delay or quota limits.
+
 ## 2026-09-19 — Khaki replaces terracotta as the signal color
 
 Use `#596B42` for brand emphasis and `#394A2D` for its darker interactive state. Keep the shared CSS tokens and Tailwind brand scale aligned. Preserve amber for warnings rather than treating it as a brand accent.

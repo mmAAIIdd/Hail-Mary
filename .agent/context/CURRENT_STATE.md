@@ -1,5 +1,22 @@
 # Current state
 
+## 2026-09-19 — Compact AI plans and immediate guidance (published)
+
+- The public frontend now shows an explicitly non-AI quick profile assessment immediately while full recommendations load, including during provider errors (Pages commit `8d93485`).
+- The Worker now requests three differentiated universities instead of six, retains five roadmap stages, and accepts shorter but still substantive factor/task lists. Gemini 3.5 Flash Lite is primary while 3.6 is quota-limited. Cache contract is v14; deployed Worker version `5db8ca9e-731d-4f27-b3e3-ad6f3a332d41`. The matching API source and non-legacy frontend copy were pushed in commit `b881e46`; Pages workflow `35400875538` passed.
+- Fresh live full-profile requests returned HTTP 200 in 22.3 seconds (earlier compact contract) and 21.9 seconds (current contract). A different intermediate contract returned 502 and was corrected after Worker logs exposed overly strict array minima. These samples do not guarantee a 25-second AI response under all provider conditions.
+
+## 2026-09-19 — New Worker secret verified
+
+- Cloudflare shows a `Secret Change` deployment (version `7994dac9-1e6a-4ef2-b623-6a52d1a3ba99`). A fresh, uncached questionnaire request returned HTTP 200 with six universities and five roadmap stages using the Gemini 3.5 Flash Lite fallback.
+- Removed an exposed token-like string from this file. It is still present in earlier Git history; if it is a real credential, revoke and replace it. No secret value was read from Cloudflare or included in test output.
+
+## 2026-09-19 — Live recommendation API restored
+
+- Production Worker was still on its 2026-09-18 deployment and rejected the current questionnaire payload with HTTP 400. Deployed the current v10 profile/response contract to the existing Worker URL (version `873ae269-674f-40a9-b701-ed04d55d76db`).
+- A full questionnaire-shaped production request now returned HTTP 200 with six universities and five roadmap stages. Gemini 3.6 Flash currently hits a free-tier quota/availability error; the existing Gemini 3.5 Flash Lite fallback produced the verified response. One earlier generation returned a transient 502, so provider reliability is not guaranteed.
+- API typecheck, Worker dry-run and frontend production build passed. No frontend release was made in this task.
+
 ## 2026-09-19 — Khaki-green accent (local)
 
 - Replaced the terracotta/orange brand scale and shared accent tokens with khaki green (`#596B42`, darker state `#394A2D`). Roadmap markers and selected-choice outlines now use the same palette.

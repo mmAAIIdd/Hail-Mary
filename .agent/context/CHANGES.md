@@ -1,5 +1,17 @@
 # Change history
 
+## 2026-09-19 — Reduce AI generation volume
+
+Published immediate non-AI quick guidance and reduced Gemini output to three universities (ambitious, balanced, safer) plus the existing five-stage roadmap. Relaxed minimum factor/task counts to accept honest compact answers, selected the working Flash Lite model first and versioned the Worker cache to v14. One full-profile live response completed in 21.9s with three universities and five stages; no hard latency guarantee. Published Worker and GitHub Pages; local documentation changes remain uncommitted because the local branch has divergent history and a token-like string in an earlier commit.
+
+## 2026-09-19 — Verify replaced Gemini secret
+
+Confirmed the Cloudflare Worker secret-change deployment and successful uncached live recommendation generation. Removed an exposed token-like string from the current state file; prior Git history still contains it, so rotation is required if genuine. No application code changed.
+
+## 2026-09-19 — Restore live AI recommendations
+
+Deployed the current v10 Cloudflare Worker over the stale 2026-09-18 version that rejected new questionnaire fields. Verified the full live request returns six universities and five roadmap stages. Gemini 3.6 Flash was quota-limited/unavailable; the existing 3.5 Flash Lite fallback succeeded. One transient 502 occurred before the successful retry. No frontend code or release changed.
+
 ## 2026-09-19 — Khaki-green accent
 
 Changed frontend brand colors, CSS tokens, selection outline and roadmap markers from terracotta to khaki green. Updated the design specification; retained amber warning states. Frontend production build passed. Local only.
