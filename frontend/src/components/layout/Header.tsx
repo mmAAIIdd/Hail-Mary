@@ -54,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({
               </button>
 
               <button
-                onClick={() => setIsUnisOpen(true)}
+                onClick={() => profile ? setActiveTab('diagnosis') : setIsUnisOpen(true)}
                 className="px-3 py-1.5 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-black hover:bg-slate-100/80 transition"
               >
                 Университеты
@@ -129,7 +129,8 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={() => {
                   setIsMobileMenuOpen(false);
-                  setIsUnisOpen(true);
+                  if (profile) setActiveTab('diagnosis');
+                  else setIsUnisOpen(true);
                 }}
                 className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
               >

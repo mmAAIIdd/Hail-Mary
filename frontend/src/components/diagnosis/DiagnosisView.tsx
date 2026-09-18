@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { UserProfile, GapStatus } from '../../types/profile';
 import { runProfileDiagnosis } from '../../lib/diagnosticEngine';
 import { ExplainModal } from './ExplainModal';
+import { AdmissionsWorkspace } from '../admissions/AdmissionsWorkspace';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -153,6 +154,8 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
           </div>
         </div>
       </div>
+
+      <AdmissionsWorkspace profile={profile} />
 
       {/* 2 & 3: Two Columns: Strengths & Gaps */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

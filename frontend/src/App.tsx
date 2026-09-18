@@ -10,6 +10,7 @@ import {
   saveStoredProfile,
   clearStoredProfile,
 } from './lib/storage';
+import { clearAdmissionsPlan } from './lib/admissionsStorage';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<'landing' | 'profile' | 'diagnosis'>('landing');
@@ -32,6 +33,7 @@ export function App() {
   const handleReset = () => {
     if (window.confirm('Сбросить текущий профиль и начать заново?')) {
       clearStoredProfile();
+      clearAdmissionsPlan();
       setProfile(null);
       setActiveTab('landing');
     }
@@ -78,7 +80,7 @@ export function App() {
                 Анкета еще не заполнена
               </h3>
               <p className="text-xs text-slate-500 mb-6">
-                Для построения индивидуальной диагностики сначала расскажите о ваших оценках, экзаменах и целях.
+                Для построения индивидуальной диагностики сначала заполните короткую анкету.
               </p>
               <button
                 onClick={() => setActiveTab('profile')}

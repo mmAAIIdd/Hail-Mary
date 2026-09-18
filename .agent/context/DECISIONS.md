@@ -24,3 +24,9 @@ The stored profile contains only answers collected by the current four-step ques
 The public product has one entry path: the user completes the questionnaire. Demo presets and their UI controls are removed.
 
 The profile schema is versioned as `hail_mary_profile_v2` and contains only fields collected by the current form. Known old storage keys are deleted during initialization so a previously saved preset cannot reopen.
+
+## 2026-09-18 — Grounded recommendations behind a server API
+
+The browser never receives the Gemini key. GitHub Pages calls a Cloudflare Worker that validates a minimized profile without the applicant's name, invokes Gemini 2.5 Flash with Google Search grounding and a strict JSON schema, validates the response and caches it for six hours.
+
+Recommendations provide six options across ambitious, balanced and more realistic categories. The score means fit with known questionnaire facts and never represents admission probability. Current costs, deadlines and rules remain linked to official sources for user verification.

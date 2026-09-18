@@ -1,5 +1,15 @@
 # Change history
 
+## 2026-09-18 — Personal university recommendations and application path
+
+Goal: add grounded Gemini recommendations, university comparison and a personal preparation path without exposing the API key or adding decorative AI copy.
+
+Changed: added the `api/` Cloudflare Worker with input/output validation, CORS, rate limiting, caching, Google Search grounding and structured Gemini output; added frontend API/storage contracts and a responsive recommendations workspace with six university cards, three-way comparison, roadmap stages, next actions and sources; replaced the static example-university modal; added deployment configuration and documentation.
+
+Validation: frontend production build passed with 1603 modules; API type check and Wrangler dry-run passed; API returned 400 for malformed data, 403 for a disallowed origin and 503 without a server secret; Playwright verified recommendations, comparison and roadmap on desktop and 390 × 844 with no overflow or console errors for a valid response fixture.
+
+Remaining: Cloudflare OAuth and a newly rotated Gemini auth key are required before live deployment. The user-provided key was intentionally not stored or committed because it was exposed in chat.
+
 ## 2026-09-18 — Demo removal and profile cleanup
 
 Goal: remove the demo profile completely and retire remnants of the older oversized profile model.

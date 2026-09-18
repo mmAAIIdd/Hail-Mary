@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "hail-mary-admissions-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-18",
+  "workers_dev": true,
+  "vars": {
+    "GEMINI_MODEL": "gemini-2.5-flash",
+    "ALLOWED_ORIGINS": "https://mmaaiidd.github.io,http://localhost:3000,http://127.0.0.1:3000,http://localhost:4173,http://127.0.0.1:4173"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1
+  }
+}
