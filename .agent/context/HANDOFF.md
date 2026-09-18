@@ -1,5 +1,7 @@
 # Handoff
 
+LATEST (2026-09-19, khaki palette): Replaced the terracotta brand palette with khaki green (`#596B42`, dark `#394A2D`) in Tailwind, shared CSS, selected-choice shadows and roadmap accents; updated `DESIGN.md`. Kept amber warnings semantic. Frontend production build passed. Local only; not pushed or deployed.
+
 LATEST (2026-09-19, subject entry): Fixed subject selection as user-entered subject/grade pairs (up to six), removed the fixed grid and detached grades textarea, validated grade/scale and payload size, and preserved legacy text for manual transfer when it cannot be parsed. Selected choices now have an outer contour and elevation as well as orange fill. Frontend build, API check and diff check passed. Local only; no browser visual check or deployment.
 
 LATEST (2026-09-19, dedicated roadmap): Added “Путь к поступлению” to desktop/mobile navigation and created a focused roadmap page backed by the existing admissions plan. It exposes the profile facts shaping the plan, highlights the nearest incomplete action, persists per-task progress locally and keeps stage objectives/checkpoints. Recommendation UI no longer duplicates the roadmap. Prompt rules now reject generic advice, order tasks by prerequisites, respect weekly time and align `next_actions`; Worker cache is v10 and frontend plan storage is v4. Frontend build, API check and Worker dry-run passed. Changes are local and not pushed or deployed.

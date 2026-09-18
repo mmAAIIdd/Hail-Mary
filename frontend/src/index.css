@@ -17,8 +17,8 @@
     --atlas-ink: #1f2420;
     --atlas-muted: #6d6d63;
     --atlas-line: #d8d0c1;
-    --atlas-accent: #d6552e;
-    --atlas-accent-dark: #a93e25;
+    --atlas-accent: #596b42;
+    --atlas-accent-dark: #394a2d;
     --atlas-sage: #dfe8df;
   }
 
@@ -66,7 +66,7 @@
   .app-shell {
     background:
       linear-gradient(rgba(247, 243, 234, 0.96), rgba(247, 243, 234, 0.96)),
-      radial-gradient(circle at 10% 0%, rgba(214, 85, 46, 0.08), transparent 32rem);
+      radial-gradient(circle at 10% 0%, rgba(89, 107, 66, 0.08), transparent 32rem);
   }
 
   .site-header {
@@ -163,7 +163,7 @@
     box-shadow:
       0 0 0 2px var(--atlas-paper),
       0 0 0 5px var(--atlas-accent-dark),
-      0 10px 22px rgba(169, 62, 37, 0.2);
+      0 10px 22px rgba(57, 74, 45, 0.2);
     transform: translateY(-1px);
     transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
   }

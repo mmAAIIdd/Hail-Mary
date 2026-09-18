@@ -1,5 +1,10 @@
 # Current state
 
+## 2026-09-19 — Khaki-green accent (local)
+
+- Replaced the terracotta/orange brand scale and shared accent tokens with khaki green (`#596B42`, darker state `#394A2D`). Roadmap markers and selected-choice outlines now use the same palette.
+- Semantic amber warnings remain amber. Frontend production build passed. This is a local frontend-only visual change; it has not been pushed or deployed.
+
 ## 2026-09-19 — Profile subjects and selected-state polish (local)
 
 - Replaced the fixed subject-choice grid and detached free-text grades area with up to six editable subject/grade pairs. The first pair remains the primary subject; all grades retain their stated scale and reach the existing recommendation contract.

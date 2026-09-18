@@ -1,5 +1,9 @@
 # Decisions
 
+## 2026-09-19 — Khaki replaces terracotta as the signal color
+
+Use `#596B42` for brand emphasis and `#394A2D` for its darker interactive state. Keep the shared CSS tokens and Tailwind brand scale aligned. Preserve amber for warnings rather than treating it as a brand accent.
+
 ## 2026-09-19 — Roadmap is a first-class journey with versioned local progress
 
 The personal roadmap has its own navigation destination after recommendations. It reuses the saved admissions response rather than making a second AI request, and it exposes the questionnaire facts that shaped the plan. Completion state is local to the exact profile and generated-plan version so changed answers never inherit stale progress. A valid task must name its profile evidence or missing datum, respect prerequisites and available time, and leave a measurable result; unsupported admission requirements remain verification tasks rather than facts.

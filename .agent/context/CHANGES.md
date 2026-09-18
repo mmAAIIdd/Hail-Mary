@@ -1,5 +1,9 @@
 # Change history
 
+## 2026-09-19 — Khaki-green accent
+
+Changed frontend brand colors, CSS tokens, selection outline and roadmap markers from terracotta to khaki green. Updated the design specification; retained amber warning states. Frontend production build passed. Local only.
+
 ## 2026-09-19 — Subject and grade entry
 
 Replaced the predefined profile-subject grid with repeatable subject/grade input rows. Kept the existing Worker payload shape, validated duplicate names, numeric grade/scale and total serialized length, and made older unstructured grades visible during profile editing. Added a clearly outlined selected state to questionnaire choices. Frontend build, API typecheck and diff check passed; not published.

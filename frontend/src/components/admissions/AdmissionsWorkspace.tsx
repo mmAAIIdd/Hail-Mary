@@ -304,9 +304,9 @@ function Roadmap({ plan, profile }: { plan: AdmissionsPlan; profile: UserProfile
         <div className="px-0 py-4 sm:px-4 lg:pr-0"><dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">Время на подготовку</dt><dd className="mt-2 text-sm font-semibold leading-6 text-slate-950">{weeklyTime === null || weeklyTime === undefined ? 'Нужно уточнить' : weeklyTime === 0 ? 'Пока не выделено' : `${weeklyTime} час. в неделю`}</dd></div>
       </dl>
 
-      <div className="mt-7 grid gap-5 border-l-4 border-terracotta bg-white px-5 py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+      <div className="mt-7 grid gap-5 border-l-4 border-khaki bg-white px-5 py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-terracotta">{nextTask ? 'Ближайший шаг' : 'План выполнен'}</p>
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-khaki">{nextTask ? 'Ближайший шаг' : 'План выполнен'}</p>
           <h3 className="mt-2 text-lg font-semibold leading-7 text-slate-950">{nextTask?.task.title || 'Все задачи отмечены'}</h3>
           {nextTask && <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{nextTask.task.reason} <span className="font-semibold text-slate-800">Результат:</span> {nextTask.task.result}</p>}
         </div>
@@ -315,7 +315,7 @@ function Roadmap({ plan, profile }: { plan: AdmissionsPlan; profile: UserProfile
 
       <div className="mt-6" aria-label={`Выполнено ${completedCount} из ${tasks.length} задач`}>
         <div className="flex items-center justify-between gap-4 text-sm"><span className="font-semibold text-slate-950">Прогресс</span><span className="text-slate-600">{completedCount} из {tasks.length}</span></div>
-        <div className="mt-2 h-2 bg-slate-200"><div className="h-full bg-terracotta transition-[width]" style={{ width: `${progressPercent}%` }} /></div>
+        <div className="mt-2 h-2 bg-slate-200"><div className="h-full bg-khaki transition-[width]" style={{ width: `${progressPercent}%` }} /></div>
       </div>
 
       <ol className="relative mt-7 before:absolute before:bottom-4 before:left-[13px] before:top-4 before:w-px before:bg-slate-300 sm:mt-8 sm:before:left-[23px]">
@@ -341,7 +341,7 @@ function Roadmap({ plan, profile }: { plan: AdmissionsPlan; profile: UserProfile
                   return (
                   <li key={taskId} className="grid grid-cols-[32px_minmax(0,1fr)] gap-3 py-4 sm:grid-cols-[32px_140px_minmax(0,1fr)] sm:py-5">
                     <button type="button" onClick={() => toggleTask(taskId)} aria-pressed={isCompleted} aria-label={`${isCompleted ? 'Вернуть в работу' : 'Отметить выполненным'}: ${task.title}`} className="mt-0.5 inline-flex h-8 w-8 items-center justify-center text-slate-700">
-                      {isCompleted ? <CheckCircle2 className="h-5 w-5 text-terracotta" aria-hidden="true" /> : <Circle className="h-5 w-5" aria-hidden="true" />}
+                      {isCompleted ? <CheckCircle2 className="h-5 w-5 text-khaki" aria-hidden="true" /> : <Circle className="h-5 w-5" aria-hidden="true" />}
                     </button>
                     <div className="sm:col-auto">
                       <span className="text-xs font-bold uppercase tracking-wide text-slate-500">{categoryLabels[task.category]}</span>

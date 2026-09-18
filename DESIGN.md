@@ -2,7 +2,7 @@
 
 ## Visual thesis
 
-Hail Mary is a calm admissions atlas: warm paper, ink-like typography, thin editorial rules, and one terracotta signal color. It should feel closer to a well-edited academic magazine than a generic education dashboard.
+Hail Mary is a calm admissions atlas: warm paper, ink-like typography, thin editorial rules, and one khaki-green signal color. It should feel closer to a well-edited academic magazine than a generic education dashboard.
 
 ## Atmosphere
 
@@ -15,7 +15,7 @@ Editorial, humane, trustworthy, and quietly optimistic. The interface uses gener
 - **Ink green-black** `#1F2420` — headings, primary actions, and high-emphasis text.
 - **Quiet graphite** `#6D6D63` — supporting copy, metadata, and helper text.
 - **Rule beige** `#D8D0C1` — dividers, table rules, form borders, and progress tracks.
-- **Terracotta signal** `#D6552E` — calls to action, active progress, selected choices, and focus rings.
+- **Khaki-green signal** `#596B42` — calls to action, active progress, selected choices, and focus rings. Its darker state is `#394A2D`.
 - **Soft sage** `#DFE8DF` — geography / exploration section background.
 
 ## Typography
@@ -29,7 +29,7 @@ Prefer sharp or subtly rounded edges (`2–6px`) for editorial surfaces. Reserve
 ## Composition rules
 
 - Landing hero: split-studio logic — photographic field plus a narrow typographic column, with a compact three-part ledger as the memorable anchor.
-- Questionnaire: one long paper sheet with a visible progress rule, dense but breathable fields, and terracotta selection states.
+- Questionnaire: one long paper sheet with a visible progress rule, dense but breathable fields, and khaki-green selection states.
 - Recommendations: left-hand university index, right-hand narrative detail, comparison table, then chronological roadmap.
 - Mobile: preserve reading order, keep interactive targets at least 44px, allow tables to scroll intentionally, and never depend on hover.
 
