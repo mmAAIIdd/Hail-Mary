@@ -85,7 +85,7 @@ const universitySchema = z.object({
       label: z.string().trim().min(2).max(80),
       score: z.number().int().min(1).max(100),
       note: z.string().trim().min(2).max(180),
-    })).min(5).max(8),
+    })).min(2).max(5),
   }),
   acceptance_rate: z.object({
     percent: z.number().min(0).max(100),
@@ -113,7 +113,7 @@ const universitySchema = z.object({
       why_for_program: z.string().trim().min(15).max(420),
       first_30_days: z.string().trim().min(10).max(320),
       evidence: z.string().trim().min(5).max(220),
-    })).min(2).max(3),
+    })).min(1).max(3),
   }),
   annual_cost: moneySchema,
   scholarships: z.array(z.string().trim().min(1).max(180)).max(4),
@@ -137,7 +137,7 @@ const roadmapStageSchema = z.object({
     deadline: z.string().trim().min(2).max(100),
     result: z.string().trim().min(2).max(250),
     source_url: optionalSourceUrlSchema,
-  })).min(4).max(8),
+  })).min(2).max(5),
 });
 
 const sourceSchema = z.object({
@@ -148,7 +148,7 @@ const sourceSchema = z.object({
 export const admissionsPlanSchema = z.object({
   strategy_summary: z.string().trim().min(20).max(1600),
   personalization: z.array(z.string().trim().min(20).max(350)).min(3).max(6),
-  universities: z.array(universitySchema).length(6),
+  universities: z.array(universitySchema).length(3),
   roadmap_target_university: z.string().trim().min(2).max(160),
   roadmap: z.array(roadmapStageSchema).length(5),
   next_actions: z.array(z.string().trim().min(2).max(200)).min(3).max(5),
@@ -171,8 +171,8 @@ export const responseJsonSchema = {
     personalization: { type: 'array', minItems: 3, maxItems: 6, items: { type: 'string' } },
     universities: {
       type: 'array',
-      minItems: 6,
-      maxItems: 6,
+      minItems: 3,
+      maxItems: 3,
       items: {
         type: 'object',
         properties: {
@@ -191,7 +191,7 @@ export const responseJsonSchema = {
               confidence: { type: 'string', enum: ['low', 'medium', 'high'] },
               explanation: { type: 'string' },
               factors: {
-                type: 'array', minItems: 5, maxItems: 8,
+                type: 'array', minItems: 2, maxItems: 5,
                 items: {
                   type: 'object',
                   properties: { label: { type: 'string' }, score: { type: 'integer', minimum: 1, maximum: 100 }, note: { type: 'string' } },
@@ -233,7 +233,7 @@ export const responseJsonSchema = {
               open_questions: { type: 'string' },
               first_step: { type: 'string' },
               extracurricular_strategy: {
-                type: 'array', minItems: 2, maxItems: 3,
+                type: 'array', minItems: 1, maxItems: 3,
                 items: {
                   type: 'object',
                   properties: {
@@ -282,8 +282,8 @@ export const responseJsonSchema = {
           priority: { type: 'string', enum: ['now', 'next', 'later'] },
           tasks: {
             type: 'array',
-            minItems: 4,
-            maxItems: 8,
+            minItems: 2,
+            maxItems: 5,
             items: {
               type: 'object',
               properties: {
