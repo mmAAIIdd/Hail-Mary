@@ -9,6 +9,16 @@ export interface UniversityRecommendation {
   program_name: string;
   fit_score: number;
   fit_level: UniversityFitLevel;
+  admission_chance: {
+    percent: number;
+    confidence: 'low' | 'medium' | 'high';
+    explanation: string;
+    factors: Array<{
+      label: string;
+      score: number;
+      note: string;
+    }>;
+  };
   why_fit: string[];
   concerns: string[];
   annual_cost: {
@@ -20,6 +30,7 @@ export interface UniversityRecommendation {
   work_rules_note: string;
   foundation_note: string;
   deadline_note: string;
+  deadline_source_url: string;
 }
 
 export interface RoadmapStage {
@@ -28,8 +39,12 @@ export interface RoadmapStage {
   title: string;
   priority: 'now' | 'next' | 'later';
   tasks: Array<{
+    category: 'deadlines' | 'academics' | 'activities' | 'exams' | 'grades' | 'olympiads' | 'portfolio' | 'personality' | 'documents' | 'finance';
     title: string;
     reason: string;
+    deadline: string;
+    result: string;
+    source_url: string;
   }>;
 }
 

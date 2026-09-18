@@ -10,7 +10,7 @@ export const Footer: React.FC = () => {
           <span>Персональный путь к поступлению</span>
         </div>
         <div className="text-xs text-slate-400">
-          Профиль • Диагностика • Следующие шаги
+          Анкета • Университеты • Roadmap
         </div>
       </div>
     </footer>

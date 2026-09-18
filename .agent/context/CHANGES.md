@@ -1,5 +1,9 @@
 # Change history
 
+## 2026-09-18 — Admissions centre replaces the prior diagnosis view
+
+Removed the old strengths/gaps/constraints presentation and old comparison tabs. Added a two-column university/recommendation analysis, per-university chance diagrams with factor explanations, direct university links, a comprehensive stage-based roadmap and source/uncertainty messaging. Expanded the Worker and frontend response contracts; versioned the plan storage and cache. Updated landing/navigation copy. Verified frontend build, API typecheck, Worker dry-run and fixture-based browser layout at desktop/mobile. Live Gemini generation with the expanded schema was not tested and nothing was deployed.
+
 ## 2026-09-18 — Personal university recommendations and application path
 
 Goal: add grounded Gemini recommendations, university comparison and a personal preparation path without exposing the API key or adding decorative AI copy.

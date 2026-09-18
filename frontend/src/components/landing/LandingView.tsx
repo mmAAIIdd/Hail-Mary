@@ -36,8 +36,8 @@ export const LandingView: React.FC<LandingViewProps> = ({
           </h1>
 
           <p className="mt-7 max-w-xl text-base font-normal leading-7 text-white/90 sm:text-lg sm:leading-8">
-            Заполните короткую анкету и получите диагностику профиля для поступления
-            в зарубежный университет.
+            Заполните короткую анкету и получите подбор университетов,
+            разбор шансов и план подготовки к поступлению.
           </p>
 
           <div className="mt-10">

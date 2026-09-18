@@ -1,5 +1,13 @@
 # Current state
 
+## 2026-09-18 — Admissions centre redesign (local, not deployed)
+
+- The old diagnosis cards have been replaced by a single admissions-centre view. The left column lists six recommended universities, individual illustrative chance diagrams and links supplied as official university sites; selecting one opens a textual analysis with factors, risks, costs and a deadline note.
+- The roadmap now has stages, ten requested categories, per-task timing and expected outcomes. A factual task or university deadline shows its direct source when supplied, otherwise an explicit verification warning.
+- Admission percentages are non-calibrated estimates from the sparse questionnaire, not statistical probabilities or guarantees. The Worker forces low confidence because exact grades, exams and documents are not collected. Model-only research remains explicitly unverified.
+- Frontend build, API typecheck and Worker dry-run passed. A browser fixture verified university switching, zero console errors and no horizontal overflow at 1440px and 390px. The production generation path with the new schema has not yet been exercised against Gemini or deployed.
+- The supplied LOCUS CASE 01 describes a separate 30-second visual campus profile. This change implements the requested admissions centre, not photo search, deduplication, visual provenance or campus categories.
+
 Status: frontend и Cloudflare Worker опубликованы; production путь от анкеты до персональных Gemini-рекомендаций проверен в браузере.
 
 Working:

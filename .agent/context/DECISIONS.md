@@ -1,5 +1,9 @@
 # Decisions
 
+## 2026-09-18 — Chance estimates and factual provenance
+
+The user requested a percentage for each university. It is displayed only as an illustrative, non-calibrated assessment based on known questionnaire fields, separate from `fit_score`. Because the form does not capture precise grades, exam scores or documents, the API forces low confidence. University deadlines and factual roadmap requirements have individual source fields; absent URLs trigger an explicit verification notice rather than an implied source. Model-only output must never be described as web-verified. The admissions profile redesign does not imply completion of the separate LOCUS CASE 01 visual-campus requirements.
+
 ## 2026-09-17 — Shared provider-neutral layout
 
 The future project uses one `.agent/` directory for roles, skills, tool policy, workflow and durable context. Root Claude, Codex and Gemini files only bootstrap into it. This prevents copies of the same instructions from drifting across models.

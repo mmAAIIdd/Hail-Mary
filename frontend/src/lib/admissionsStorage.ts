@@ -1,7 +1,7 @@
 import { AdmissionsPlan } from '../types/admissions';
 import { UserProfile } from '../types/profile';
 
-const PLAN_KEY = 'hail_mary_admissions_plan_v1';
+const PLAN_KEY = 'hail_mary_admissions_plan_v3';
 
 interface StoredPlan {
   profile_updated_at: string;

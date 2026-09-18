@@ -77,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({
                   onClick={() => setActiveTab('diagnosis')}
                   className="hidden sm:inline-block text-xs font-semibold px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 transition"
                 >
-                  Моя диагностика
+                  Моя стратегия
                 </button>
               )}
 
@@ -144,7 +144,7 @@ export const Header: React.FC<HeaderProps> = ({
                   }}
                   className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
                 >
-                  Моя диагностика
+                  Моя стратегия
                 </button>
               )}
               {activeTab !== 'landing' && (

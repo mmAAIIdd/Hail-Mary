@@ -73,7 +73,7 @@ function isRateLimited(request: Request): boolean {
 }
 
 async function cacheKey(profile: unknown): Promise<Request> {
-  const encoded = new TextEncoder().encode(`v1:${JSON.stringify(profile)}`);
+  const encoded = new TextEncoder().encode(`v3:${JSON.stringify(profile)}`);
   const digest = await crypto.subtle.digest('SHA-256', encoded);
   const hash = [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
   return new Request(`https://hail-mary-cache.internal/${hash}`);
@@ -89,6 +89,7 @@ function sanitizePlan(rawText: string) {
     ...parsed,
     universities: parsed.universities.map((university) => ({
       ...university,
+      admission_chance: { ...university.admission_chance, confidence: 'low' as const },
       annual_cost: {
         ...university.annual_cost,
         max_usd: Math.max(university.annual_cost.min_usd, university.annual_cost.max_usd),
