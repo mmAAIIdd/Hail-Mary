@@ -1,5 +1,15 @@
 # Decisions
 
+## 2026-09-18 — Local history storage and response sensitivity
+
+Cookies cannot reliably hold a full AI answer and would send its contents with site requests. Store only up to five opaque IDs and timestamps in a SameSite=Lax cookie; keep the complete plans in browser localStorage and clear both on profile reset. This is same-browser history, not account sync. Hash the entire validated admissions profile for the Worker cache so all meaningful edits miss the previous plan. Do not force a different university list for an irrelevant edit; require explanation tied to changed facts instead.
+
+
+## 2026-09-18 — Optional detailed applicant context
+
+Detailed grades, exam status and extracurricular history are optional so applicants can honestly leave unknowns blank. User corrections are stored with the local profile and sent without name/surname to the Worker; they are data, not instructions to override output or source rules. Every saved correction invalidates the previous local recommendation plan. Current-source claims remain disallowed in model-only mode.
+
+
 ## 2026-09-18 — Source claims in model-only mode
 
 Without online retrieval, Gemini output cannot be treated as verified evidence. The API clears generated source URLs and unknown financial/deadline facts in model-only mode; the frontend also applies this rule when reading legacy production responses. University links remain explicitly labelled as unverified addresses. The product must show uncertainty instead of inventing citations or presenting estimated admission percentages as statistical probabilities. A paid grounding mode or independent official-source ingestion is needed before claiming fully verified current admissions facts.

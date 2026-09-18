@@ -8,7 +8,7 @@ Purpose: помочь школьнику 8–11 класса собрать ис
 
 Stack:
 - React 19, TypeScript, Tailwind CSS, Vite, Lucide React.
-- `localStorage` для сохранения заполненной анкеты.
+- `localStorage` для анкеты и полных ответов; cookie только для компактного индекса локальной истории.
 - GitHub Actions и GitHub Pages для публикации.
 - Cloudflare Worker для защищённого вызова Gemini API.
 - Gemini 3.6 Flash с автоматическим переходом на Flash Lite и структурированным JSON-ответом.
@@ -19,7 +19,7 @@ Architecture boundaries:
 - `frontend/src/lib/diagnosticEngine.ts`: детерминированные правила по ответам пользователя.
 - `frontend/src/lib/storage.ts`: проверяемое версионированное хранение профиля.
 - `frontend/src/components/landing/`: главный экран.
-- `frontend/src/components/profile/`: анкета из четырёх шагов.
+- `frontend/src/components/profile/`: анкета из пяти шагов с дополнительными аспектами.
 - `frontend/src/components/diagnosis/`: итоговая диагностика.
 - `frontend/src/components/admissions/`: рекомендации, сравнение и путь поступления.
 - `api/`: валидация, кеширование, Gemini-вызов и CORS API.

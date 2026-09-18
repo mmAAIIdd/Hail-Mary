@@ -1,5 +1,14 @@
 # Handoff
 
+LATEST (2026-09-18, history/detail/personalization): Added five-entry cookie-indexed local answer history, explicit university “Подробнее” details, extra applicant inputs and six custom aspects, `personalization` explanations, and modular AI recommendation-writing guidance. The Worker cache key is v5 over every validated admissions input. Frontend build, API typecheck and Worker dry-run passed; no browser or live Gemini check. Nothing was pushed or deployed. The production Worker still strips new fields and does not return the expanded schema; publish only after end-to-end validation, and do not claim source verification while grounding is off. Previous local typography and correction edits are preserved.
+
+
+LATEST (2026-09-18, profile refinement): Added an inline correction field to results and five-step editable questionnaire with optional grade, exam, language and extracurricular details. Both saving routes invalidate the local plan and trigger generation with the updated profile. API validation/prompt/cache now handle the extra data and request specific first-week exam and extracurricular steps. Frontend build, API typecheck and Worker dry-run passed; browser check could not run because Playwright CLI package resolution stalled. Changes remain local and the production Worker will ignore the new fields until deployed. Existing local typography edits are preserved.
+
+
+LATEST (2026-09-18, typography): The frontend now uses Lora for brand/headings and Golos Text for body/interface copy, with normal body letter spacing. `npm.cmd run build` passed after an escalated retry because sandboxed Vite/esbuild could not read a parent directory. These local changes have not been pushed or published.
+
+
 LATEST (2026-09-18, follow-up): Fixed the observed blank page by normalizing legacy API output instead of trusting TypeScript casts. Questionnaire completion now immediately starts generation. The results page includes clear active navigation, a plain university list/detail view, comparison table and roadmap. API failures have retry UI and unexpected render failures have a fallback. In model-only mode, generated source links and factual prices/deadlines are not presented as verified. Mocked old/new/error browser flows, frontend build, API check and Worker dry-run passed. The frontend is prepared for GitHub Pages publication; confirm the workflow status after push. The production Worker still predates the expanded schema, and Google Search grounding is off, so fully verified live admissions facts remain unavailable.
 
 NEXT: After the frontend release, test a real generation against the old production Worker for compatibility. Separately test the new Worker schema and validate its cited official pages before Worker deployment. Grounding/billing or a separate trusted source pipeline is required for the user's requested verified, current facts.

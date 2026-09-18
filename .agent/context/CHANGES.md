@@ -1,5 +1,20 @@
 # Change history
 
+## 2026-09-18 — History and explained university recommendations
+
+Added compact cookie-indexed history with local full-plan snapshots, university detail expansion, richer applicant and custom-aspect inputs, model personalization explanations, and modular prompt-writing rules for evidence, text and roadmap. Updated API contract and cache version. Frontend build, API typecheck and Worker dry-run passed; not deployed.
+
+
+## 2026-09-18 — Profile corrections and actionable roadmap input
+
+Added direct post-questionnaire corrections and full profile editing with fresh recommendation generation. Expanded the questionnaire/API contract with optional academic, exam and extracurricular context; guided the Worker to include concrete near-term exam and extracurricular actions. Bumped the Worker cache key. Frontend build, API typecheck and dry-run passed; not published.
+
+
+## 2026-09-18 — Softer typography
+
+Switched the site-wide heading font from Cormorant Garamond to Lora and body font from Manrope to Golos Text; removed tight global letter spacing and unused font downloads. Frontend build passed. Not published yet.
+
+
 ## 2026-09-18 — Immediate results and truthful failure states
 
 Made recommendation generation automatic on questionnaire completion; added legacy-response normalization, API error/retry UI and a render fallback. Replaced card-heavy result layout with a university list, narrative analysis, six-way comparison and plain roadmap. Made active page visible in navigation/title. Model-only responses no longer surface AI-supplied URLs or unsupported cost/deadline claims as verified facts. Validated old/new/error responses in Playwright and built frontend/Worker locally. Worker deployment intentionally deferred until a live generation test.

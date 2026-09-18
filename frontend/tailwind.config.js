@@ -22,12 +22,11 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Manrope', 'Plus Jakarta Sans', 'Inter', '-apple-system', 'sans-serif'],
-        serif: ['Lora', 'Georgia', 'serif'],
-        brand: ['"Cormorant Garamond"', 'Lora', 'Georgia', 'serif'],
+        sans: ['Liter', 'Arial', 'sans-serif'],
+        serif: ['Liter', 'Arial', 'sans-serif'],
+        brand: ['Liter', 'Arial', 'sans-serif'],
       },
     },
   },
   plugins: [],
 }
-

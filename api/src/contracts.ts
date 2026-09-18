@@ -5,6 +5,10 @@ const httpsUrlSchema = z.string().url().refine(
   'URL must use HTTPS',
 );
 const optionalSourceUrlSchema = z.union([z.literal(''), httpsUrlSchema]);
+const examResultSchema = z.discriminatedUnion('status', [
+  z.object({ status: z.literal('not_taken'), score: z.null() }).strict(),
+  z.object({ status: z.literal('taken'), score: z.number().finite().min(0).max(2000) }).strict(),
+]);
 
 export const profileSchema = z.object({
   basic_info: z.object({
@@ -16,7 +20,30 @@ export const profileSchema = z.object({
     interests: z.array(z.string().trim().min(1).max(80)).min(1).max(8),
     main_subject: z.string().trim().min(1).max(80),
     performance_level: z.enum(['excellent', 'good', 'average', 'needs_support']),
+    grades_detail: z.string().trim().max(300).optional(),
+    language_level: z.string().trim().max(100).optional(),
+    language_exam: z.string().trim().max(120).optional(),
+    other_exams: z.string().trim().max(180).optional(),
+    target_program: z.string().trim().max(120).optional(),
+    school_system: z.string().trim().max(120).optional(),
+    exam_results: z.object({
+      IELTS: examResultSchema.optional(),
+      TOEFL: examResultSchema.optional(),
+      SAT: examResultSchema.optional(),
+      ЕНТ: examResultSchema.optional(),
+    }).strict().optional(),
   }),
+  activities: z.object({
+    current: z.string().trim().max(500),
+    interested_in: z.array(z.enum(['Исследование', 'Волонтёрство', 'Школьный клуб', 'Олимпиады', 'Личный проект', 'Стажировка'])).max(6),
+    time_per_week: z.number().int().min(0).max(40).nullable(),
+    achievements: z.string().trim().max(400).optional(),
+  }).optional(),
+  additional_context: z.string().trim().max(1000).optional(),
+  custom_aspects: z.array(z.object({
+    title: z.string().trim().min(1).max(60),
+    detail: z.string().trim().min(1).max(500),
+  }).strict()).max(6).optional(),
   preferences: z.object({
     countries: z.array(z.string().trim().min(1).max(80)).min(1).max(10),
   }),
@@ -60,6 +87,12 @@ const universitySchema = z.object({
   }),
   why_fit: z.array(z.string().trim().min(1).max(240)).min(2).max(4),
   concerns: z.array(z.string().trim().min(1).max(240)).min(1).max(4),
+  details: z.object({
+    academic_fit: z.string().trim().min(20).max(650),
+    choice_reason: z.string().trim().min(20).max(650),
+    open_questions: z.string().trim().min(20).max(650),
+    first_step: z.string().trim().min(15).max(450),
+  }),
   annual_cost: moneySchema,
   scholarships: z.array(z.string().trim().min(1).max(180)).max(4),
   work_rules_note: z.string().trim().min(1).max(280),
@@ -76,9 +109,9 @@ const roadmapStageSchema = z.object({
   tasks: z.array(z.object({
     category: z.enum(['deadlines', 'academics', 'activities', 'exams', 'grades', 'olympiads', 'portfolio', 'personality', 'documents', 'finance']),
     title: z.string().trim().min(2).max(180),
-    reason: z.string().trim().min(2).max(280),
+    reason: z.string().trim().min(2).max(500),
     deadline: z.string().trim().min(2).max(100),
-    result: z.string().trim().min(2).max(180),
+    result: z.string().trim().min(2).max(250),
     source_url: optionalSourceUrlSchema,
   })).min(3).max(8),
 });
@@ -89,7 +122,8 @@ const sourceSchema = z.object({
 });
 
 export const admissionsPlanSchema = z.object({
-  strategy_summary: z.string().trim().min(10).max(700),
+  strategy_summary: z.string().trim().min(20).max(1600),
+  personalization: z.array(z.string().trim().min(20).max(350)).min(3).max(6),
   universities: z.array(universitySchema).length(6),
   roadmap: z.array(roadmapStageSchema).min(3).max(5),
   next_actions: z.array(z.string().trim().min(2).max(200)).min(3).max(5),
@@ -109,6 +143,7 @@ export const responseJsonSchema = {
   type: 'object',
   properties: {
     strategy_summary: { type: 'string', description: 'Краткая стратегия поступления на русском языке.' },
+    personalization: { type: 'array', minItems: 3, maxItems: 6, items: { type: 'string' } },
     universities: {
       type: 'array',
       minItems: 6,
@@ -143,6 +178,16 @@ export const responseJsonSchema = {
           },
           why_fit: { type: 'array', minItems: 2, maxItems: 4, items: { type: 'string' } },
           concerns: { type: 'array', minItems: 1, maxItems: 4, items: { type: 'string' } },
+          details: {
+            type: 'object',
+            properties: {
+              academic_fit: { type: 'string' },
+              choice_reason: { type: 'string' },
+              open_questions: { type: 'string' },
+              first_step: { type: 'string' },
+            },
+            required: ['academic_fit', 'choice_reason', 'open_questions', 'first_step'],
+          },
           annual_cost: {
             type: 'object',
             properties: {
@@ -158,7 +203,7 @@ export const responseJsonSchema = {
           deadline_note: { type: 'string' },
           deadline_source_url: { type: 'string' },
         },
-        required: ['id', 'name', 'country', 'city', 'official_url', 'program_name', 'fit_score', 'fit_level', 'admission_chance', 'why_fit', 'concerns', 'annual_cost', 'scholarships', 'work_rules_note', 'foundation_note', 'deadline_note', 'deadline_source_url'],
+        required: ['id', 'name', 'country', 'city', 'official_url', 'program_name', 'fit_score', 'fit_level', 'admission_chance', 'why_fit', 'concerns', 'details', 'annual_cost', 'scholarships', 'work_rules_note', 'foundation_note', 'deadline_note', 'deadline_source_url'],
       },
     },
     roadmap: {
@@ -206,5 +251,5 @@ export const responseJsonSchema = {
     },
     disclaimer: { type: 'string' },
   },
-  required: ['strategy_summary', 'universities', 'roadmap', 'next_actions', 'sources', 'disclaimer'],
+  required: ['strategy_summary', 'personalization', 'universities', 'roadmap', 'next_actions', 'sources', 'disclaimer'],
 } as const;

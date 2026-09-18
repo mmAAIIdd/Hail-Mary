@@ -1,5 +1,26 @@
 # Current state
 
+## 2026-09-18 — Local answer history, university details, deeper personalization
+
+- A bounded five-version history now uses a compact cookie index (IDs and timestamps only) with full plans in localStorage; the results screen can reopen an older answer. Reset clears both. No server-side or cross-device history exists.
+- University options now have an explicit “Подробнее” control. The new Worker schema asks for four evidence-aware explanatory fields per university, with safe fallback text for older responses.
+- The five-step form includes intended program, school system, achievements and up to six user-defined aspects, on top of the previous academic/exam/activity fields. These reach the Worker schema and prompt. A personalization section explains how input affects recommendations.
+- Cache key v5 hashes the complete validated admissions profile, including small field edits and custom aspects. An edit clears the current local plan and triggers a new request; an immaterial edit need not change the university list artificially, but the rationale should reflect meaningful new facts.
+- Prompt writing rules were separated into `api/src/recommendationSkills.ts` for questionnaire evidence, university rationale, honest wording and actionable roadmap. Google Search grounding remains disabled, so current factual requirements cannot be claimed verified.
+- Frontend build, API typecheck and Worker dry-run passed. Browser flow and live Gemini output with the expanded schema have not been tested. Changes remain local; production Worker ignores new fields until deployed.
+
+## 2026-09-18 — Editable questionnaire and broader preparation (local)
+
+- Results now accept a direct 1,000-character correction; the full questionnaire can also be edited. Saving either clears the local plan and remounts generation for the updated profile.
+- The questionnaire has five steps, adding optional subject grades, language level/exam, other exams, current extracurricular activities, interests in research/volunteering/clubs/olympiads/projects/internships, available weekly time and extra context. These fields are included in the API request and validated by the Worker contract.
+- The Worker prompt requests detailed exam/grade actions and feasible extracurricular starts in the first week, based on the actual answers. Its cache key was bumped. Exact admissions requirements remain unverified with search disabled.
+- Frontend build, API typecheck and Worker dry-run passed. Playwright CLI was unavailable in this environment, so the browser edit flow has not been exercised. Neither frontend nor Worker was published in this turn.
+
+## 2026-09-18 — Softer typography (local)
+
+- Replaced the display Cormorant Garamond with Lora and geometric Manrope with Golos Text across the frontend. Removed global negative letter spacing for more relaxed reading.
+- Frontend production build passed. Typography changes are local and have not been pushed or published.
+
 ## 2026-09-18 — Automatic recommendations and blank-screen fix
 
 - Finishing the four-step questionnaire now opens recommendations and starts generation automatically; there is no intermediate generate button.

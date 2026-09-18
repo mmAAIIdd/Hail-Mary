@@ -72,6 +72,7 @@ export function normalizeAdmissionsPlan(value: unknown): AdmissionsPlan {
       throw new AdmissionsApiError('Сервис вернул неполный список университетов. Попробуйте ещё раз.');
     }
     const cost = record(university.annual_cost);
+    const details = record(university.details);
     const chance = record(university.admission_chance);
     const factors = Array.isArray(chance?.factors) ? chance.factors.map(record).filter((factor) => factor !== null) : [];
     const percent = chance?.percent;
@@ -98,6 +99,12 @@ export function normalizeAdmissionsPlan(value: unknown): AdmissionsPlan {
       } : null,
       why_fit: stringList(university.why_fit),
       concerns: stringList(university.concerns),
+      details: {
+        academic_fit: text(details?.academic_fit),
+        choice_reason: text(details?.choice_reason),
+        open_questions: text(details?.open_questions),
+        first_step: text(details?.first_step),
+      },
       annual_cost: {
         min_usd: typeof cost?.min_usd === 'number' ? cost.min_usd : 0,
         max_usd: typeof cost?.max_usd === 'number' ? cost.max_usd : 0,
@@ -139,6 +146,7 @@ export function normalizeAdmissionsPlan(value: unknown): AdmissionsPlan {
   const sources = Array.isArray(raw.sources) ? raw.sources.map(record).filter((source) => source !== null) : [];
   return {
     strategy_summary: text(raw.strategy_summary) || 'Рекомендации по вашей анкете',
+    personalization: stringList(raw.personalization),
     universities,
     roadmap,
     next_actions: stringList(raw.next_actions),

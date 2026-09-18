@@ -3,6 +3,8 @@ export type PerformanceLevel = 'excellent' | 'good' | 'average' | 'needs_support
 export type ApplicationTimeline = 'six_months' | 'one_year' | 'one_two_years' | 'exploring';
 export type PreferenceAnswer = 'yes' | 'consider' | 'no';
 export type BudgetRange = 'under_10000' | '10000_20000' | '20000_40000' | 'over_40000';
+export type ExamName = 'IELTS' | 'TOEFL' | 'SAT' | 'ЕНТ';
+export type ExamResult = { status: 'not_taken'; score: null } | { status: 'taken'; score: number };
 
 export interface UserProfile {
   id: string;
@@ -19,7 +21,22 @@ export interface UserProfile {
     interests: string[];
     main_subject: string;
     performance_level: PerformanceLevel;
+    grades_detail?: string;
+    language_level?: string;
+    language_exam?: string;
+    other_exams?: string;
+    target_program?: string;
+    school_system?: string;
+    exam_results?: Partial<Record<ExamName, ExamResult>>;
   };
+  activities?: {
+    current: string;
+    interested_in: string[];
+    time_per_week: number | null;
+    achievements?: string;
+  };
+  additional_context?: string;
+  custom_aspects?: Array<{ title: string; detail: string }>;
   preferences: { countries: string[] };
   budget: {
     range: BudgetRange;

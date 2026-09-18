@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import {
   ApplicationTimeline,
   BudgetRange,
+  ExamName,
   PerformanceLevel,
   PreferenceAnswer,
   SchoolGrade,
@@ -23,6 +24,19 @@ interface QuestionnaireDraft {
   interests: string;
   mainSubject: string;
   performance: PerformanceLevel | '';
+  gradesDetail: string;
+  languageLevel: string;
+  languageExam: string;
+  otherExams: string;
+  examResults: Record<ExamName, { status: 'not_taken' | 'taken'; score: string }>;
+  targetProgram: string;
+  schoolSystem: string;
+  currentActivities: string;
+  achievements: string;
+  activitiesToTry: string[];
+  timePerWeek: number | '';
+  additionalContext: string;
+  customAspects: Array<{ title: string; detail: string }>;
   countries: string[];
   timeline: ApplicationTimeline | '';
   foundation: PreferenceAnswer | '';
@@ -55,6 +69,10 @@ const STEPS = [
     description: 'Укажите, что вам интересно и как вы оцениваете текущую успеваемость.',
   },
   {
+    title: 'Опыт и новые занятия',
+    description: 'Расскажите, что уже делаете вне уроков и что готовы попробовать сейчас. Отсутствие опыта — нормальная отправная точка.',
+  },
+  {
     title: 'Страны и сроки',
     description: 'Определим географию поиска и насколько быстро вы планируете подавать документы.',
   },
@@ -74,6 +92,16 @@ const COUNTRIES = [
   'Южная Корея',
   'ОАЭ',
 ];
+
+const ACTIVITY_OPTIONS = ['Исследование', 'Волонтёрство', 'Школьный клуб', 'Олимпиады', 'Личный проект', 'Стажировка'];
+const EXAM_NAMES: ExamName[] = ['IELTS', 'TOEFL', 'SAT', 'ЕНТ'];
+
+function initialExamResults(profile: UserProfile | null): QuestionnaireDraft['examResults'] {
+  return Object.fromEntries(EXAM_NAMES.map((name) => {
+    const result = profile?.academics.exam_results?.[name];
+    return [name, { status: result?.status ?? 'not_taken', score: result?.status === 'taken' ? String(result.score) : '' }];
+  })) as QuestionnaireDraft['examResults'];
+}
 
 const PERFORMANCE_OPTIONS: ChoiceOption[] = [
   { value: 'excellent', label: 'Отличная', description: 'В основном высшие оценки' },
@@ -150,6 +178,26 @@ function ChoiceGroup({
   );
 }
 
+function CustomAspects({ aspects, onChange }: {
+  aspects: QuestionnaireDraft['customAspects'];
+  onChange: (aspects: QuestionnaireDraft['customAspects']) => void;
+}) {
+  return (
+    <section id="custom-aspects" className="border-t border-slate-200 pt-7">
+      <h2 className="text-lg font-semibold text-slate-950">Добавьте то, что важно о вас</h2>
+      <p className="mt-1 text-sm leading-6 text-slate-600">Не нашли подходящего вопроса? Добавьте свой аспект — он попадёт в рекомендации. До шести пунктов.</p>
+      <div className="mt-4 space-y-5">{aspects.map((aspect, index) => (
+        <div key={index} className="border-l-2 border-slate-300 pl-4">
+          <input aria-label={`Название аспекта ${index + 1}`} maxLength={60} value={aspect.title} onChange={(event) => onChange(aspects.map((item, position) => position === index ? { ...item, title: event.target.value } : item))} placeholder="Например: исследовательский проект" className="h-11 w-full border-b border-slate-300 text-sm outline-none focus:border-slate-950" />
+          <textarea aria-label={`Описание аспекта ${index + 1}`} maxLength={500} rows={2} value={aspect.detail} onChange={(event) => onChange(aspects.map((item, position) => position === index ? { ...item, detail: event.target.value } : item))} placeholder="Что именно ИИ должен учесть?" className="mt-2 w-full border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-950" />
+          <button type="button" onClick={() => onChange(aspects.filter((_, position) => position !== index))} className="mt-1 text-xs text-slate-600 underline underline-offset-4">Удалить аспект</button>
+        </div>
+      ))}</div>
+      {aspects.length < 6 && <button type="button" onClick={() => onChange([...aspects, { title: '', detail: '' }])} className="mt-4 inline-flex min-h-11 items-center border border-slate-950 px-5 text-sm font-semibold text-slate-950 transition hover:bg-slate-950 hover:text-white">+ Добавить свои данные</button>}
+    </section>
+  );
+}
+
 function createDraft(profile: UserProfile | null): QuestionnaireDraft {
   return {
     firstName: profile?.basic_info.first_name ?? '',
@@ -159,6 +207,19 @@ function createDraft(profile: UserProfile | null): QuestionnaireDraft {
     interests: profile?.academics.interests.join(', ') ?? '',
     mainSubject: profile?.academics.main_subject ?? '',
     performance: profile?.academics.performance_level ?? '',
+    gradesDetail: profile?.academics.grades_detail ?? '',
+    languageLevel: profile?.academics.language_level ?? '',
+    languageExam: profile?.academics.language_exam ?? '',
+    otherExams: profile?.academics.other_exams ?? '',
+    examResults: initialExamResults(profile),
+    targetProgram: profile?.academics.target_program ?? '',
+    schoolSystem: profile?.academics.school_system ?? '',
+    currentActivities: profile?.activities?.current ?? '',
+    achievements: profile?.activities?.achievements ?? '',
+    activitiesToTry: profile?.activities?.interested_in ?? [],
+    timePerWeek: profile?.activities?.time_per_week ?? '',
+    additionalContext: profile?.additional_context ?? '',
+    customAspects: profile?.custom_aspects ?? [],
     countries: profile?.preferences.countries ?? [],
     timeline: profile?.application_preferences.timeline ?? '',
     foundation: profile?.application_preferences.foundation ?? '',
@@ -245,6 +306,9 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
       if (draft.age === '' || draft.age < 12 || draft.age > 22) {
         return 'Укажите возраст от 12 до 22 лет.';
       }
+      if (draft.customAspects.some((aspect) => !aspect.title.trim() || !aspect.detail.trim())) {
+        return 'Заполните название и описание каждого добавленного аспекта или удалите пустой.';
+      }
     }
 
     if (currentStep === 1) {
@@ -253,15 +317,27 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
       }
       if (!draft.mainSubject.trim()) return 'Укажите главный предмет.';
       if (!draft.performance) return 'Выберите текущую успеваемость.';
+      for (const name of EXAM_NAMES) {
+        const result = draft.examResults[name];
+        if (result.status === 'taken' && (!result.score.trim() || !Number.isFinite(Number(result.score)) || Number(result.score) < 0 || Number(result.score) > 2000)) {
+          return `Укажите числовой балл ${name} или выберите «Не сдавал(а)».`;
+        }
+      }
     }
 
     if (currentStep === 2) {
+      if (draft.timePerWeek !== '' && (draft.timePerWeek < 0 || draft.timePerWeek > 40 || !Number.isInteger(draft.timePerWeek))) {
+        return 'Укажите от 0 до 40 часов в неделю.';
+      }
+    }
+
+    if (currentStep === 3) {
       if (draft.countries.length === 0) return 'Выберите хотя бы одну страну.';
       if (!draft.timeline) return 'Выберите планируемые сроки подачи.';
       if (!draft.foundation) return 'Укажите отношение к программе Foundation.';
     }
 
-    if (currentStep === 3) {
+    if (currentStep === 4) {
       if (!draft.budgetRange) return 'Выберите годовой бюджет.';
       if (!draft.scholarship) return 'Укажите важность стипендии.';
       if (!draft.financialAid) return 'Ответьте на вопрос о financial aid.';
@@ -293,7 +369,24 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
         interests,
         main_subject: draft.mainSubject.trim(),
         performance_level: draft.performance as PerformanceLevel,
+        grades_detail: draft.gradesDetail.trim(),
+        language_level: draft.languageLevel.trim(),
+        language_exam: draft.languageExam.trim(),
+        other_exams: draft.otherExams.trim(),
+        target_program: draft.targetProgram.trim(),
+        school_system: draft.schoolSystem.trim(),
+        exam_results: Object.fromEntries(EXAM_NAMES.map((name) => [name, draft.examResults[name].status === 'taken'
+          ? { status: 'taken', score: Number(draft.examResults[name].score) }
+          : { status: 'not_taken', score: null }])),
       },
+      activities: {
+        current: draft.currentActivities.trim(),
+        interested_in: draft.activitiesToTry,
+        time_per_week: draft.timePerWeek === '' ? null : draft.timePerWeek,
+        achievements: draft.achievements.trim(),
+      },
+      additional_context: draft.additionalContext.trim(),
+      custom_aspects: draft.customAspects.map((aspect) => ({ title: aspect.title.trim(), detail: aspect.detail.trim() })),
       preferences: {
         countries: draft.countries,
       },
@@ -357,7 +450,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
       <section className="border border-slate-200 bg-white px-5 py-7 sm:px-10 sm:py-10">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">
-            Анкета абитуриента
+            {initialProfile ? 'Редактирование анкеты' : 'Анкета абитуриента'}
           </p>
           <h1 className="mt-3 font-brand text-4xl font-semibold leading-tight text-slate-950 sm:text-5xl">
             {step.title}
@@ -426,6 +519,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
                   className="h-14 w-full border border-slate-300 px-4 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-950"
                 />
               </label>
+              <CustomAspects aspects={draft.customAspects} onChange={(aspects) => updateDraft('customAspects', aspects)} />
             </div>
           )}
 
@@ -472,10 +566,49 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
                   }
                 />
               </fieldset>
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-slate-800">Оценки по профильным предметам</span>
+                <textarea maxLength={300} rows={2} value={draft.gradesDetail} onChange={(event) => updateDraft('gradesDetail', event.target.value)} placeholder="Например: математика 5/5, биология 4/5; укажите шкалу" className="w-full border border-slate-300 px-4 py-3 text-base outline-none focus:border-slate-950" />
+                <span className="mt-1 block text-sm text-slate-500">Необязательно. Если не знаете точных оценок, оставьте пустым.</span>
+              </label>
+              <div className="grid gap-6 sm:grid-cols-2">
+                <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-800">Уровень языка обучения</span><input maxLength={100} value={draft.languageLevel} onChange={(event) => updateDraft('languageLevel', event.target.value)} placeholder="Например: английский B2" className="h-14 w-full border border-slate-300 px-4 text-base outline-none focus:border-slate-950" /></label>
+                <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-800">Дополнительный языковой экзамен или план</span><input maxLength={120} value={draft.languageExam} onChange={(event) => updateDraft('languageExam', event.target.value)} placeholder="Например: Duolingo English Test в ноябре" className="h-14 w-full border border-slate-300 px-4 text-base outline-none focus:border-slate-950" /></label>
+              </div>
+              <fieldset className="border-t border-slate-200 pt-6">
+                <legend className="text-sm font-semibold text-slate-950">Результаты экзаменов</legend>
+                <p className="mt-1 text-sm text-slate-600">Если не сдавали экзамен, так и оставьте. Баллы — ваши данные, не подтверждённые сертификатом.</p>
+                <div className="mt-4 divide-y divide-slate-200 border-y border-slate-200">{EXAM_NAMES.map((name) => {
+                  const result = draft.examResults[name];
+                  return <div key={name} className="grid gap-3 py-4 sm:grid-cols-[90px_1fr_150px] sm:items-center">
+                    <span className="text-sm font-semibold text-slate-950">{name}</span>
+                    <div className="flex flex-wrap gap-2">
+                      <button type="button" aria-pressed={result.status === 'not_taken'} onClick={() => updateDraft('examResults', { ...draft.examResults, [name]: { status: 'not_taken', score: '' } })} className={result.status === 'not_taken' ? 'border border-slate-950 bg-slate-950 px-3 py-2 text-xs font-semibold text-white' : 'border border-slate-300 px-3 py-2 text-xs text-slate-700'}>Не сдавал(а)</button>
+                      <button type="button" aria-pressed={result.status === 'taken'} onClick={() => updateDraft('examResults', { ...draft.examResults, [name]: { ...result, status: 'taken' } })} className={result.status === 'taken' ? 'border border-slate-950 bg-slate-950 px-3 py-2 text-xs font-semibold text-white' : 'border border-slate-300 px-3 py-2 text-xs text-slate-700'}>Есть результат</button>
+                    </div>
+                    {result.status === 'taken' && <label className="block"><span className="sr-only">Балл {name}</span><input type="number" inputMode="decimal" min={0} max={2000} step="any" value={result.score} onChange={(event) => updateDraft('examResults', { ...draft.examResults, [name]: { status: 'taken', score: event.target.value } })} placeholder="Ваш балл" className="h-11 w-full border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" /></label>}
+                  </div>;
+                })}</div>
+              </fieldset>
+              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-800">Другие экзамены</span><input maxLength={180} value={draft.otherExams} onChange={(event) => updateDraft('otherExams', event.target.value)} placeholder="SAT, ACT, предметные экзамены — результат или план" className="h-14 w-full border border-slate-300 px-4 text-base outline-none focus:border-slate-950" /></label>
+              <div className="grid gap-6 sm:grid-cols-2">
+                <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-800">Желаемая специальность</span><input maxLength={120} value={draft.targetProgram} onChange={(event) => updateDraft('targetProgram', event.target.value)} placeholder="Например, биоинформатика" className="h-14 w-full border border-slate-300 px-4 text-base outline-none focus:border-slate-950" /></label>
+                <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-800">Школьная программа</span><input maxLength={120} value={draft.schoolSystem} onChange={(event) => updateDraft('schoolSystem', event.target.value)} placeholder="Обычная школа, IB, A-Level и т. п." className="h-14 w-full border border-slate-300 px-4 text-base outline-none focus:border-slate-950" /></label>
+              </div>
             </div>
           )}
 
           {currentStep === 2 && (
+            <div className="space-y-8">
+              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-800">Чем уже занимаетесь вне учёбы?</span><textarea maxLength={500} rows={3} value={draft.currentActivities} onChange={(event) => updateDraft('currentActivities', event.target.value)} placeholder="Клуб, проект, волонтёрство, олимпиада — или пока ничего" className="w-full border border-slate-300 px-4 py-3 text-base outline-none focus:border-slate-950" /></label>
+              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-800">Достижения и результаты</span><textarea maxLength={400} rows={2} value={draft.achievements} onChange={(event) => updateDraft('achievements', event.target.value)} placeholder="Только реальные результаты: роль в проекте, диплом, опубликованная работа" className="w-full border border-slate-300 px-4 py-3 text-base outline-none focus:border-slate-950" /></label>
+              <fieldset><legend className="mb-3 text-sm font-semibold text-slate-800">Что хотели бы начать?</legend><div className="flex flex-wrap gap-2">{ACTIVITY_OPTIONS.map((activity) => <button key={activity} type="button" aria-pressed={draft.activitiesToTry.includes(activity)} onClick={() => updateDraft('activitiesToTry', draft.activitiesToTry.includes(activity) ? draft.activitiesToTry.filter((item) => item !== activity) : [...draft.activitiesToTry, activity])} className={draft.activitiesToTry.includes(activity) ? 'border border-slate-950 bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white' : 'border border-slate-300 px-4 py-2.5 text-sm text-slate-700 hover:border-slate-600'}>{activity}</button>)}</div></fieldset>
+              <label className="block max-w-xs"><span className="mb-2 block text-sm font-semibold text-slate-800">Часов в неделю на новые занятия</span><input type="number" inputMode="numeric" min={0} max={40} value={draft.timePerWeek} onChange={(event) => updateDraft('timePerWeek', event.target.value === '' ? '' : Number(event.target.value))} placeholder="Например, 3" className="h-14 w-full border border-slate-300 px-4 text-base outline-none focus:border-slate-950" /></label>
+              <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-800">Что ещё важно учесть?</span><textarea maxLength={1000} rows={3} value={draft.additionalContext} onChange={(event) => updateDraft('additionalContext', event.target.value)} placeholder="Уточнения, ограничения, цель или поправки к ответам" className="w-full border border-slate-300 px-4 py-3 text-base outline-none focus:border-slate-950" /></label>
+            </div>
+          )}
+
+          {currentStep === 3 && (
             <div className="space-y-9">
               <fieldset>
                 <legend className="mb-1 text-sm font-semibold text-slate-800">
@@ -558,7 +691,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
             </div>
           )}
 
-          {currentStep === 3 && (
+          {currentStep === 4 && (
             <div className="space-y-9">
               <fieldset>
                 <legend className="mb-1 text-sm font-semibold text-slate-800">
@@ -651,7 +784,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
           onClick={handleNext}
           className="inline-flex h-12 items-center gap-2 bg-slate-950 px-6 text-sm font-semibold text-white transition hover:bg-slate-800"
         >
-          {currentStep === STEPS.length - 1 ? 'Получить результат' : 'Продолжить'}
+          {currentStep === STEPS.length - 1 ? (initialProfile ? 'Сохранить и обновить рекомендации' : 'Получить результат') : 'Продолжить'}
           <ArrowRight className="h-4 w-4" />
         </button>
       </footer>

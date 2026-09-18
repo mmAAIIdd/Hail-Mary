@@ -21,6 +21,12 @@ export interface UniversityRecommendation {
   } | null;
   why_fit: string[];
   concerns: string[];
+  details: {
+    academic_fit: string;
+    choice_reason: string;
+    open_questions: string;
+    first_step: string;
+  };
   annual_cost: {
     min_usd: number;
     max_usd: number;
@@ -50,6 +56,7 @@ export interface RoadmapStage {
 
 export interface AdmissionsPlan {
   strategy_summary: string;
+  personalization: string[];
   universities: UniversityRecommendation[];
   roadmap: RoadmapStage[];
   next_actions: string[];

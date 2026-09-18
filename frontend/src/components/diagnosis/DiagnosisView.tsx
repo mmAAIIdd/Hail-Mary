@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Edit3 } from 'lucide-react';
 import { UserProfile } from '../../types/profile';
 import { AdmissionsWorkspace } from '../admissions/AdmissionsWorkspace';
@@ -6,9 +6,12 @@ import { AdmissionsWorkspace } from '../admissions/AdmissionsWorkspace';
 interface DiagnosisViewProps {
   profile: UserProfile;
   onEditProfile: () => void;
+  onAddContext: (context: string) => void;
 }
 
-export const DiagnosisView: React.FC<DiagnosisViewProps> = ({ profile, onEditProfile }) => (
+export const DiagnosisView: React.FC<DiagnosisViewProps> = ({ profile, onEditProfile, onAddContext }) => {
+  const [context, setContext] = useState(profile.additional_context ?? '');
+  return (
   <main className="mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-10 lg:px-8">
     <header className="mb-8 flex flex-col gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end sm:justify-between">
       <div>
@@ -30,6 +33,18 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({ profile, onEditPro
       </button>
     </header>
 
-    <AdmissionsWorkspace profile={profile} />
+    <form className="mb-8 border-b border-slate-200 pb-8" onSubmit={(event) => {
+      event.preventDefault();
+      const nextContext = context.trim();
+      if (nextContext !== (profile.additional_context ?? '')) onAddContext(nextContext);
+    }}>
+      <label htmlFor="profile-context" className="block text-sm font-semibold text-slate-950">Добавить поправку к анкете</label>
+      <p className="mt-1 text-sm leading-6 text-slate-600">Например: «Планирую IELTS в ноябре», «Уже веду школьный клуб» или «Хочу изучать биоинформатику». Не указывайте паспортные данные.</p>
+      <textarea id="profile-context" maxLength={1000} rows={3} value={context} onChange={(event) => setContext(event.target.value)} className="mt-3 w-full border border-slate-300 bg-white px-4 py-3 text-sm leading-6 outline-none focus:border-slate-950" placeholder="Что изменилось или что важно учесть?" />
+      <button type="submit" disabled={context.trim() === (profile.additional_context ?? '')} className="mt-3 min-h-11 border-b-2 border-slate-950 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-40">Учесть и обновить рекомендации</button>
+    </form>
+
+    <AdmissionsWorkspace key={profile.updated_at} profile={profile} />
   </main>
 );
+};

@@ -11,6 +11,7 @@ import {
   clearStoredProfile,
 } from './lib/storage';
 import { clearAdmissionsPlan } from './lib/admissionsStorage';
+import { clearAdmissionsHistory } from './lib/admissionsHistory';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<'landing' | 'profile' | 'diagnosis'>('landing');
@@ -28,9 +29,19 @@ export function App() {
   }, [activeTab]);
 
   const handleProfileComplete = (completedProfile: UserProfile) => {
+    clearAdmissionsPlan();
     setProfile(completedProfile);
     saveStoredProfile(completedProfile);
     setActiveTab('diagnosis');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleAddContext = (context: string) => {
+    if (!profile) return;
+    const updatedProfile = { ...profile, additional_context: context, updated_at: new Date().toISOString() };
+    clearAdmissionsPlan();
+    setProfile(updatedProfile);
+    saveStoredProfile(updatedProfile);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -38,6 +49,7 @@ export function App() {
     if (window.confirm('Сбросить текущий профиль и начать заново?')) {
       clearStoredProfile();
       clearAdmissionsPlan();
+      clearAdmissionsHistory();
       setProfile(null);
       setActiveTab('landing');
     }
@@ -73,6 +85,7 @@ export function App() {
           profile ? (
             <DiagnosisView
               profile={profile}
+              onAddContext={handleAddContext}
               onEditProfile={() => {
                 setActiveTab('profile');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
