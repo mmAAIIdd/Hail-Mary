@@ -29,13 +29,6 @@ export function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleLoadDemo = (demoProfile: UserProfile) => {
-    setProfile(demoProfile);
-    saveStoredProfile(demoProfile);
-    setActiveTab('diagnosis');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const handleReset = () => {
     if (window.confirm('Сбросить текущий профиль и начать заново?')) {
       clearStoredProfile();
@@ -50,7 +43,6 @@ export function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         profile={profile}
-        onLoadDemo={handleLoadDemo}
         onReset={handleReset}
       />
 
@@ -61,7 +53,6 @@ export function App() {
               setActiveTab('profile');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            onLoadDemo={handleLoadDemo}
           />
         )}
 
@@ -106,4 +97,3 @@ export function App() {
 }
 
 export default App;
-

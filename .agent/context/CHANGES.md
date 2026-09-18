@@ -1,5 +1,17 @@
 # Change history
 
+## 2026-09-18 — Demo removal and profile cleanup
+
+Goal: remove the demo profile completely and retire remnants of the older oversized profile model.
+
+Changed: removed `frontend/src/lib/demoData.ts`, all demo buttons and handlers; reduced `UserProfile` to the fields collected by the current questionnaire; simplified questionnaire mapping, diagnostics and result rendering; added validated `hail_mary_profile_v2` storage and cleanup of old stored records; updated README and project context.
+
+Reason: ensure every result comes from the user's answers and keep the code aligned with the visible four-step form.
+
+Validation: production build passed with 1600 modules; Playwright completed the full questionnaire, confirmed the compact stored academics object, verified old storage cleanup, checked the 390 × 844 mobile menu and found zero console errors or warnings.
+
+Remaining: production deployment must complete after pushing this change to `main`.
+
 ## 2026-09-17 — University landing background
 
 Goal: replace the separate study image with a full landing background based on the supplied historic university scene and improve text readability.

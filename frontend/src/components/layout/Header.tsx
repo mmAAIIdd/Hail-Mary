@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { RotateCcw, ArrowLeft, ArrowRight, Menu, X } from 'lucide-react';
 import { UserProfile } from '../../types/profile';
-import { DEMO_PROFILE_CS, DEMO_PROFILE_BUSINESS } from '../../lib/demoData';
 import { TipsModal } from '../modals/TipsModal';
 import { UniversitiesModal } from '../modals/UniversitiesModal';
 
@@ -9,7 +8,6 @@ interface HeaderProps {
   activeTab: 'landing' | 'profile' | 'diagnosis';
   setActiveTab: (tab: 'landing' | 'profile' | 'diagnosis') => void;
   profile: UserProfile | null;
-  onLoadDemo: (demo: UserProfile) => void;
   onReset: () => void;
 }
 
@@ -17,7 +15,6 @@ export const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab,
   profile,
-  onLoadDemo,
   onReset,
 }) => {
   const [isTipsOpen, setIsTipsOpen] = useState(false);
@@ -74,7 +71,6 @@ export const Header: React.FC<HeaderProps> = ({
               )}
             </nav>
 
-            {/* Right Controls: Prominent "Пройти анкету" button, Demo & Reset */}
             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
               {profile && activeTab === 'landing' && (
                 <button
@@ -94,41 +90,6 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="hidden sm:inline">Пройти анкету</span>
                 <ArrowRight className="hidden h-3.5 w-3.5 text-slate-400 sm:block" />
               </button>
-
-              {/* Demo Profile Preset dropdown */}
-              <div className="relative group">
-                <button
-                  type="button"
-                  className="hidden sm:inline-flex items-center text-xs font-medium px-3 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition border border-slate-200/60"
-                >
-                  <span>Демо-профиль</span>
-                </button>
-                <div className="absolute right-0 mt-1 w-64 p-1.5 bg-white rounded-2xl shadow-xl border border-slate-200 hidden group-hover:block transition z-50">
-                  <div className="text-[10px] font-semibold text-slate-400 px-3 py-1.5 uppercase tracking-wider">
-                    Быстрый тест для жюри
-                  </div>
-                  <button
-                    onClick={() => {
-                      onLoadDemo(DEMO_PROFILE_CS);
-                      setActiveTab('diagnosis');
-                    }}
-                    className="w-full text-left px-3 py-2 rounded-xl text-xs hover:bg-slate-50 text-slate-800 transition"
-                  >
-                    <div className="font-semibold text-slate-950">10 класс • CS & Robotics</div>
-                    <div className="text-[11px] text-slate-500">IELTS 7.0, GPA 4.85, $25k/год</div>
-                  </button>
-                  <button
-                    onClick={() => {
-                      onLoadDemo(DEMO_PROFILE_BUSINESS);
-                      setActiveTab('diagnosis');
-                    }}
-                    className="w-full text-left px-3 py-2 rounded-xl text-xs hover:bg-slate-50 text-slate-800 transition"
-                  >
-                    <div className="font-semibold text-slate-950">11 класс • Business & MUN</div>
-                    <div className="text-[11px] text-slate-500">IELTS 7.5, GPA 4.92, $12k/год</div>
-                  </button>
-                </div>
-              </div>
 
               {profile && (
                 <button
@@ -196,30 +157,6 @@ export const Header: React.FC<HeaderProps> = ({
                   На главную
                 </button>
               )}
-              <div className="my-1 border-t border-stone-200" />
-              <p className="px-3 pb-1 pt-2 text-xs font-medium uppercase tracking-wider text-slate-400">
-                Демо-профили
-              </p>
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  onLoadDemo(DEMO_PROFILE_CS);
-                  setActiveTab('diagnosis');
-                }}
-                className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
-              >
-                10 класс · CS и Robotics
-              </button>
-              <button
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  onLoadDemo(DEMO_PROFILE_BUSINESS);
-                  setActiveTab('diagnosis');
-                }}
-                className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
-              >
-                11 класс · Business и MUN
-              </button>
               {profile && (
                 <button
                   onClick={() => {

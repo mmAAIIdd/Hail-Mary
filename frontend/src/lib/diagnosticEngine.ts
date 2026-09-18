@@ -18,8 +18,8 @@ export function runProfileDiagnosis(profile: UserProfile): DiagnosticProfileResu
   const gaps: DiagnosticGap[] = [];
   const constraints: DiagnosticConstraint[] = [];
   const performance = profile.academics.performance_level;
-  const mainSubject = profile.academics.favorite_subjects[0] || 'главный предмет';
-  const applicationPreferences = profile.application_preferences;
+  const mainSubject = profile.academics.main_subject;
+  const preferences = profile.application_preferences;
 
   if (performance === 'excellent' || performance === 'good') {
     strengths.push({
@@ -31,11 +31,11 @@ export function runProfileDiagnosis(profile: UserProfile): DiagnosticProfileResu
     });
   }
 
-  if (profile.academics.academic_fields.length >= 2) {
+  if (profile.academics.interests.length >= 2) {
     strengths.push({
       id: 'str-interests',
       title: 'Понятный круг интересов',
-      grounding: `Вы указали направления: ${profile.academics.academic_fields.slice(0, 4).join(', ')}.`,
+      grounding: `Вы указали направления: ${profile.academics.interests.slice(0, 4).join(', ')}.`,
       admission_impact: 'Эти интересы помогут составить первый список специальностей и университетов.',
       why_it_matters: 'Чёткий учебный фокус упрощает выбор программы и подготовку мотивационного письма.',
     });
@@ -51,29 +51,6 @@ export function runProfileDiagnosis(profile: UserProfile): DiagnosticProfileResu
     });
   }
 
-  if (profile.exams.ielts.status === 'taken' || profile.exams.toefl.status === 'taken') {
-    const exam = profile.exams.ielts.status === 'taken'
-      ? `IELTS ${profile.exams.ielts.score}`
-      : `TOEFL ${profile.exams.toefl.score}`;
-    strengths.push({
-      id: 'str-language-exam',
-      title: 'Есть языковой сертификат',
-      grounding: `В профиле указан результат ${exam}.`,
-      admission_impact: 'Его можно сопоставить с требованиями выбранных программ.',
-      why_it_matters: 'Требования к языку различаются, поэтому результат нужно проверять для каждой программы отдельно.',
-    });
-  }
-
-  if (profile.extracurriculars.length > 0 || profile.achievements.length > 0) {
-    strengths.push({
-      id: 'str-experience',
-      title: 'Есть опыт вне школы',
-      grounding: `В профиле: ${profile.extracurriculars.length} активностей и ${profile.achievements.length} достижений.`,
-      admission_impact: 'Этот опыт можно использовать в резюме и мотивационных материалах.',
-      why_it_matters: 'Конкретные роли и результаты помогают показать интерес к выбранному направлению.',
-    });
-  }
-
   if (performance === 'average' || performance === 'needs_support') {
     gaps.push({
       id: 'gap-academics',
@@ -85,7 +62,7 @@ export function runProfileDiagnosis(profile: UserProfile): DiagnosticProfileResu
     });
   }
 
-  if (applicationPreferences?.timeline === 'six_months') {
+  if (preferences.timeline === 'six_months') {
     gaps.push({
       id: 'gap-deadline',
       title: 'Сжатые сроки подготовки',
@@ -94,7 +71,7 @@ export function runProfileDiagnosis(profile: UserProfile): DiagnosticProfileResu
       why_it_matters: 'За это время нужно успеть проверить требования, дедлайны, документы и варианты финансирования.',
       recommended_action: 'На этой неделе выбрать 5–7 программ и выписать их требования и сроки в один список.',
     });
-  } else if (applicationPreferences?.timeline === 'exploring') {
+  } else if (preferences.timeline === 'exploring') {
     gaps.push({
       id: 'gap-timeline',
       title: 'Определить ориентировочный срок',
@@ -114,74 +91,59 @@ export function runProfileDiagnosis(profile: UserProfile): DiagnosticProfileResu
   });
 
   if (profile.budget.scholarship_criticality !== 'not_needed') {
-    const scholarshipRequired = profile.budget.scholarship_criticality === 'critical';
+    const required = profile.budget.scholarship_criticality === 'critical';
     constraints.push({
       id: 'con-scholarship',
-      title: scholarshipRequired ? 'Стипендия обязательна' : 'Стипендия важна',
+      title: required ? 'Стипендия обязательна' : 'Стипендия важна',
       category: 'scholarship',
       description: 'Сроки и условия стипендий нужно проверять отдельно от основной заявки.',
-      is_hard: scholarshipRequired,
+      is_hard: required,
     });
   }
 
-  if (applicationPreferences && applicationPreferences.financial_aid !== 'no') {
+  if (preferences.financial_aid !== 'no') {
     constraints.push({
       id: 'con-financial-aid',
       title: 'Нужна финансовая помощь',
       category: 'scholarship',
       description: 'В список стоит включать программы с понятными условиями financial aid для иностранных студентов.',
-      is_hard: applicationPreferences.financial_aid === 'yes',
+      is_hard: preferences.financial_aid === 'yes',
     });
   }
 
-  if (applicationPreferences && applicationPreferences.work_during_studies !== 'no') {
+  if (preferences.work_during_studies !== 'no') {
     constraints.push({
       id: 'con-work',
       title: 'Важна возможность работать во время учёбы',
       category: 'visa',
       description: 'Правила подработки зависят от страны и типа студенческой визы, поэтому их нужно проверять до подачи.',
-      is_hard: applicationPreferences.work_during_studies === 'yes',
+      is_hard: preferences.work_during_studies === 'yes',
     });
   }
 
-  if (profile.preferences.preferred_countries.length > 0) {
-    constraints.push({
-      id: 'con-countries',
-      title: `Страны: ${profile.preferences.preferred_countries.join(', ')}`,
-      category: 'country',
-      description: 'Первый список программ будет ограничен выбранными странами.',
-      is_hard: true,
-    });
-  }
+  constraints.push({
+    id: 'con-countries',
+    title: `Страны: ${profile.preferences.countries.join(', ')}`,
+    category: 'country',
+    description: 'Первый список программ будет ограничен выбранными странами.',
+    is_hard: true,
+  });
 
+  const mainInterest = profile.academics.interests[0] || mainSubject;
   return {
     summary: {
       grade_label: `${profile.basic_info.grade}-й класс`,
-      target_major: profile.academics.intended_major,
-      preferred_countries: profile.preferences.preferred_countries,
+      main_interest: mainInterest,
+      preferred_countries: profile.preferences.countries,
       annual_budget_usd: profile.budget.max_total_usd_year,
-      english_summary: profile.exams.ielts.status === 'taken'
-        ? `IELTS ${profile.exams.ielts.score}`
-        : profile.exams.toefl.status === 'taken'
-          ? `TOEFL ${profile.exams.toefl.score}`
-          : 'Нужно уточнить',
-      sat_summary: profile.exams.sat.status === 'taken'
-        ? `SAT ${profile.exams.sat.score}`
-        : profile.exams.sat.status === 'planned'
-          ? 'Запланирован'
-          : 'Нужно уточнить',
-      extracurricular_count: profile.extracurriculars.length,
-      achievement_count: profile.achievements.length,
     },
     strengths,
     gaps,
     constraints,
     goal: {
-      degree: profile.basic_info.degree_type,
-      major: profile.academics.intended_major,
-      alternative_majors: profile.academics.alternative_majors,
+      main_interest: mainInterest,
       target_intake: profile.basic_info.target_intake_year,
-      preferred_countries: profile.preferences.preferred_countries,
+      preferred_countries: profile.preferences.countries,
       max_budget_usd: profile.budget.max_total_usd_year,
     },
   };

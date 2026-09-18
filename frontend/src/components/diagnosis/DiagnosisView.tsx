@@ -117,7 +117,7 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
                 {[profile.basic_info.first_name, profile.basic_info.last_name].filter(Boolean).join(' ') || 'Профиль ученика'}
               </div>
               <div className="mt-0.5 text-xs leading-5 text-slate-500">
-                {diagnosis.summary.grade_label} • {diagnosis.summary.target_major} • поступление {diagnosis.goal.target_intake}
+                {diagnosis.summary.grade_label} • {diagnosis.summary.main_interest} • поступление {diagnosis.goal.target_intake}
               </div>
             </div>
           </div>
@@ -127,16 +127,14 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
             <span className="mb-1 block text-xs text-slate-500">Успеваемость</span>
             <span className="font-bold leading-snug text-slate-800">
-              {profile.academics.performance_level
-                ? performanceLabels[profile.academics.performance_level]
-                : `${profile.academics.gpa} / ${profile.academics.grading_scale}`}
+              {performanceLabels[profile.academics.performance_level]}
             </span>
           </div>
 
           <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
             <span className="mb-1 block text-xs text-slate-500">Главный предмет</span>
             <span className="block truncate font-bold text-slate-800">
-              {profile.academics.favorite_subjects[0] || 'Не указан'}
+              {profile.academics.main_subject}
             </span>
           </div>
 
@@ -356,7 +354,7 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({
             <span>Ваша цель</span>
           </div>
           <h3 className="text-lg font-bold text-white">
-            {diagnosis.goal.major} ({diagnosis.goal.degree})
+            {diagnosis.goal.main_interest}
           </h3>
           <p className="mt-2 max-w-xl text-sm leading-6 text-slate-300">
             Поступление в {diagnosis.goal.target_intake} году. Приоритетные страны:{' '}

@@ -150,50 +150,22 @@ function ChoiceGroup({
   );
 }
 
-function inferPerformance(profile: UserProfile | null): PerformanceLevel | '' {
-  if (!profile) return '';
-  if (profile.academics.performance_level) return profile.academics.performance_level;
-
-  const { gpa, grading_scale } = profile.academics;
-  if (
-    (grading_scale === '5.0' && gpa >= 4.5) ||
-    (grading_scale === '4.0' && gpa >= 3.6) ||
-    (grading_scale === '100' && gpa >= 88)
-  ) {
-    return 'excellent';
-  }
-  return 'good';
-}
-
-function inferBudgetRange(profile: UserProfile | null): BudgetRange | '' {
-  if (!profile) return '';
-  if (profile.budget.range) return profile.budget.range;
-
-  const budget = profile.budget.max_total_usd_year;
-  if (budget <= 10000) return 'under_10000';
-  if (budget <= 20000) return '10000_20000';
-  if (budget <= 40000) return '20000_40000';
-  return 'over_40000';
-}
-
 function createDraft(profile: UserProfile | null): QuestionnaireDraft {
-  const grade = profile?.basic_info.grade === 'graduated' ? '11' : profile?.basic_info.grade;
-
   return {
     firstName: profile?.basic_info.first_name ?? '',
     lastName: profile?.basic_info.last_name ?? '',
-    grade: grade ?? '',
+    grade: profile?.basic_info.grade ?? '',
     age: profile?.basic_info.age ?? '',
-    interests: profile?.academics.academic_fields.join(', ') ?? '',
-    mainSubject: profile?.academics.favorite_subjects[0] ?? '',
-    performance: inferPerformance(profile),
-    countries: profile?.preferences.preferred_countries ?? [],
-    timeline: profile?.application_preferences?.timeline ?? '',
-    foundation: profile?.application_preferences?.foundation ?? '',
-    budgetRange: inferBudgetRange(profile),
+    interests: profile?.academics.interests.join(', ') ?? '',
+    mainSubject: profile?.academics.main_subject ?? '',
+    performance: profile?.academics.performance_level ?? '',
+    countries: profile?.preferences.countries ?? [],
+    timeline: profile?.application_preferences.timeline ?? '',
+    foundation: profile?.application_preferences.foundation ?? '',
+    budgetRange: profile?.budget.range ?? '',
     scholarship: profile?.budget.scholarship_criticality ?? '',
-    financialAid: profile?.application_preferences?.financial_aid ?? '',
-    workDuringStudies: profile?.application_preferences?.work_during_studies ?? '',
+    financialAid: profile?.application_preferences.financial_aid ?? '',
+    workDuringStudies: profile?.application_preferences.work_during_studies ?? '',
   };
 }
 
@@ -205,15 +177,12 @@ function splitInterests(value: string): string[] {
     .slice(0, 8);
 }
 
-function budgetValues(range: BudgetRange): {
-  maxTuition: number;
-  maxTotal: number;
-} {
-  const values: Record<BudgetRange, { maxTuition: number; maxTotal: number }> = {
-    under_10000: { maxTuition: 6000, maxTotal: 10000 },
-    '10000_20000': { maxTuition: 12000, maxTotal: 20000 },
-    '20000_40000': { maxTuition: 25000, maxTotal: 40000 },
-    over_40000: { maxTuition: 40000, maxTotal: 60000 },
+function maximumAnnualBudget(range: BudgetRange): number {
+  const values: Record<BudgetRange, number> = {
+    under_10000: 10000,
+    '10000_20000': 20000,
+    '20000_40000': 40000,
+    over_40000: 60000,
   };
   return values[range];
 }
@@ -227,16 +196,6 @@ function targetIntakeYear(timeline: ApplicationTimeline): number {
     exploring: 3,
   };
   return currentYear + offsets[timeline];
-}
-
-function performanceGpa(level: PerformanceLevel): number {
-  const values: Record<PerformanceLevel, number> = {
-    excellent: 4.8,
-    good: 4.2,
-    average: 3.6,
-    needs_support: 3,
-  };
-  return values[level];
 }
 
 export const Questionnaire: React.FC<QuestionnaireProps> = ({
@@ -316,7 +275,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   const buildProfile = (): UserProfile => {
     const interests = splitInterests(draft.interests);
-    const budget = budgetValues(draft.budgetRange as BudgetRange);
+    const budgetRange = draft.budgetRange as BudgetRange;
     const now = new Date().toISOString();
 
     return {
@@ -329,49 +288,20 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
         age: draft.age as number,
         grade: draft.grade as SchoolGrade,
         target_intake_year: targetIntakeYear(draft.timeline as ApplicationTimeline),
-        degree_type: 'Bachelor / Undergraduate',
-        residence_country: initialProfile?.basic_info.residence_country ?? 'Казахстан',
       },
       academics: {
-        gpa: performanceGpa(draft.performance as PerformanceLevel),
-        grading_scale: '5.0',
-        favorite_subjects: [draft.mainSubject.trim()],
-        strong_subjects: draft.performance === 'excellent' || draft.performance === 'good'
-          ? [draft.mainSubject.trim()]
-          : [],
-        academic_fields: interests,
-        intended_major: interests[0] ?? 'Направление уточняется',
-        alternative_majors: interests.slice(1, 4),
+        interests,
+        main_subject: draft.mainSubject.trim(),
         performance_level: draft.performance as PerformanceLevel,
       },
-      exams: initialProfile?.exams ?? {
-        english_level: 'B1',
-        ielts: { status: 'not_taken' },
-        toefl: { status: 'not_taken' },
-        sat: { status: 'not_taken' },
-        act: { status: 'not_taken' },
-      },
-      extracurriculars: initialProfile?.extracurriculars ?? [],
-      achievements: initialProfile?.achievements ?? [],
       preferences: {
-        preferred_countries: draft.countries,
-        excluded_countries: initialProfile?.preferences.excluded_countries ?? [],
-        city_type: initialProfile?.preferences.city_type ?? 'any',
-        campus_type: initialProfile?.preferences.campus_type ?? 'any',
-        climate: initialProfile?.preferences.climate ?? 'any',
-        instruction_language: initialProfile?.preferences.instruction_language ?? 'english_only',
-        university_size: initialProfile?.preferences.university_size ?? 'any',
-        focus_orientation: initialProfile?.preferences.focus_orientation ?? 'balanced',
+        countries: draft.countries,
       },
       budget: {
-        range: draft.budgetRange as BudgetRange,
-        max_tuition_usd_year: budget.maxTuition,
-        max_total_usd_year: budget.maxTotal,
+        range: budgetRange,
+        max_total_usd_year: maximumAnnualBudget(budgetRange),
         scholarship_criticality:
           draft.scholarship as UserProfile['budget']['scholarship_criticality'],
-        need_based_aid_ready: draft.financialAid !== 'no',
-        merit_scholarships_ready: draft.scholarship !== 'not_needed',
-        dormitory_needed: initialProfile?.budget.dormitory_needed ?? false,
       },
       application_preferences: {
         timeline: draft.timeline as ApplicationTimeline,
@@ -379,12 +309,6 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
         financial_aid: draft.financialAid as PreferenceAnswer,
         work_during_studies: draft.workDuringStudies as PreferenceAnswer,
       },
-      constraints: [
-        ...(draft.scholarship === 'critical' ? ['scholarship_required'] : []),
-        ...(draft.financialAid === 'yes' ? ['financial_aid_required'] : []),
-        ...(draft.workDuringStudies === 'yes' ? ['work_during_studies_required'] : []),
-      ],
-      additional_notes: initialProfile?.additional_notes ?? '',
     };
   };
 

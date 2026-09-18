@@ -1,27 +1,28 @@
 # Current state
 
-Status: LOCUS CASE 02 — Phase 1 (Frontend MVP) implemented and verified.
+Status: Hail Mary frontend MVP работает и опубликован.
 
 Working:
-1. **Landing Page**: Full-screen historic university campus background with white content placed directly over a layered dark overlay, clear value proposition and immediate CTAs. The previous study-workspace photo and hero card were removed.
-2. **Global Navigation & Stepper**: Header with logo, step progress (Landing → Profile → Diagnosis → Upcoming), demo profile presets and reset. Mobile navigation exposes advice, universities, diagnosis, demo profiles and reset through a touch-friendly menu.
-3. **4-Step Profile Questionnaire**:
-   - Step 1: Имя, фамилия, класс 8–11 и возраст
-   - Step 2: Интересы, главный школьный предмет и уровень успеваемости
-   - Step 3: Целевые страны, сроки подачи и готовность рассматривать Foundation
-   - Step 4: Годовой бюджет, стипендия, financial aid и работа во время учёбы
-   - Каждый шаг валидируется отдельно; интерфейс использует крупные поля и очевидные варианты ответа.
-4. **Profile Result**:
-   - Strengths based on questionnaire answers and available profile evidence
-   - Preparation tasks based only on fields the user actually supplied
-   - Conditions covering budget, countries, funding and work preferences
-   - Short detail modals explaining why each item matters
-5. **State Persistence**: Full LocalStorage saving across reloads.
-6. **Build and browser verification**: `npm run build` exits 0 with zero TypeScript errors. Landing, questionnaire, diagnosis, navigation and modals were checked down to 320 × 700 and at 1440 × 900 with no horizontal overflow or console errors.
-7. **Publishing**: GitHub Pages is live at `https://mmaaiidd.github.io/Hail-Mary/`. The Node 24 workflow in `.github/workflows/deploy-pages.yml` builds and deploys every push to `main`.
+1. Полноэкранный адаптивный лендинг с одним основным действием — пройти анкету.
+2. Навигация с советами, информацией об университетах, переходом к своей диагностике и сбросом профиля.
+3. Анкета из четырёх шагов:
+   - имя, фамилия, класс и возраст;
+   - интересы, главный предмет и успеваемость;
+   - страны, сроки подачи и Foundation;
+   - бюджет, стипендия, financial aid и работа во время учёбы.
+4. Результат строится только из ответов пользователя и не создаёт скрытые оценки, экзамены, достижения или активности.
+5. Профиль сохраняется под ключом `hail_mary_profile_v2`; устаревшие записи очищаются при загрузке.
+6. Демо-профили, их элементы интерфейса, обработчики и данные удалены.
+7. GitHub Pages: `https://mmaaiidd.github.io/Hail-Mary/`.
 
-Not implemented yet (Phase 2):
-- Universities recommendations engine, deep comparison matrix, roadmap tracker, next action engine, and FastAPI backend.
+Validation:
+- `npm run build`: passed, 1600 modules transformed.
+- Playwright: полный путь анкеты прошёл до результата.
+- Desktop and 390 × 844 mobile navigation contain no demo controls.
+- Browser console: zero errors and zero warnings.
+- Old profile storage key is removed after reload.
 
-Next:
-Run dev server for live demo / user review, or begin Phase 2 university dataset & recommendation engine when requested.
+Not implemented:
+- подбор и сравнение университетов;
+- персональный план действий;
+- backend and database.

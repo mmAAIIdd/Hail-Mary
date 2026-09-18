@@ -1,37 +1,36 @@
 # Handoff
 
-USER GOAL: Provide a clear minimalist applicant questionnaire with mixed text inputs and selectable answers.
+USER GOAL: минимальный сервис диагностики поступления без демо-профилей и старой модели данных.
 
-CURRENT STATUS: Complete, mobile-adapted and verified.
+CURRENT STATUS: реализовано и проверено локально.
 
 REPOSITORY: `https://github.com/mmAAIIdd/Hail-Mary` (`main`).
-PUBLIC SITE: `https://mmaaiidd.github.io/Hail-Mary/` (GitHub Pages workflow).
+PUBLIC SITE: `https://mmaaiidd.github.io/Hail-Mary/`.
 
-IMPLEMENTED FLOW:
-- Step 1: first name, last name, grade 8–11, age
-- Step 2: interests, main subject, self-reported performance
-- Step 3: countries, application timeline, Foundation preference
-- Step 4: annual total budget, scholarship importance, financial aid and work during study
+CURRENT FLOW:
+- пользователь проходит четыре шага анкеты;
+- введённые ответы нормализуются в компактный `UserProfile`;
+- детерминированный движок строит сильные стороны, задачи и условия выбора;
+- профиль сохраняется в `localStorage` с версией `v2`.
 
 KEY FILES:
 - `frontend/src/components/profile/Questionnaire.tsx`
 - `frontend/src/types/profile.ts`
-- `frontend/src/lib/demoData.ts`
+- `frontend/src/lib/storage.ts`
 - `frontend/src/lib/diagnosticEngine.ts`
 - `frontend/src/components/diagnosis/DiagnosisView.tsx`
 
-BEHAVIOUR:
-- Validation is applied before each step transition with a visible inline message.
-- Answers are normalized into `UserProfile` and stored in localStorage.
-- Existing demo and older stored profiles are converted defensively when the questionnaire opens.
-- The result uses only answers the user supplied and does not invent missing exam or activity requirements.
+REMOVED:
+- `frontend/src/lib/demoData.ts`;
+- демо-кнопки в шапке, мобильном меню и лендинге;
+- обработчики загрузки демо;
+- старые поля экзаменов, GPA, активностей, достижений и дополнительных предпочтений.
 
 VALIDATION:
-- `npm run build`: passed, 1601 modules transformed.
-- Playwright: full 4-step completion passed; result showed `Алина Садыкова` and `Хорошая`.
-- Browser console: zero errors and zero warnings.
-- Mobile visual checks: 320 × 700 and 390 × 844, no horizontal overflow.
-- Mobile menu and tips modal checked at 320 px; desktop navigation checked at 1440 px.
-- Public GitHub Pages URL returned HTTP 200; production assets, background, mobile navigation and demo result were verified with zero browser console errors.
+- production build passed;
+- full questionnaire flow passed in Playwright;
+- result stored only real questionnaire fields;
+- desktop and mobile navigation verified;
+- zero browser console errors and warnings.
 
-NEXT PRODUCT STEP: implement or refine university matching when requested.
+NEXT PRODUCT STEP: начать подбор университетов только после отдельного запроса пользователя.

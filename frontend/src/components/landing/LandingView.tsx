@@ -1,16 +1,12 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
-import { UserProfile } from '../../types/profile';
-import { DEMO_PROFILE_CS } from '../../lib/demoData';
 
 interface LandingViewProps {
   onStartQuestionnaire: () => void;
-  onLoadDemo: (profile: UserProfile) => void;
 }
 
 export const LandingView: React.FC<LandingViewProps> = ({
   onStartQuestionnaire,
-  onLoadDemo,
 }) => {
   return (
     <section
@@ -44,7 +40,7 @@ export const LandingView: React.FC<LandingViewProps> = ({
             в зарубежный университет.
           </p>
 
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="mt-10">
             <button
               onClick={onStartQuestionnaire}
               className="inline-flex min-h-14 items-center justify-center gap-2.5 rounded-lg bg-white px-7 py-4 text-sm font-semibold text-slate-950 shadow-xl shadow-slate-950/30 transition hover:bg-slate-100 active:scale-[0.99]"
@@ -53,12 +49,6 @@ export const LandingView: React.FC<LandingViewProps> = ({
               <ArrowRight className="h-4 w-4" />
             </button>
 
-            <button
-              onClick={() => onLoadDemo(DEMO_PROFILE_CS)}
-              className="min-h-14 rounded-lg border border-white/40 bg-slate-950/55 px-7 py-4 text-sm font-semibold text-white transition hover:bg-slate-950/75"
-            >
-              Открыть демо-профиль
-            </button>
           </div>
 
         </div>
