@@ -5,6 +5,8 @@ import { AdmissionsPlan, RoadmapStage, UniversityRecommendation } from '../../ty
 import { AdmissionsApiError, generateAdmissionsPlan, recommendationsAvailable } from '../../lib/admissionsApi';
 import { loadAdmissionsPlan, saveAdmissionsPlan } from '../../lib/admissionsStorage';
 import { listAdmissionsHistory, loadHistoryPlan, saveHistoryPlan } from '../../lib/admissionsHistory';
+import { getCampusImage } from '../../lib/campusImages';
+import type { CampusImage } from '../../lib/campusImages';
 
 interface AdmissionsWorkspaceProps {
   profile: UserProfile;
@@ -58,6 +60,37 @@ function Chance({ university, large = false }: { university: UniversityRecommend
   );
 }
 
+function CampusPhoto({ universityName }: { universityName: string }) {
+  const [image, setImage] = useState<CampusImage | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    setIsLoading(true);
+    setImage(null);
+    void getCampusImage(universityName).then((result) => {
+      if (active) {
+        setImage(result);
+        setIsLoading(false);
+      }
+    });
+    return () => { active = false; };
+  }, [universityName]);
+
+  if (isLoading) return <div className="mt-7 grid min-h-48 place-items-center bg-slate-100 text-sm text-slate-500"><LoaderCircle className="mr-2 inline h-4 w-4 animate-spin" /> Ищем подтверждённое фото</div>;
+  if (!image) return <p className="mt-7 border-y border-slate-200 py-4 text-sm leading-6 text-slate-600">Подтверждённое изображение этого университета в Wikidata и Wikimedia Commons не найдено. Случайное фото не показываем.</p>;
+
+  return (
+    <figure className="mt-7">
+      <img src={image.url} alt={`${universityName}: ${image.caption}`} loading="lazy" referrerPolicy="no-referrer" className="aspect-[16/9] w-full bg-slate-100 object-cover" />
+      <figcaption className="mt-2 text-xs leading-5 text-slate-500">
+        {image.caption}. Автор: {image.author}. {image.license}.{' '}
+        <a href={image.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">Источник и лицензия</a>
+      </figcaption>
+    </figure>
+  );
+}
+
 function UniversityDetail({ university, plan, expanded }: { university: UniversityRecommendation; plan: AdmissionsPlan; expanded: boolean }) {
   const relatedSources = plan.sources.filter((source) => {
     try {
@@ -89,6 +122,7 @@ function UniversityDetail({ university, plan, expanded }: { university: Universi
       </div>
 
       {expanded && <>
+        <CampusPhoto universityName={university.name} />
         <div className="mt-7 space-y-6 border-t border-slate-200 pt-6">
           <div><h4 className="text-sm font-bold text-slate-950">Учебное соответствие</h4><p className="mt-2 text-sm leading-7 text-slate-700">{university.details.academic_fit || 'Для точного разбора нужны оценки по профильным предметам и требования выбранной программы.'}</p></div>
           <div><h4 className="text-sm font-bold text-slate-950">Почему стоит рассмотреть</h4><p className="mt-2 text-sm leading-7 text-slate-700">{university.details.choice_reason || university.why_fit.join(' ')}</p></div>
