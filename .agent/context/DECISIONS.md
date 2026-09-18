@@ -1,5 +1,9 @@
 # Decisions
 
+## 2026-09-19 — CSS orbital field, not WebGL
+
+The requested dimensional motion is implemented as decorative CSS rings, dots and a coordinate axis, rather than a Three.js scene. It ships no additional runtime, uses a static mobile layout, stays clear of all inputs and calls to action, and is fully neutralized by the existing reduced-motion rule. This preserves fast first load and supports applicants on modest devices while still giving the desktop entry point a distinctive spatial signature.
+
 ## 2026-09-19 — Admissions Atlas visual language
 
 Use Inspo archive recommendation `split-studio` as composition guidance, not as a template. Keep Hail Mary’s existing Liter font, map, cardless admissions workspace and evidence-aware copy. Add warm paper `#F7F3EA`, ink `#1F2420`, terracotta `#D6552E`, beige rules and sage geography surfaces. Use typography, thin rules and a three-part hero ledger as the differentiator; avoid card mosaics, gradients and heavy shadows.

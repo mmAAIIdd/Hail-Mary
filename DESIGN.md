@@ -33,9 +33,9 @@ Prefer sharp or subtly rounded edges (`2–6px`) for editorial surfaces. Reserve
 - Recommendations: left-hand university index, right-hand narrative detail, comparison table, then chronological roadmap.
 - Mobile: preserve reading order, keep interactive targets at least 44px, allow tables to scroll intentionally, and never depend on hover.
 
-## Motion
+## Motion and dimensionality
 
-Motion is sparse and purposeful: 180–300ms color/transform transitions for actions, smooth section navigation, and a reduced-motion fallback. Avoid decorative animation that competes with the user’s decision-making.
+Motion is sparse and purposeful: 180–300ms color/transform transitions for actions, smooth section navigation, and a reduced-motion fallback. The landing may use a CSS-only orbital coordinate field to give the atlas a dimensional, cinematic point of view. It is decorative, never contains task-critical information, stays outside the reading column, uses only `transform`/`opacity`-friendly effects, and disappears under 1024px. Map pulses only confirm the currently selected location. Avoid decorative animation that competes with the user’s decision-making.
 
 ## Avoid
 

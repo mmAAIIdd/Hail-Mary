@@ -98,6 +98,18 @@ Validation: `npm run build` passed.
 
 Record significant changes only. For each entry include date, goal, changed paths, reason, validation and remaining issue. Do not copy full diffs or logs here; use Git history when a future project has Git.
 
+## 2026-09-19 — Grand but legible atlas motion pass
+
+Goal: make the admissions experience more cinematic and tactile across devices without losing the existing evidence-aware, editorial clarity.
+
+Changed: `frontend/src/components/landing/LandingView.tsx`, `frontend/src/components/landing/UniversityMap.tsx`, `frontend/src/index.css`, `DESIGN.md`, and agent context.
+
+Reason: the landing had a strong static hero but no memorable spatial cue connecting the applicant’s route to its global university map. A CSS-only orbit gives large screens depth while mobile gets a readable route index rather than compressed decoration.
+
+Validation: `npm.cmd run build` passed. Browser checks at desktop and 390 × 844 found no horizontal overflow; the mobile CTA is 56px high and begins below the sticky header. Browser console has no errors.
+
+Remaining: no physical-device rendering check; the orbital field intentionally stays CSS-only and desktop-only, so it does not need a WebGL fallback.
+
 ## 2026-09-18 — Production polish and GitHub Pages
 
 Goal: turn the repository into a complete public site with concise product copy and reliable automatic deployment.

@@ -1,5 +1,12 @@
 # Current state
 
+## 2026-09-19 — Admissions Atlas orbit and journey pass (local)
+
+- Inspo archive study revisited Split Studio for its complete first viewport and asymmetric type/visual split; Wes Bos and Norrøna supplied only the paper-layer and distant-landscape composition cues.
+- Landing now has a CSS-only orbital coordinate field on large screens, a three-point journey index, and clearer route numbering. It preserves the existing paper/ink/terracotta design system and does not add WebGL or a new dependency.
+- The map has a restrained coordinate grid, selected-location pulse and stronger location panel. Questionnaire selections and admissions index/roadmap gained consistent editorial feedback without changing data or flow logic.
+- Frontend production build passed with 1884 modules transformed. Desktop and 390px checks show no horizontal overflow; 390px hero starts below the header and its primary CTA is 56px tall. Browser console has no errors.
+
 ## 2026-09-19 — Admissions Atlas visual system (local)
 
 - Frontend visual language is now documented in `DESIGN.md`.

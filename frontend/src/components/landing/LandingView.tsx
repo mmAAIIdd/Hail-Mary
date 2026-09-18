@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Compass } from 'lucide-react';
 import { UniversityMap } from './UniversityMap';
 
 interface LandingViewProps {
@@ -21,11 +21,23 @@ export const LandingView: React.FC<LandingViewProps> = ({
         <div className="absolute inset-0 z-0 bg-gradient-to-r from-slate-950/95 via-slate-950/68 to-slate-950/10" aria-hidden="true" />
         <div className="absolute inset-x-0 bottom-0 z-0 h-56 bg-gradient-to-t from-slate-950/70 to-transparent" aria-hidden="true" />
 
+        <div className="hero-grain absolute inset-0 z-[1]" aria-hidden="true" />
+        <div className="hero-orbit" aria-hidden="true">
+          <span className="hero-orbit__ring hero-orbit__ring--outer" />
+          <span className="hero-orbit__ring hero-orbit__ring--inner" />
+          <span className="hero-orbit__axis" />
+          <span className="hero-orbit__dot hero-orbit__dot--one" />
+          <span className="hero-orbit__dot hero-orbit__dot--two" />
+          <span className="hero-orbit__dot hero-orbit__dot--three" />
+          <span className="hero-orbit__label hero-orbit__label--top">ВЕКТОР / 2026</span>
+          <span className="hero-orbit__label hero-orbit__label--bottom">ВАШ МАРШРУТ</span>
+        </div>
+
         <div className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] min-h-[calc(100svh-4rem)] w-full max-w-7xl items-start px-5 pb-10 pt-20 sm:min-h-[calc(100vh-5rem)] sm:min-h-[calc(100svh-5rem)] sm:items-center sm:px-8 sm:py-20 lg:px-12">
-          <div className="w-full max-w-3xl text-white">
+          <div className="w-full max-w-3xl text-white lg:max-w-2xl">
           <div className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/75 sm:text-xs">
             <span className="h-px w-8 bg-white/60" aria-hidden="true" />
-            <span>Персональный маршрут поступления</span>
+            <span>Персональный маршрут поступления / 01</span>
           </div>
 
           <h1 className="mt-5 max-w-3xl font-brand text-[44px] font-semibold leading-[1.02] tracking-[-0.025em] text-white min-[380px]:text-5xl sm:text-7xl lg:text-[86px]">
@@ -45,7 +57,6 @@ export const LandingView: React.FC<LandingViewProps> = ({
               <span>Пройти анкету</span>
               <ArrowRight className="h-4 w-4" />
             </button>
-
           </div>
 
           <div className="hero-ledger mt-14 grid max-w-xl grid-cols-3 gap-4 py-4 text-[10px] uppercase tracking-[0.16em] sm:gap-8 sm:text-xs">
@@ -55,6 +66,19 @@ export const LandingView: React.FC<LandingViewProps> = ({
           </div>
 
           </div>
+        </div>
+      </section>
+      <section className="journey-index px-5 py-12 sm:px-8 sm:py-16 lg:px-12" aria-labelledby="journey-title">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,2fr)] lg:gap-16">
+          <div>
+            <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-[var(--atlas-accent-dark)]"><Compass className="h-4 w-4" aria-hidden="true" /> Навигация вместо догадок</p>
+            <h2 id="journey-title" className="mt-3 max-w-sm font-brand text-3xl font-semibold leading-tight text-[var(--atlas-ink)] sm:text-4xl">Один ясный курс, три опорные точки.</h2>
+          </div>
+          <ol className="journey-index__steps grid gap-0 sm:grid-cols-3">
+            <li><span>01</span><h3>Соберите свой контур</h3><p>Учёба, интересы, страны и бюджет без лишних полей.</p></li>
+            <li><span>02</span><h3>Сверьте координаты</h3><p>Посмотрите, где находятся подходящие программы.</p></li>
+            <li><span>03</span><h3>Двигайтесь по плану</h3><p>Получите следующий практический шаг для подачи.</p></li>
+          </ol>
         </div>
       </section>
       <UniversityMap />

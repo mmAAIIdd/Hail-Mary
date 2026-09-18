@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ComposableMap, Geographies, Geography, Marker } from 'react-simple-maps';
+import { Crosshair } from 'lucide-react';
 
 interface UniversityLocation {
   name: string;
@@ -36,12 +37,14 @@ export const UniversityMap: React.FC = () => {
     <section className="map-section border-t border-slate-200 bg-[#f6f8f7] px-5 py-16 sm:px-8 sm:py-20 lg:px-12" aria-labelledby="map-title">
       <div className="mx-auto max-w-7xl">
         <div className="max-w-2xl">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">География возможностей</p>
+          <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-slate-500"><Crosshair className="h-4 w-4 text-[var(--atlas-accent)]" aria-hidden="true" /> География возможностей / 02</p>
           <h2 id="map-title" className="mt-3 font-brand text-3xl font-semibold text-slate-950 sm:text-5xl">Университеты на карте</h2>
           <p className="mt-4 text-base leading-7 text-slate-600">Выберите университет на карте, чтобы увидеть его город, страну и основные направления.</p>
         </div>
 
         <div className="map-panel relative mt-10 overflow-hidden border border-slate-300 bg-[#b9d8dc] shadow-sm">
+          <div className="map-panel__grid" aria-hidden="true" />
+          <p className="map-panel__coordinates" aria-hidden="true">15 ТОЧЕК · ГЛОБАЛЬНЫЙ ПОИСК</p>
           <ComposableMap
             projection="geoEqualEarth"
             projectionConfig={{ scale: 152, center: [10, 12] }}
@@ -83,7 +86,8 @@ export const UniversityMap: React.FC = () => {
                     }}
                     style={{ cursor: 'pointer', outline: 'none' }}
                   >
-                    <circle r={selected ? 12 : 9} fill={selected ? '#e11d48' : '#0f172a'} stroke="#ffffff" strokeWidth="3" />
+                    {selected && <circle className="map-marker-pulse" r="18" fill="none" stroke="#d6552e" strokeWidth="1.5" />}
+                    <circle r={selected ? 12 : 9} fill={selected ? '#d6552e' : '#1f2420'} stroke="#fffaf2" strokeWidth="3" />
                     <circle r="3" fill="#ffffff" />
                   </g>
                 </Marker>
@@ -92,7 +96,7 @@ export const UniversityMap: React.FC = () => {
           </ComposableMap>
 
           {activeLocation && (
-            <div className="absolute bottom-4 left-4 max-w-[calc(100%-2rem)] border border-slate-200 bg-white p-4 shadow-xl sm:bottom-6 sm:left-6 sm:max-w-sm sm:p-5">
+            <div className="map-location-card absolute bottom-4 left-4 max-w-[calc(100%-2rem)] border border-slate-200 bg-white p-4 shadow-xl sm:bottom-6 sm:left-6 sm:max-w-sm sm:p-5">
               <p className="text-xs font-bold uppercase tracking-[0.12em] text-rose-600">{activeLocation.city}, {activeLocation.country}</p>
               <h3 className="mt-2 text-lg font-semibold text-slate-950">{activeLocation.name}</h3>
               <p className="mt-1 text-sm leading-6 text-slate-600">{activeLocation.description}</p>
