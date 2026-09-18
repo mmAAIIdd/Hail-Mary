@@ -3,8 +3,8 @@ import { RotateCcw, Menu, X } from 'lucide-react';
 import { UserProfile } from '../../types/profile';
 
 interface HeaderProps {
-  activeTab: 'landing' | 'profile' | 'diagnosis';
-  setActiveTab: (tab: 'landing' | 'profile' | 'diagnosis') => void;
+  activeTab: 'landing' | 'profile' | 'diagnosis' | 'about' | 'resources';
+  setActiveTab: (tab: 'landing' | 'profile' | 'diagnosis' | 'about' | 'resources') => void;
   profile: UserProfile | null;
   onReset: () => void;
 }
@@ -54,6 +54,20 @@ export const Header: React.FC<HeaderProps> = ({
                 className={activeTab === 'profile' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}
               >
                 Анкета
+              </button>
+              <button
+                onClick={() => setActiveTab('about')}
+                aria-current={activeTab === 'about' ? 'page' : undefined}
+                className={activeTab === 'about' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}
+              >
+                О нас
+              </button>
+              <button
+                onClick={() => setActiveTab('resources')}
+                aria-current={activeTab === 'resources' ? 'page' : undefined}
+                className={activeTab === 'resources' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}
+              >
+                Ресурсы
               </button>
               {profile && (
                 <button
@@ -118,6 +132,26 @@ export const Header: React.FC<HeaderProps> = ({
                 className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
               >
                 Анкета {activeTab === 'profile' && '•'}
+              </button>
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setActiveTab('about');
+                }}
+                aria-current={activeTab === 'about' ? 'page' : undefined}
+                className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
+              >
+                О нас {activeTab === 'about' && '•'}
+              </button>
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setActiveTab('resources');
+                }}
+                aria-current={activeTab === 'resources' ? 'page' : undefined}
+                className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
+              >
+                Ресурсы {activeTab === 'resources' && '•'}
               </button>
               {profile && (
                 <button

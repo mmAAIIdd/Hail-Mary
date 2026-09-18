@@ -20,6 +20,7 @@ export interface UserProfile {
   academics: {
     interests: string[];
     main_subject: string;
+    gpa: number;
     performance_level: PerformanceLevel;
     grades_detail?: string;
     language_level?: string;

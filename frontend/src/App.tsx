@@ -5,6 +5,7 @@ import { Footer } from './components/layout/Footer';
 import { LandingView } from './components/landing/LandingView';
 import { Questionnaire } from './components/profile/Questionnaire';
 import { DiagnosisView } from './components/diagnosis/DiagnosisView';
+import { InfoView } from './components/info/InfoView';
 import {
   loadStoredProfile,
   saveStoredProfile,
@@ -14,7 +15,7 @@ import { clearAdmissionsPlan } from './lib/admissionsStorage';
 import { clearAdmissionsHistory } from './lib/admissionsHistory';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'landing' | 'profile' | 'diagnosis'>('landing');
+  const [activeTab, setActiveTab] = useState<'landing' | 'profile' | 'diagnosis' | 'about' | 'resources'>('landing');
   const [profile, setProfile] = useState<UserProfile | null>(() => loadStoredProfile());
 
   useEffect(() => {
@@ -24,7 +25,7 @@ export function App() {
   }, [profile]);
 
   useEffect(() => {
-    const pageNames = { landing: 'Главная', profile: 'Анкета', diagnosis: 'Рекомендации' };
+    const pageNames = { landing: 'Главная', profile: 'Анкета', diagnosis: 'Рекомендации', about: 'О нас', resources: 'Ресурсы' };
     document.title = `${pageNames[activeTab]} — Hail Mary`;
   }, [activeTab]);
 
@@ -108,6 +109,9 @@ export function App() {
             </div>
           )
         )}
+
+        {activeTab === 'about' && <InfoView section="about" onStartQuestionnaire={() => setActiveTab('profile')} />}
+        {activeTab === 'resources' && <InfoView section="resources" onStartQuestionnaire={() => setActiveTab('profile')} />}
       </main>
 
       {activeTab !== 'landing' && <Footer />}

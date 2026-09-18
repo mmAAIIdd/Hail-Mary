@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { UniversityMap } from './UniversityMap';
 
 interface LandingViewProps {
   onStartQuestionnaire: () => void;
@@ -9,24 +10,19 @@ export const LandingView: React.FC<LandingViewProps> = ({
   onStartQuestionnaire,
 }) => {
   return (
-    <section
-      className="relative min-h-[calc(100vh-4rem)] min-h-[calc(100svh-4rem)] overflow-hidden bg-slate-950 bg-cover bg-[position:58%_center] sm:min-h-[calc(100vh-5rem)] sm:min-h-[calc(100svh-5rem)] lg:bg-[position:64%_center]"
-      style={{
-        backgroundImage: `url("${import.meta.env.BASE_URL}university-campus-hero.jpg")`,
-      }}
-    >
-      <div className="absolute inset-0 z-0 bg-slate-950/30" aria-hidden="true" />
-      <div
-        className="absolute inset-0 z-0 bg-gradient-to-r from-slate-950/95 via-slate-950/68 to-slate-950/10"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-x-0 bottom-0 z-0 h-56 bg-gradient-to-t from-slate-950/70 to-transparent"
-        aria-hidden="true"
-      />
+    <>
+      <section
+        className="relative min-h-[calc(100vh-4rem)] min-h-[calc(100svh-4rem)] overflow-hidden bg-slate-950 bg-cover bg-[position:58%_center] sm:min-h-[calc(100vh-5rem)] sm:min-h-[calc(100svh-5rem)] lg:bg-[position:64%_center]"
+        style={{
+          backgroundImage: `url("${import.meta.env.BASE_URL}university-campus-hero.jpg")`,
+        }}
+      >
+        <div className="absolute inset-0 z-0 bg-slate-950/30" aria-hidden="true" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-r from-slate-950/95 via-slate-950/68 to-slate-950/10" aria-hidden="true" />
+        <div className="absolute inset-x-0 bottom-0 z-0 h-56 bg-gradient-to-t from-slate-950/70 to-transparent" aria-hidden="true" />
 
-      <div className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] min-h-[calc(100svh-4rem)] w-full max-w-7xl items-center px-5 py-10 sm:min-h-[calc(100vh-5rem)] sm:min-h-[calc(100svh-5rem)] sm:px-8 sm:py-20 lg:px-12">
-        <div className="w-full max-w-3xl text-white">
+        <div className="relative z-10 mx-auto flex min-h-[calc(100vh-4rem)] min-h-[calc(100svh-4rem)] w-full max-w-7xl items-center px-5 py-10 sm:min-h-[calc(100vh-5rem)] sm:min-h-[calc(100svh-5rem)] sm:px-8 sm:py-20 lg:px-12">
+          <div className="w-full max-w-3xl text-white">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/75 sm:text-xs">
             Персональный маршрут поступления
           </p>
@@ -51,8 +47,10 @@ export const LandingView: React.FC<LandingViewProps> = ({
 
           </div>
 
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+      <UniversityMap />
+    </>
   );
 };

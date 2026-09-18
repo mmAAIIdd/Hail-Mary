@@ -20,7 +20,11 @@ function profileForRecommendations(profile: UserProfile) {
       grade: profile.basic_info.grade,
       target_intake_year: profile.basic_info.target_intake_year,
     },
-    academics: profile.academics,
+    academics: {
+      interests: profile.academics.interests,
+      main_subject: profile.academics.main_subject,
+      performance_level: profile.academics.performance_level,
+    },
     preferences: profile.preferences,
     budget: profile.budget,
     application_preferences: profile.application_preferences,
