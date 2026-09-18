@@ -18,7 +18,7 @@ Working:
    - Short detail modals explaining why each item matters
 5. **State Persistence**: Full LocalStorage saving across reloads.
 6. **Build and browser verification**: `npm run build` exits 0 with zero TypeScript errors. Landing, questionnaire, diagnosis, navigation and modals were checked down to 320 × 700 and at 1440 × 900 with no horizontal overflow or console errors.
-7. **Publishing**: GitHub Pages is configured through `.github/workflows/deploy-pages.yml` for `https://mmaaiidd.github.io/Hail-Mary/`.
+7. **Publishing**: GitHub Pages is live at `https://mmaaiidd.github.io/Hail-Mary/`. The Node 24 workflow in `.github/workflows/deploy-pages.yml` builds and deploys every push to `main`.
 
 Not implemented yet (Phase 2):
 - Universities recommendations engine, deep comparison matrix, roadmap tracker, next action engine, and FastAPI backend.

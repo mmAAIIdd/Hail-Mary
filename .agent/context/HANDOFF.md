@@ -32,5 +32,6 @@ VALIDATION:
 - Browser console: zero errors and zero warnings.
 - Mobile visual checks: 320 × 700 and 390 × 844, no horizontal overflow.
 - Mobile menu and tips modal checked at 320 px; desktop navigation checked at 1440 px.
+- Public GitHub Pages URL returned HTTP 200; production assets, background, mobile navigation and demo result were verified with zero browser console errors.
 
 NEXT PRODUCT STEP: implement or refine university matching when requested.

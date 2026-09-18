@@ -46,7 +46,7 @@ Reason: avoid broken assets under `/Hail-Mary/`, remove technical template langu
 
 Validation: Pages-mode production build passed. Local production preview at `/Hail-Mary/` loaded every asset with zero console errors. A fresh four-step profile completed successfully at 390 × 844 with no horizontal overflow and no IELTS/SAT warnings in the result.
 
-Remaining: verify the public URL after the workflow using Node 24 based action versions completes.
+Remaining: none for the current deployment scope. The public URL was verified after the Node 24 workflow completed.
 
 ## 2026-09-17 — GitHub repository publication
 
