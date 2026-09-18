@@ -2,7 +2,7 @@
 
 USER GOAL: минимальный сервис диагностики поступления без демо-профилей и старой модели данных.
 
-CURRENT STATUS: реализовано и проверено локально.
+CURRENT STATUS: реализовано, проверено и опубликовано.
 
 REPOSITORY: `https://github.com/mmAAIIdd/Hail-Mary` (`main`).
 PUBLIC SITE: `https://mmaaiidd.github.io/Hail-Mary/`.
@@ -32,5 +32,6 @@ VALIDATION:
 - result stored only real questionnaire fields;
 - desktop and mobile navigation verified;
 - zero browser console errors and warnings.
+- GitHub Pages workflow run `35352260885` completed successfully; the public page was checked after deployment.
 
 NEXT PRODUCT STEP: начать подбор университетов только после отдельного запроса пользователя.

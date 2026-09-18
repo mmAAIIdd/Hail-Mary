@@ -10,7 +10,7 @@ Reason: ensure every result comes from the user's answers and keep the code alig
 
 Validation: production build passed with 1600 modules; Playwright completed the full questionnaire, confirmed the compact stored academics object, verified old storage cleanup, checked the 390 × 844 mobile menu and found zero console errors or warnings.
 
-Remaining: production deployment must complete after pushing this change to `main`.
+Publishing: commit `750db3b` was deployed successfully by GitHub Pages workflow run `35352260885`; the public landing page was checked with zero console errors or warnings.
 
 ## 2026-09-17 — University landing background
 
