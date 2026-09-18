@@ -239,7 +239,7 @@ function Comparison({ plan }: { plan: AdmissionsPlan }) {
           </article>
         ))}
       </div>
-      <div className="mt-5 hidden overflow-x-auto border-y border-slate-300 sm:block">
+      <div className="comparison-table mt-5 hidden overflow-x-auto border-y border-slate-300 sm:block">
         <table className="min-w-[920px] w-full border-collapse text-left text-sm">
           <thead><tr><th scope="col" className="w-40 p-3 text-xs font-bold uppercase text-slate-500">Критерий</th>{plan.universities.map((university) => <th scope="col" key={university.id} className="min-w-36 p-3 align-top font-semibold text-slate-950">{university.name}</th>)}</tr></thead>
           <tbody>{rows.map((row) => <tr key={row.title} className="border-t border-slate-200"><th scope="row" className="p-3 align-top font-semibold text-slate-600">{row.title}</th>{plan.universities.map((university) => <td key={university.id} className="p-3 align-top leading-5 text-slate-700">{row.value(university)}</td>)}</tr>)}</tbody>
@@ -263,7 +263,7 @@ function Roadmap({ plan }: { plan: AdmissionsPlan }) {
         {plan.roadmap.map((stage, index) => (
           <li key={stage.id} className="relative grid grid-cols-[28px_minmax(0,1fr)] gap-2.5 pb-10 last:pb-0 sm:grid-cols-[48px_minmax(0,1fr)] sm:gap-6 sm:pb-12">
             <div className="relative z-10 grid h-7 w-7 place-items-center rounded-full border-2 border-slate-950 bg-slate-50 text-xs font-semibold text-slate-950 sm:h-12 sm:w-12 sm:text-base">{index + 1}</div>
-            <article className="min-w-0 border-t border-slate-300 pt-4 sm:pt-6">
+            <article className="roadmap-stage min-w-0 border-t border-slate-300 pt-4 sm:pt-6">
               <div className="grid gap-5 lg:grid-cols-[220px_minmax(0,1fr)]">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">{priorityLabels[stage.priority]}</p>
@@ -372,7 +372,7 @@ export const AdmissionsWorkspace: React.FC<AdmissionsWorkspaceProps> = ({ profil
   }
 
   return (
-    <div>
+    <div className="editorial-page admissions-workspace">
       {history.length > 0 && (
         <section className="mb-8 border-b border-slate-200 pb-6" aria-label="История рекомендаций">
           <h2 className="text-sm font-semibold text-slate-950">История рекомендаций</h2>
@@ -396,7 +396,7 @@ export const AdmissionsWorkspace: React.FC<AdmissionsWorkspaceProps> = ({ profil
         <h2 id="universities-title" className="mt-2 font-brand text-3xl font-semibold text-slate-950">Университеты</h2>
         <p className="mt-3 text-sm leading-6 text-slate-600 lg:hidden">Проведите в сторону, чтобы увидеть все варианты. Нажмите «Подробнее» для персональной стратегии поступления.</p>
         <div className="mt-6 grid gap-8 lg:mt-7 lg:grid-cols-[340px_minmax(0,1fr)]">
-          <nav aria-label="Подобранные университеты" className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 lg:mx-0 lg:block lg:divide-y lg:divide-slate-200 lg:overflow-visible lg:border-y lg:border-slate-300 lg:px-0 lg:pb-0">
+          <nav aria-label="Подобранные университеты" className="university-list -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 lg:mx-0 lg:block lg:divide-y lg:divide-slate-200 lg:overflow-visible lg:border-y lg:border-slate-300 lg:px-0 lg:pb-0">
             {displayedPlan.universities.map((university, index) => (
               <div key={university.id} className={`flex min-w-[82vw] snap-start items-center gap-3 border border-slate-200 p-4 sm:min-w-[320px] lg:min-w-0 lg:border-0 lg:py-4 lg:px-0 ${selectedUniversity?.id === university.id ? 'bg-slate-50 lg:bg-transparent' : 'bg-white'}`}>
                 <span className="w-5 shrink-0 text-xs font-semibold text-slate-400">{String(index + 1).padStart(2, '0')}</span>

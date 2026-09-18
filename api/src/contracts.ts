@@ -19,6 +19,7 @@ export const profileSchema = z.object({
   academics: z.object({
     interests: z.array(z.string().trim().min(1).max(80)).min(1).max(8),
     main_subject: z.string().trim().min(1).max(80),
+    gpa: z.number().min(1).max(5).optional(),
     performance_level: z.enum(['excellent', 'good', 'average', 'needs_support']),
     grades_detail: z.string().trim().max(300).optional(),
     language_level: z.string().trim().max(100).optional(),

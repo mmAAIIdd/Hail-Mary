@@ -12,8 +12,8 @@ interface DiagnosisViewProps {
 export const DiagnosisView: React.FC<DiagnosisViewProps> = ({ profile, onEditProfile, onAddContext }) => {
   const [context, setContext] = useState(profile.additional_context ?? '');
   return (
-  <main className="mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-10 lg:px-8">
-    <header className="mb-8 flex flex-col gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end sm:justify-between">
+  <main className="editorial-page diagnosis-page mx-auto max-w-7xl px-4 py-7 sm:px-6 sm:py-10 lg:px-8">
+    <header className="diagnosis-header mb-8 flex flex-col gap-5 border-b border-slate-200 pb-7 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <p className="text-xs font-semibold text-slate-500">Анкета завершена <span aria-hidden="true">/</span> <span className="text-slate-950">Рекомендации</span>{profile.basic_info.first_name && <span> · {profile.basic_info.first_name}</span>}</p>
         <h1 className="mt-2 max-w-3xl font-brand text-3xl font-semibold leading-tight text-slate-950 sm:text-5xl">
@@ -33,7 +33,7 @@ export const DiagnosisView: React.FC<DiagnosisViewProps> = ({ profile, onEditPro
       </button>
     </header>
 
-    <form className="mb-8 border-b border-slate-200 pb-8" onSubmit={(event) => {
+    <form className="context-form mb-8 border-b border-slate-200 pb-8" onSubmit={(event) => {
       event.preventDefault();
       const nextContext = context.trim();
       if (nextContext !== (profile.additional_context ?? '')) onAddContext(nextContext);

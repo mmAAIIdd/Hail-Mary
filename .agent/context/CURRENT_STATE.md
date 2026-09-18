@@ -1,5 +1,11 @@
 # Current state
 
+## 2026-09-19 — Merge recovery and typography polish (ready to publish)
+
+- Resolved the unfinished merge between the local planner/chance-analysis work and the remote Admissions Atlas visual system. Planner, reminders, About/Resources pages, university map and the complete recommendation payload are all preserved.
+- Removed the decorative dash before “Персональный маршрут поступления” and increased word spacing in the three About-page principles.
+- Frontend production build, API typecheck, Worker dry-run, conflict-marker scan and `git diff --check` passed. Browser UI verification was unavailable because no browser provider or local Playwright installation was exposed.
+
 ## 2026-09-19 — My Universities planner, reminders and deeper chance analysis (local)
 
 - A post-questionnaire “Мои университеты” area now stores favorites per local profile. Saving a university creates checklist tasks from its 2–3 AI extracurricular recommendations; users can assign dates, mark completion, write a result note and add their own exam/document/deadline/essay tasks.
@@ -21,6 +27,15 @@
 - Newly generated plans contain exactly five chronological roadmap stages. Every stage has an objective, a measurable checkpoint and 4–8 detailed tasks with category, deadline, rationale and tangible result.
 - The results page renders the roadmap as a numbered vertical timeline that runs from the next seven days through preparation, application submission, status checks, financing and final choice.
 - Frontend GitHub Pages build, API typecheck and Worker dry-run passed. Browser automation was unavailable because no browser provider was exposed in the current environment. Changes are local and the production Worker still uses the previous response contract until deployed.
+
+## 2026-09-19 — Admissions Atlas visual system (local)
+
+- Frontend visual language is now documented in `DESIGN.md`.
+- Inspo archive recommendation `split-studio` informed a warm editorial admissions-atlas direction.
+- Shared visual tokens and accessibility-safe focus/reduced-motion rules live in `frontend/src/index.css`; Tailwind brand colors now use terracotta instead of indigo.
+- Landing, navigation, map, questionnaire, diagnosis, admissions workspace, info pages, footer and modal surfaces now share paper/ink/rule/accent treatment.
+- Frontend production build passed with 1884 modules transformed.
+- Desktop and 390px mobile browser screenshots show the revised hierarchy; mobile document width stays within viewport and console has no warnings/errors.
 
 ## 2026-09-18 — Liter, explicit exam scores and sourced campus imagery (local)
 

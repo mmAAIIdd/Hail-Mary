@@ -23,6 +23,7 @@ interface QuestionnaireDraft {
   age: number | '';
   interests: string;
   mainSubject: string;
+  gpa: string;
   performance: PerformanceLevel | '';
   gradesDetail: string;
   languageLevel: string;
@@ -67,7 +68,7 @@ const STEPS = [
   },
   {
     title: 'Учёба и интересы',
-    description: 'Укажите, что вам интересно и как вы оцениваете текущую успеваемость.',
+    description: 'Выберите направления, профильный предмет и укажите средний GPA.',
   },
   {
     title: 'Опыт и новые занятия',
@@ -110,11 +111,26 @@ function initialExamResults(profile: UserProfile | null): QuestionnaireDraft['ex
   })) as QuestionnaireDraft['examResults'];
 }
 
-const PERFORMANCE_OPTIONS: ChoiceOption[] = [
-  { value: 'excellent', label: 'Отличная', description: 'В основном высшие оценки' },
-  { value: 'good', label: 'Хорошая', description: 'Стабильно выше среднего' },
-  { value: 'average', label: 'Средняя', description: 'Есть сильные и слабые предметы' },
-  { value: 'needs_support', label: 'Нужно улучшить', description: 'Есть заметные пробелы' },
+const INTEREST_OPTIONS: ChoiceOption[] = [
+  { value: 'Дизайн', label: 'Дизайн' },
+  { value: 'Робототехника', label: 'Робототехника' },
+  { value: 'Программирование', label: 'Программирование' },
+  { value: 'Бизнес и экономика', label: 'Бизнес и экономика' },
+  { value: 'Медицина и биология', label: 'Медицина и биология' },
+  { value: 'Медиа и коммуникации', label: 'Медиа и коммуникации' },
+  { value: 'Архитектура', label: 'Архитектура' },
+  { value: 'Право и общество', label: 'Право и общество' },
+];
+
+const SUBJECT_OPTIONS: ChoiceOption[] = [
+  { value: 'Математика', label: 'Математика' },
+  { value: 'Информатика', label: 'Информатика' },
+  { value: 'Физика', label: 'Физика' },
+  { value: 'Биология', label: 'Биология' },
+  { value: 'Химия', label: 'Химия' },
+  { value: 'Английский язык', label: 'Английский язык' },
+  { value: 'Обществознание', label: 'Обществознание' },
+  { value: 'Искусство', label: 'Искусство' },
 ];
 
 const TIMELINE_OPTIONS: ChoiceOption[] = [
@@ -205,6 +221,37 @@ function CustomAspects({ aspects, onChange }: {
   );
 }
 
+function MultiChoiceGroup({
+  values,
+  options,
+  onChange,
+}: {
+  values: string[];
+  options: ChoiceOption[];
+  onChange: (value: string[]) => void;
+}) {
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {options.map((option) => {
+        const selected = values.includes(option.value);
+        return (
+          <button
+            key={option.value}
+            type="button"
+            aria-pressed={selected}
+            onClick={() => onChange(selected ? values.filter((value) => value !== option.value) : [...values, option.value])}
+            className={selected
+              ? 'min-h-14 border border-slate-950 bg-slate-950 px-4 py-3 text-left text-sm font-semibold text-white'
+              : 'min-h-14 border border-slate-200 bg-white px-4 py-3 text-left text-sm text-slate-900 transition hover:border-slate-400'}
+          >
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function createDraft(profile: UserProfile | null): QuestionnaireDraft {
   return {
     firstName: profile?.basic_info.first_name ?? '',
@@ -213,6 +260,7 @@ function createDraft(profile: UserProfile | null): QuestionnaireDraft {
     age: profile?.basic_info.age ?? '',
     interests: profile?.academics.interests.join(', ') ?? '',
     mainSubject: profile?.academics.main_subject ?? '',
+    gpa: profile?.academics.gpa?.toFixed(1) ?? '',
     performance: profile?.academics.performance_level ?? '',
     gradesDetail: profile?.academics.grades_detail ?? '',
     languageLevel: profile?.academics.language_level ?? '',
@@ -254,6 +302,13 @@ function maximumAnnualBudget(range: BudgetRange): number {
     over_40000: 60000,
   };
   return values[range];
+}
+
+function performanceFromGpa(gpa: number): PerformanceLevel {
+  if (gpa >= 4.5) return 'excellent';
+  if (gpa >= 3.5) return 'good';
+  if (gpa >= 2.5) return 'average';
+  return 'needs_support';
 }
 
 function targetIntakeYear(timeline: ApplicationTimeline): number {
@@ -324,13 +379,16 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
         return 'Укажите хотя бы один интерес.';
       }
       if (!draft.mainSubject.trim()) return 'Укажите главный предмет.';
-      if (!draft.performance) return 'Выберите текущую успеваемость.';
       for (const name of EXAM_NAMES) {
         const result = draft.examResults[name];
         const config = EXAM_CONFIG[name];
         if (result.status === 'taken' && (!result.score.trim() || !Number.isFinite(Number(result.score)) || Number(result.score) < config.min || Number(result.score) > config.max)) {
           return `Укажите балл ${name} в диапазоне ${config.hint} или выберите «Не сдавал(а)».`;
         }
+      }
+      const gpa = Number(draft.gpa);
+      if (!draft.gpa || !Number.isFinite(gpa) || gpa < 1 || gpa > 5) {
+        return 'Укажите GPA от 1.0 до 5.0.';
       }
     }
 
@@ -360,6 +418,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   const buildProfile = (): UserProfile => {
     const interests = splitInterests(draft.interests);
+    const gpa = Number(draft.gpa);
     const budgetRange = draft.budgetRange as BudgetRange;
     const now = new Date().toISOString();
 
@@ -377,7 +436,6 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
       academics: {
         interests,
         main_subject: draft.mainSubject.trim(),
-        performance_level: draft.performance as PerformanceLevel,
         grades_detail: draft.gradesDetail.trim(),
         language_level: draft.languageLevel.trim(),
         language_exam: draft.languageExam.trim(),
@@ -387,6 +445,8 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
         exam_results: Object.fromEntries(EXAM_NAMES.map((name) => [name, draft.examResults[name].status === 'taken'
           ? { status: 'taken', score: Number(draft.examResults[name].score) }
           : { status: 'not_taken', score: null }])),
+        gpa,
+        performance_level: performanceFromGpa(gpa),
       },
       activities: {
         current: draft.currentActivities.trim(),
@@ -439,7 +499,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
   };
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-8 sm:py-14">
+    <main className="editorial-page questionnaire-page mx-auto w-full max-w-5xl px-4 py-8 sm:px-8 sm:py-14">
       <header className="mb-10">
         <div className="mb-5 flex items-center justify-between gap-4">
           <span className="text-sm font-semibold text-slate-500">
@@ -449,7 +509,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
             {Math.round(progress)}% заполнено
           </span>
         </div>
-        <div className="h-1.5 overflow-hidden bg-slate-200">
+        <div className="progress-track h-1.5 overflow-hidden bg-slate-200">
           <div
             className="h-full bg-slate-950 transition-[width] duration-300"
             style={{ width: `${progress}%` }}
@@ -457,7 +517,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
         </div>
       </header>
 
-      <section className="border border-slate-200 bg-white px-5 py-7 sm:px-10 sm:py-10">
+      <section className="questionnaire-panel border border-slate-200 bg-white px-5 py-7 sm:px-10 sm:py-10">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-400">
             {initialProfile ? 'Редактирование анкеты' : 'Анкета абитуриента'}
@@ -539,41 +599,20 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
                 <span className="mb-2 block text-sm font-semibold text-slate-800">
                   Ваши интересы
                 </span>
-                <input
-                  type="text"
-                  value={draft.interests}
-                  onChange={(event) => updateDraft('interests', event.target.value)}
-                  placeholder="Программирование, дизайн, экономика"
-                  className="h-14 w-full border border-slate-300 px-4 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-950"
+                <MultiChoiceGroup
+                  values={splitInterests(draft.interests)}
+                  options={INTEREST_OPTIONS}
+                  onChange={(values) => updateDraft('interests', values.join(', '))}
                 />
-                <span className="mt-2 block text-sm text-slate-500">
-                  Перечислите через запятую до восьми направлений.
-                </span>
-              </label>
-
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-slate-800">
-                  Главный школьный предмет
-                </span>
-                <input
-                  type="text"
-                  value={draft.mainSubject}
-                  onChange={(event) => updateDraft('mainSubject', event.target.value)}
-                  placeholder="Например, математика"
-                  className="h-14 w-full border border-slate-300 px-4 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-950"
-                />
+                <span className="mt-2 block text-sm text-slate-500">Можно выбрать несколько направлений.</span>
               </label>
 
               <fieldset>
-                <legend className="mb-3 text-sm font-semibold text-slate-800">
-                  Как вы оцениваете свою успеваемость?
-                </legend>
+                <legend className="mb-3 text-sm font-semibold text-slate-800">Профильный предмет</legend>
                 <ChoiceGroup
-                  value={draft.performance}
-                  options={PERFORMANCE_OPTIONS}
-                  onChange={(value) =>
-                    updateDraft('performance', value as PerformanceLevel)
-                  }
+                  value={draft.mainSubject}
+                  options={SUBJECT_OPTIONS}
+                  onChange={(value) => updateDraft('mainSubject', value)}
                 />
               </fieldset>
               <label className="block">
@@ -606,6 +645,21 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
                 <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-800">Желаемая специальность</span><input maxLength={120} value={draft.targetProgram} onChange={(event) => updateDraft('targetProgram', event.target.value)} placeholder="Например, биоинформатика" className="h-14 w-full border border-slate-300 px-4 text-base outline-none focus:border-slate-950" /></label>
                 <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-800">Школьная программа</span><input maxLength={120} value={draft.schoolSystem} onChange={(event) => updateDraft('schoolSystem', event.target.value)} placeholder="Обычная школа, IB, A-Level и т. п." className="h-14 w-full border border-slate-300 px-4 text-base outline-none focus:border-slate-950" /></label>
               </div>
+              <label className="block max-w-sm">
+                <span className="mb-2 block text-sm font-semibold text-slate-800">Средний GPA</span>
+                <input
+                  type="number"
+                  min="1"
+                  max="5"
+                  step="0.1"
+                  inputMode="decimal"
+                  value={draft.gpa}
+                  onChange={(event) => updateDraft('gpa', event.target.value)}
+                  placeholder="Например, 4.3"
+                  className="h-14 w-full border border-slate-300 px-4 text-base text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-slate-950"
+                />
+                <span className="mt-2 block text-sm text-slate-500">Введите среднее значение по шкале от 1.0 до 5.0.</span>
+              </label>
             </div>
           )}
 

@@ -3,8 +3,8 @@ import { RotateCcw, Menu, X } from 'lucide-react';
 import { UserProfile } from '../../types/profile';
 
 interface HeaderProps {
-  activeTab: 'landing' | 'profile' | 'diagnosis' | 'planner';
-  setActiveTab: (tab: 'landing' | 'profile' | 'diagnosis' | 'planner') => void;
+  activeTab: 'landing' | 'profile' | 'diagnosis' | 'planner' | 'about' | 'resources';
+  setActiveTab: (tab: 'landing' | 'profile' | 'diagnosis' | 'planner' | 'about' | 'resources') => void;
   profile: UserProfile | null;
   onReset: () => void;
 }
@@ -25,16 +25,16 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      <header className="relative sticky top-0 z-40 w-full border-b border-stone-200/80 bg-[#faf8f5]/95 backdrop-blur-md">
+      <header className="site-header relative sticky top-0 z-40 w-full border-b border-stone-200/80 bg-[#faf8f5]/95 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between gap-3 sm:h-20">
             {/* Brand */}
             <div className="flex min-w-0 items-center">
               <button
                 onClick={() => setActiveTab('landing')}
-                className="flex items-center gap-2 text-left group focus:outline-none"
+                className="group flex items-center gap-2 text-left focus:outline-none"
               >
-                <span className="whitespace-nowrap font-brand text-xl font-semibold tracking-tight text-slate-950 transition group-hover:text-neutral-700 sm:text-[30px] sm:font-medium">
+                <span className="brand-mark whitespace-nowrap font-brand text-xl font-semibold tracking-tight text-slate-950 transition group-hover:text-neutral-700 sm:text-[30px] sm:font-medium">
                   Hail Mary
                 </span>
               </button>
@@ -44,22 +44,36 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 onClick={() => setActiveTab('landing')}
                 aria-current={activeTab === 'landing' ? 'page' : undefined}
-                className={activeTab === 'landing' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}
+                    className={`nav-link ${activeTab === 'landing' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}`}
               >
                 Главная
               </button>
               <button
                 onClick={handleStartQuestionnaire}
                 aria-current={activeTab === 'profile' ? 'page' : undefined}
-                className={activeTab === 'profile' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}
+                    className={`nav-link ${activeTab === 'profile' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}`}
               >
                 Анкета
+              </button>
+              <button
+                onClick={() => setActiveTab('about')}
+                aria-current={activeTab === 'about' ? 'page' : undefined}
+                    className={`nav-link ${activeTab === 'about' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}`}
+              >
+                О нас
+              </button>
+              <button
+                onClick={() => setActiveTab('resources')}
+                aria-current={activeTab === 'resources' ? 'page' : undefined}
+                    className={`nav-link ${activeTab === 'resources' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}`}
+              >
+                Ресурсы
               </button>
               {profile && (
                 <button
                   onClick={() => setActiveTab('diagnosis')}
                   aria-current={activeTab === 'diagnosis' ? 'page' : undefined}
-                  className={activeTab === 'diagnosis' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}
+                    className={`nav-link ${activeTab === 'diagnosis' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}`}
                 >
                   Рекомендации
                 </button>
@@ -79,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
               {activeTab === 'landing' && (
                 <button
                   onClick={profile ? () => setActiveTab('diagnosis') : handleStartQuestionnaire}
-                  className="hidden min-h-10 items-center rounded-xl bg-black px-4 text-xs font-semibold text-white transition hover:bg-neutral-800 sm:inline-flex sm:text-sm"
+                  className="atlas-button hidden min-h-10 items-center px-4 text-xs font-semibold text-white sm:inline-flex sm:text-sm"
                 >
                   {profile ? 'Мои рекомендации' : 'Пройти анкету'}
                 </button>
@@ -126,6 +140,26 @@ export const Header: React.FC<HeaderProps> = ({
                 className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
               >
                 Анкета {activeTab === 'profile' && '•'}
+              </button>
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setActiveTab('about');
+                }}
+                aria-current={activeTab === 'about' ? 'page' : undefined}
+                className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
+              >
+                О нас {activeTab === 'about' && '•'}
+              </button>
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  setActiveTab('resources');
+                }}
+                aria-current={activeTab === 'resources' ? 'page' : undefined}
+                className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
+              >
+                Ресурсы {activeTab === 'resources' && '•'}
               </button>
               {profile && (
                 <button

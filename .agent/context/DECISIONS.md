@@ -12,6 +12,10 @@ Do not present one generic extracurricular list as suitable for every applicatio
 
 The user's preferred university is optional and is treated as an admissions hypothesis. It may enter the six recommendations only when its bachelor level and geography fit the questionnaire; the desire itself must not increase fit or admission-chance estimates. The roadmap uses five explicit stages with measurable checkpoints so progress can be reviewed before moving forward. The timeline continues beyond submission to status requests, financing and final choice.
 
+## 2026-09-19 — Admissions Atlas visual language
+
+Use Inspo archive recommendation `split-studio` as composition guidance, not as a template. Keep Hail Mary’s existing Liter font, map, cardless admissions workspace and evidence-aware copy. Add warm paper `#F7F3EA`, ink `#1F2420`, terracotta `#D6552E`, beige rules and sage geography surfaces. Use typography, thin rules and a three-part hero ledger as the differentiator; avoid card mosaics, gradients and heavy shadows.
+
 ## 2026-09-18 — Campus images require entity provenance
 
 Do not ask the language model to invent or guess a campus-photo URL. Resolve the university name to an exact Wikidata entity, use its P18 structured image claim, and display Wikimedia Commons author, license and source metadata. If resolution or metadata validation fails, show no image. This reduces false campus attribution but does not implement the hackathon case's complete photo verification and deduplication pipeline.

@@ -6,6 +6,7 @@ import { LandingView } from './components/landing/LandingView';
 import { Questionnaire } from './components/profile/Questionnaire';
 import { DiagnosisView } from './components/diagnosis/DiagnosisView';
 import { MyUniversitiesView } from './components/planner/MyUniversitiesView';
+import { InfoView } from './components/info/InfoView';
 import {
   loadStoredProfile,
   saveStoredProfile,
@@ -16,7 +17,7 @@ import { clearAdmissionsHistory } from './lib/admissionsHistory';
 import { clearPlannerState, getNextPlannerReminder, PLANNER_UPDATED_EVENT } from './lib/plannerStorage';
 import { PlannerReminder } from './types/planner';
 
-type ActiveTab = 'landing' | 'profile' | 'diagnosis' | 'planner';
+type ActiveTab = 'landing' | 'profile' | 'diagnosis' | 'planner' | 'about' | 'resources';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('landing');
@@ -37,7 +38,14 @@ export function App() {
   }, [profile]);
 
   useEffect(() => {
-    const pageNames = { landing: 'Главная', profile: 'Анкета', diagnosis: 'Рекомендации', planner: 'Мои университеты' };
+    const pageNames: Record<ActiveTab, string> = {
+      landing: 'Главная',
+      profile: 'Анкета',
+      diagnosis: 'Рекомендации',
+      planner: 'Мои университеты',
+      about: 'О нас',
+      resources: 'Ресурсы',
+    };
     document.title = `${pageNames[activeTab]} — Hail Mary`;
   }, [activeTab]);
 
@@ -70,7 +78,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="app-shell min-h-screen flex flex-col bg-paper text-ink">
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -131,6 +139,9 @@ export function App() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }} />
         )}
+
+        {activeTab === 'about' && <InfoView section="about" onStartQuestionnaire={() => setActiveTab('profile')} />}
+        {activeTab === 'resources' && <InfoView section="resources" onStartQuestionnaire={() => setActiveTab('profile')} />}
       </main>
 
       {activeTab !== 'landing' && <Footer />}

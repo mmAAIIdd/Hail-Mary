@@ -3,19 +3,220 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: Liter;
-  src: url('/fonts/Liter-Regular.woff2') format('woff2');
+  font-family: 'Liter';
+  src: url('/fonts/Liter-Regular.ttf') format('truetype');
   font-style: normal;
   font-weight: 400;
   font-display: swap;
 }
 
 @layer base {
+  :root {
+    --atlas-paper: #f7f3ea;
+    --atlas-paper-deep: #ece4d5;
+    --atlas-ink: #1f2420;
+    --atlas-muted: #6d6d63;
+    --atlas-line: #d8d0c1;
+    --atlas-accent: #d6552e;
+    --atlas-accent-dark: #a93e25;
+    --atlas-sage: #dfe8df;
+  }
+
   html {
     color-scheme: light;
+    scroll-behavior: smooth;
   }
+
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+    @apply text-slate-900 antialiased;
+    background: var(--atlas-paper);
+    color: var(--atlas-ink);
+    font-family: 'Liter', sans-serif;
+    letter-spacing: 0;
+  }
+
+  body::selection {
+    background: var(--atlas-accent);
+    color: #fffaf2;
+  }
+
+  button,
+  a,
+  input,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--atlas-accent);
+    outline-offset: 3px;
+  }
+
+  input,
+  textarea {
+    border-radius: 0.18rem;
+    background: rgba(255, 252, 246, 0.72);
+  }
+}
+
+@layer components {
+  .app-shell {
+    background:
+      linear-gradient(rgba(247, 243, 234, 0.96), rgba(247, 243, 234, 0.96)),
+      radial-gradient(circle at 10% 0%, rgba(214, 85, 46, 0.08), transparent 32rem);
+  }
+
+  .site-header {
+    border-color: var(--atlas-line) !important;
+    background: rgba(247, 243, 234, 0.92) !important;
+  }
+
+  .site-header .brand-mark {
+    color: var(--atlas-ink);
+    letter-spacing: -0.055em;
+  }
+
+  .site-header .nav-link {
+    color: var(--atlas-muted);
+    transition: color 180ms ease, border-color 180ms ease;
+  }
+
+  .site-header .nav-link:hover,
+  .site-header .nav-link[aria-current='page'] {
+    color: var(--atlas-ink);
+  }
+
+  .editorial-page {
+    color: var(--atlas-ink);
+  }
+
+  .editorial-page h1,
+  .editorial-page h2,
+  .editorial-page h3,
+  .editorial-page h4,
+  .editorial-page .font-brand {
+    letter-spacing: -0.045em;
+  }
+
+  .editorial-page section,
+  .editorial-page header,
+  .editorial-page form {
+    border-color: var(--atlas-line);
+  }
+
+  .about-principles {
+    word-spacing: 0.12em;
+  }
+
+  .landing-hero {
+    isolation: isolate;
+  }
+
+  .landing-hero::after {
+    position: absolute;
+    inset: 1.5rem 1.5rem auto auto;
+    z-index: 2;
+    width: 5rem;
+    height: 5rem;
+    border: 1px solid rgba(255, 250, 242, 0.5);
+    border-radius: 999px;
+    content: '';
+    opacity: 0.6;
+  }
+
+  .hero-ledger {
+    border-top: 1px solid rgba(255, 250, 242, 0.42);
+    border-bottom: 1px solid rgba(255, 250, 242, 0.42);
+    color: rgba(255, 250, 242, 0.82);
+  }
+
+  .hero-ledger strong {
+    color: #fffaf2;
+  }
+
+  .atlas-button {
+    border-radius: 0.2rem;
+    background: var(--atlas-accent);
+    box-shadow: 0 10px 24px rgba(31, 36, 32, 0.24);
+    transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  .atlas-button:hover {
+    background: var(--atlas-accent-dark);
+    box-shadow: 0 14px 30px rgba(31, 36, 32, 0.28);
+    transform: translateY(-1px);
+  }
+
+  .questionnaire-panel {
+    background: rgba(255, 252, 246, 0.84) !important;
+    box-shadow: 0 24px 60px rgba(92, 77, 56, 0.08);
+  }
+
+  .questionnaire-panel button[aria-pressed='true'] {
+    border-color: var(--atlas-accent) !important;
+    background: var(--atlas-accent) !important;
+  }
+
+  .questionnaire-panel button[aria-pressed='false']:hover {
+    border-color: var(--atlas-accent) !important;
+    color: var(--atlas-ink);
+  }
+
+  .progress-track {
+    background: var(--atlas-line) !important;
+  }
+
+  .progress-track > div {
+    background: var(--atlas-accent) !important;
+  }
+
+  .admissions-workspace .university-list,
+  .admissions-workspace .comparison-table,
+  .admissions-workspace .roadmap-stage {
+    border-color: var(--atlas-line);
+  }
+
+  .admissions-workspace .section-kicker {
+    color: var(--atlas-accent);
+  }
+
+  .admissions-workspace .university-list button[aria-pressed='true'] {
+    color: var(--atlas-accent-dark);
+  }
+
+  .map-section {
+    background: var(--atlas-sage) !important;
+    border-color: var(--atlas-line) !important;
+  }
+
+  .map-panel {
+    border-color: rgba(31, 36, 32, 0.28) !important;
+    background: #b7ced0 !important;
+    box-shadow: 12px 12px 0 rgba(31, 36, 32, 0.1) !important;
+  }
+
+  .site-footer {
+    border-color: var(--atlas-line) !important;
+    background: var(--atlas-paper-deep) !important;
+  }
+
+  .modal-surface {
+    border-radius: 0.35rem !important;
+    background: var(--atlas-paper) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }
 
