@@ -291,7 +291,7 @@ export const AdmissionsWorkspace: React.FC<AdmissionsWorkspaceProps> = ({ profil
               Получите шесть вариантов по странам, бюджету и интересам. Затем сравните их и соберите порядок действий до подачи.
             </p>
             <ul className="mt-6 grid gap-3 text-sm text-slate-700 sm:grid-cols-3">
-              <li className="border-t border-slate-300 pt-3">Проверка по открытым источникам</li>
+              <li className="border-t border-slate-300 pt-3">Источники для перепроверки</li>
               <li className="border-t border-slate-300 pt-3">Сравнение до трёх вариантов</li>
               <li className="border-t border-slate-300 pt-3">План по вашим срокам</li>
             </ul>

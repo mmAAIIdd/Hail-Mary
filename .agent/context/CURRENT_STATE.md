@@ -1,6 +1,6 @@
 # Current state
 
-Status: основной frontend опубликован; Cloudflare Worker развёрнут, секрет настроен и production API проверен реальным Gemini-запросом.
+Status: frontend и Cloudflare Worker опубликованы; production путь от анкеты до персональных Gemini-рекомендаций проверен в браузере.
 
 Working:
 1. Полноэкранный адаптивный лендинг с одним основным действием — пройти анкету.
@@ -34,7 +34,7 @@ Validation:
 - API boundary: malformed profile returns 400, disallowed origin returns 403, missing server secret returns 503.
 - Production Worker health returns 200; реальный запрос вернул 6 университетов, 3 этапа пути и 6 источников.
 - При перегрузке Gemini 3.6 Flash запрос успешно переключился на `gemini-3.5-flash-lite`.
+- GitHub Pages workflow `35360706771` завершился успешно; публичная анкета получила шесть рекомендаций через production Worker без ошибок консоли.
 
 Pending production setup:
-- publish the updated frontend and verify the live GitHub Pages flow.
 - enable Gemini billing before turning on Google Search grounding.
