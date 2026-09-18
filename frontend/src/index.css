@@ -156,8 +156,16 @@
   }
 
   .questionnaire-panel button[aria-pressed='true'] {
-    border-color: var(--atlas-accent) !important;
+    position: relative;
+    z-index: 1;
+    border-color: var(--atlas-accent-dark) !important;
     background: var(--atlas-accent) !important;
+    box-shadow:
+      0 0 0 2px var(--atlas-paper),
+      0 0 0 5px var(--atlas-accent-dark),
+      0 10px 22px rgba(169, 62, 37, 0.2);
+    transform: translateY(-1px);
+    transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
   }
 
   .questionnaire-panel button[aria-pressed='false']:hover {

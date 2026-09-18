@@ -1,5 +1,12 @@
 # Current state
 
+## 2026-09-19 — Profile subjects and selected-state polish (local)
+
+- Replaced the fixed subject-choice grid and detached free-text grades area with up to six editable subject/grade pairs. The first pair remains the primary subject; all grades retain their stated scale and reach the existing recommendation contract.
+- Validation rejects missing or duplicate subjects, scores above their scale maximum and an oversized serialized payload. Structured older entries reopen in the new fields; unstructured legacy text remains visible for manual transfer rather than being silently rewritten.
+- Selected questionnaire options now have a dark terracotta border, separated outer contour and light elevation in addition to the orange fill.
+- Frontend build, API typecheck, stale-selector search and `git diff --check` passed. Changes remain local; browser visual QA was not run.
+
 ## 2026-09-19 — Dedicated personalized admissions roadmap (local)
 
 - Added a separate top-navigation section, “Путь к поступлению”, instead of hiding the roadmap below university recommendations. The recommendation page now focuses on selection and comparison and links directly to the roadmap.

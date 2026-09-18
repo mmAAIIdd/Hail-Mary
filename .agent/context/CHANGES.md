@@ -1,5 +1,9 @@
 # Change history
 
+## 2026-09-19 — Subject and grade entry
+
+Replaced the predefined profile-subject grid with repeatable subject/grade input rows. Kept the existing Worker payload shape, validated duplicate names, numeric grade/scale and total serialized length, and made older unstructured grades visible during profile editing. Added a clearly outlined selected state to questionnaire choices. Frontend build, API typecheck and diff check passed; not published.
+
 ## 2026-09-19 — Dedicated path-to-admission experience
 
 Added a separate “Путь к поступлению” destination to desktop and mobile navigation. The focused roadmap shows its questionnaire basis, target program, timeline, workload, nearest executable task, measurable results, stage checkpoints and locally persisted completion progress. Removed the duplicated roadmap from recommendations. Strengthened Gemini guidance so every task is tied to a real profile fact or explicit unknown, respects prerequisites and weekly capacity, and aligns with `next_actions`. Bumped Worker cache and frontend plan storage versions. Frontend build, API typecheck, Worker dry-run and diff check passed.

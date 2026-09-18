@@ -22,10 +22,9 @@ interface QuestionnaireDraft {
   grade: SchoolGrade | '';
   age: number | '';
   interests: string;
-  mainSubject: string;
+  subjectGrades: Array<{ subject: string; grade: string }>;
   gpa: string;
   performance: PerformanceLevel | '';
-  gradesDetail: string;
   languageLevel: string;
   languageExam: string;
   otherExams: string;
@@ -68,7 +67,7 @@ const STEPS = [
   },
   {
     title: 'Учёба и интересы',
-    description: 'Выберите направления, профильный предмет и укажите средний GPA.',
+    description: 'Укажите направления, профильные предметы и ваши реальные оценки.',
   },
   {
     title: 'Опыт и новые занятия',
@@ -120,17 +119,6 @@ const INTEREST_OPTIONS: ChoiceOption[] = [
   { value: 'Медиа и коммуникации', label: 'Медиа и коммуникации' },
   { value: 'Архитектура', label: 'Архитектура' },
   { value: 'Право и общество', label: 'Право и общество' },
-];
-
-const SUBJECT_OPTIONS: ChoiceOption[] = [
-  { value: 'Математика', label: 'Математика' },
-  { value: 'Информатика', label: 'Информатика' },
-  { value: 'Физика', label: 'Физика' },
-  { value: 'Биология', label: 'Биология' },
-  { value: 'Химия', label: 'Химия' },
-  { value: 'Английский язык', label: 'Английский язык' },
-  { value: 'Обществознание', label: 'Обществознание' },
-  { value: 'Искусство', label: 'Искусство' },
 ];
 
 const TIMELINE_OPTIONS: ChoiceOption[] = [
@@ -252,6 +240,57 @@ function MultiChoiceGroup({
   );
 }
 
+function subjectGradesFromProfile(profile: UserProfile | null): QuestionnaireDraft['subjectGrades'] {
+  const mainSubject = profile?.academics.main_subject?.trim() ?? '';
+  const gradesDetail = profile?.academics.grades_detail?.trim() ?? '';
+  if (!mainSubject) return [{ subject: '', grade: '' }];
+  if (!gradesDetail) return [{ subject: mainSubject, grade: '' }];
+
+  const parsed = gradesDetail
+    .split(';')
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .map((entry) => {
+      const separatorIndex = entry.indexOf(':');
+      if (separatorIndex <= 0) return null;
+      return {
+        subject: entry.slice(0, separatorIndex).trim(),
+        grade: entry.slice(separatorIndex + 1).trim(),
+      };
+    })
+    .filter((entry): entry is { subject: string; grade: string } => Boolean(entry?.subject));
+
+  if (parsed.length > 0) {
+    const mainIndex = parsed.findIndex(({ subject }) => subject.toLocaleLowerCase('ru-RU') === mainSubject.toLocaleLowerCase('ru-RU'));
+    if (mainIndex > 0) parsed.unshift(parsed.splice(mainIndex, 1)[0]);
+    if (mainIndex < 0) parsed.unshift({ subject: mainSubject, grade: '' });
+    return parsed.slice(0, 6);
+  }
+
+  return [{ subject: mainSubject, grade: /^\d+(?:[.,]\d+)?\s*\/\s*\d+(?:[.,]\d+)?$/.test(gradesDetail) ? gradesDetail : '' }];
+}
+
+function legacyGradesNote(profile: UserProfile | null): string {
+  const gradesDetail = profile?.academics.grades_detail?.trim() ?? '';
+  if (!gradesDetail || gradesDetail.includes(':')) return '';
+  return /^\d+(?:[.,]\d+)?\s*\/\s*\d+(?:[.,]\d+)?$/.test(gradesDetail) ? '' : gradesDetail;
+}
+
+function isValidGrade(grade: string): boolean {
+  const match = /^(\d+(?:[.,]\d+)?)\s*\/\s*(\d+(?:[.,]\d+)?)$/.exec(grade);
+  if (!match) return false;
+  const score = Number(match[1].replace(',', '.'));
+  const maximum = Number(match[2].replace(',', '.'));
+  return Number.isFinite(score) && Number.isFinite(maximum) && maximum > 0 && score >= 0 && score <= maximum;
+}
+
+function normalizedSubjectGrades(subjectGrades: QuestionnaireDraft['subjectGrades']) {
+  return subjectGrades.map(({ subject, grade }) => ({
+    subject: subject.trim(),
+    grade: grade.trim(),
+  }));
+}
+
 function createDraft(profile: UserProfile | null): QuestionnaireDraft {
   return {
     firstName: profile?.basic_info.first_name ?? '',
@@ -259,10 +298,9 @@ function createDraft(profile: UserProfile | null): QuestionnaireDraft {
     grade: profile?.basic_info.grade ?? '',
     age: profile?.basic_info.age ?? '',
     interests: profile?.academics.interests.join(', ') ?? '',
-    mainSubject: profile?.academics.main_subject ?? '',
+    subjectGrades: subjectGradesFromProfile(profile),
     gpa: profile?.academics.gpa?.toFixed(1) ?? '',
     performance: profile?.academics.performance_level ?? '',
-    gradesDetail: profile?.academics.grades_detail ?? '',
     languageLevel: profile?.academics.language_level ?? '',
     languageExam: profile?.academics.language_exam ?? '',
     otherExams: profile?.academics.other_exams ?? '',
@@ -378,7 +416,16 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
       if (splitInterests(draft.interests).length === 0) {
         return 'Укажите хотя бы один интерес.';
       }
-      if (!draft.mainSubject.trim()) return 'Укажите главный предмет.';
+      const subjectGrades = normalizedSubjectGrades(draft.subjectGrades);
+      if (subjectGrades.some(({ subject }) => !subject)) return 'Укажите название каждого профильного предмета.';
+      if (subjectGrades.some(({ subject }) => /[:;]/.test(subject))) return 'Уберите двоеточие и точку с запятой из названия предмета.';
+      if (subjectGrades.some(({ grade }) => !isValidGrade(grade))) return 'Укажите для каждого предмета оценку и шкалу числом, например 5/5 или 92/100. Оценка не должна превышать максимум.';
+      if (new Set(subjectGrades.map(({ subject }) => subject.toLocaleLowerCase('ru-RU'))).size !== subjectGrades.length) {
+        return 'Каждый профильный предмет нужно указать только один раз.';
+      }
+      if (subjectGrades.map(({ subject, grade }) => `${subject}: ${grade}`).join('; ').length > 300) {
+        return 'Сократите названия предметов или шкалы оценок: общий лимит — 300 символов.';
+      }
       for (const name of EXAM_NAMES) {
         const result = draft.examResults[name];
         const config = EXAM_CONFIG[name];
@@ -418,6 +465,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
 
   const buildProfile = (): UserProfile => {
     const interests = splitInterests(draft.interests);
+    const subjectGrades = normalizedSubjectGrades(draft.subjectGrades);
     const gpa = Number(draft.gpa);
     const budgetRange = draft.budgetRange as BudgetRange;
     const now = new Date().toISOString();
@@ -435,8 +483,8 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
       },
       academics: {
         interests,
-        main_subject: draft.mainSubject.trim(),
-        grades_detail: draft.gradesDetail.trim(),
+        main_subject: subjectGrades[0].subject,
+        grades_detail: subjectGrades.map(({ subject, grade }) => `${subject}: ${grade}`).join('; '),
         language_level: draft.languageLevel.trim(),
         language_exam: draft.languageExam.trim(),
         other_exams: draft.otherExams.trim(),
@@ -608,18 +656,48 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
               </label>
 
               <fieldset>
-                <legend className="mb-3 text-sm font-semibold text-slate-800">Профильный предмет</legend>
-                <ChoiceGroup
-                  value={draft.mainSubject}
-                  options={SUBJECT_OPTIONS}
-                  onChange={(value) => updateDraft('mainSubject', value)}
-                />
+                <legend className="text-sm font-semibold text-slate-800">Профильные предметы и оценки</legend>
+                <p className="mt-1 text-sm leading-6 text-slate-500">Введите предмет сами и сразу укажите оценку вместе со шкалой.</p>
+                {legacyGradesNote(initialProfile) && (
+                  <p className="mt-3 border-l-2 border-amber-500 pl-3 text-sm leading-6 text-slate-700">
+                    Ранее вы указали: {legacyGradesNote(initialProfile)}. Перенесите эти оценки в поля ниже — старый текст нельзя надёжно разделить по предметам.
+                  </p>
+                )}
+                <div className="mt-4 space-y-3">
+                  {draft.subjectGrades.map((item, index) => (
+                    <div key={index} className="grid gap-3 border-l-2 border-slate-300 pl-4 sm:grid-cols-[minmax(0,1fr)_minmax(180px,0.55fr)_auto] sm:items-end">
+                      <label className="block">
+                        <span className="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500">{index === 0 ? 'Основной предмет' : `Предмет ${index + 1}`}</span>
+                        <input
+                          type="text"
+                          maxLength={80}
+                          value={item.subject}
+                          onChange={(event) => updateDraft('subjectGrades', draft.subjectGrades.map((subjectGrade, position) => position === index ? { ...subjectGrade, subject: event.target.value } : subjectGrade))}
+                          placeholder="Например, информатика"
+                          className="h-14 w-full border border-slate-300 px-4 text-base outline-none transition focus:border-slate-950"
+                        />
+                      </label>
+                      <label className="block">
+                        <span className="mb-2 block text-xs font-semibold uppercase tracking-wide text-slate-500">Оценка и шкала</span>
+                        <input
+                          type="text"
+                          maxLength={40}
+                          value={item.grade}
+                          onChange={(event) => updateDraft('subjectGrades', draft.subjectGrades.map((subjectGrade, position) => position === index ? { ...subjectGrade, grade: event.target.value } : subjectGrade))}
+                          placeholder="5/5 или 92/100"
+                          className="h-14 w-full border border-slate-300 px-4 text-base outline-none transition focus:border-slate-950"
+                        />
+                      </label>
+                      {draft.subjectGrades.length > 1 && (
+                        <button type="button" onClick={() => updateDraft('subjectGrades', draft.subjectGrades.filter((_, position) => position !== index))} className="min-h-11 px-1 text-left text-sm text-slate-600 underline decoration-slate-300 underline-offset-4 hover:text-rose-700 sm:mb-1">Удалить</button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {draft.subjectGrades.length < 6 && (
+                  <button type="button" onClick={() => updateDraft('subjectGrades', [...draft.subjectGrades, { subject: '', grade: '' }])} className="mt-4 inline-flex min-h-11 items-center border border-slate-950 px-5 text-sm font-semibold text-slate-950 transition hover:bg-slate-950 hover:text-white">+ Добавить предмет</button>
+                )}
               </fieldset>
-              <label className="block">
-                <span className="mb-2 block text-sm font-semibold text-slate-800">Оценки по профильным предметам</span>
-                <textarea maxLength={300} rows={2} value={draft.gradesDetail} onChange={(event) => updateDraft('gradesDetail', event.target.value)} placeholder="Например: математика 5/5, биология 4/5; укажите шкалу" className="w-full border border-slate-300 px-4 py-3 text-base outline-none focus:border-slate-950" />
-                <span className="mt-1 block text-sm text-slate-500">Необязательно. Если не знаете точных оценок, оставьте пустым.</span>
-              </label>
               <div className="grid gap-6 sm:grid-cols-2">
                 <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-800">Уровень языка обучения</span><input maxLength={100} value={draft.languageLevel} onChange={(event) => updateDraft('languageLevel', event.target.value)} placeholder="Например: английский B2" className="h-14 w-full border border-slate-300 px-4 text-base outline-none focus:border-slate-950" /></label>
                 <label className="block"><span className="mb-2 block text-sm font-semibold text-slate-800">Дополнительный языковой экзамен или план</span><input maxLength={120} value={draft.languageExam} onChange={(event) => updateDraft('languageExam', event.target.value)} placeholder="Например: Duolingo English Test в ноябре" className="h-14 w-full border border-slate-300 px-4 text-base outline-none focus:border-slate-950" /></label>
