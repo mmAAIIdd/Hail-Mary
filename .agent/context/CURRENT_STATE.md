@@ -1,5 +1,13 @@
 # Current state
 
+## 2026-09-18 — Liter, explicit exam scores and sourced campus imagery (local)
+
+- The questionnaire shows a prominent “+ Добавить свои данные” control on its first step and accepts up to six custom aspects.
+- IELTS, TOEFL, SAT and ЕНТ each have “Не сдавал(а)” / “Есть результат” states and score inputs constrained to their own scales. The structured values reach the Worker profile and therefore change the v6 cache key and recommendations.
+- The interface now uses the original Liter 1.004 webfont from its OFL-licensed repository, bundled locally with the license file.
+- The selected university shows a Wikidata P18 image only after an exact university-entity match, then gets the thumbnail, author, license and source page through Wikimedia Commons metadata. If no validated image exists, the UI says so instead of substituting an unrelated photo.
+- GitHub Pages-mode frontend build, API typecheck and Worker dry-run passed. The Wikidata/Commons response shape was checked against Harvard University. Changes are not published in this turn.
+
 ## 2026-09-18 — Local answer history, university details, deeper personalization
 
 - A bounded five-version history now uses a compact cookie index (IDs and timestamps only) with full plans in localStorage; the results screen can reopen an older answer. Reset clears both. No server-side or cross-device history exists.

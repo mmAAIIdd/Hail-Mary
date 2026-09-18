@@ -5,9 +5,9 @@ const httpsUrlSchema = z.string().url().refine(
   'URL must use HTTPS',
 );
 const optionalSourceUrlSchema = z.union([z.literal(''), httpsUrlSchema]);
-const examResultSchema = z.discriminatedUnion('status', [
+const examResultSchema = (minimum: number, maximum: number) => z.discriminatedUnion('status', [
   z.object({ status: z.literal('not_taken'), score: z.null() }).strict(),
-  z.object({ status: z.literal('taken'), score: z.number().finite().min(0).max(2000) }).strict(),
+  z.object({ status: z.literal('taken'), score: z.number().finite().min(minimum).max(maximum) }).strict(),
 ]);
 
 export const profileSchema = z.object({
@@ -27,10 +27,10 @@ export const profileSchema = z.object({
     target_program: z.string().trim().max(120).optional(),
     school_system: z.string().trim().max(120).optional(),
     exam_results: z.object({
-      IELTS: examResultSchema.optional(),
-      TOEFL: examResultSchema.optional(),
-      SAT: examResultSchema.optional(),
-      ЕНТ: examResultSchema.optional(),
+      IELTS: examResultSchema(0, 9).optional(),
+      TOEFL: examResultSchema(0, 120).optional(),
+      SAT: examResultSchema(400, 1600).optional(),
+      ЕНТ: examResultSchema(0, 140).optional(),
     }).strict().optional(),
   }),
   activities: z.object({

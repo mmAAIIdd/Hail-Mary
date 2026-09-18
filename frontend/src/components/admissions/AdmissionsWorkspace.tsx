@@ -121,8 +121,9 @@ function UniversityDetail({ university, plan, expanded }: { university: Universi
         <p className="mt-3 text-sm leading-7 text-slate-700">{university.why_fit.join(' ')} {university.admission_chance?.explanation}</p>
       </div>
 
+      <CampusPhoto universityName={university.name} />
+
       {expanded && <>
-        <CampusPhoto universityName={university.name} />
         <div className="mt-7 space-y-6 border-t border-slate-200 pt-6">
           <div><h4 className="text-sm font-bold text-slate-950">Учебное соответствие</h4><p className="mt-2 text-sm leading-7 text-slate-700">{university.details.academic_fit || 'Для точного разбора нужны оценки по профильным предметам и требования выбранной программы.'}</p></div>
           <div><h4 className="text-sm font-bold text-slate-950">Почему стоит рассмотреть</h4><p className="mt-2 text-sm leading-7 text-slate-700">{university.details.choice_reason || university.why_fit.join(' ')}</p></div>

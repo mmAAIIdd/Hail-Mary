@@ -1,5 +1,8 @@
 # Handoff
 
+LATEST (2026-09-18, exams/font/campus): Custom-aspect addition is visible on questionnaire step 1. IELTS, TOEFL, SAT and ЕНТ are structured as not-taken or numeric results with exam-specific ranges and Worker validation; cache version is v6. Liter 1.004 is self-hosted with OFL. University detail resolves an exact Wikidata entity and its P18 Commons image, showing attribution/source or an honest no-photo state. GitHub Pages build, API check and Worker dry-run passed; no live browser flow or deployment was performed.
+
+
 LATEST (2026-09-18, history/detail/personalization): Added five-entry cookie-indexed local answer history, explicit university “Подробнее” details, extra applicant inputs and six custom aspects, `personalization` explanations, and modular AI recommendation-writing guidance. The Worker cache key is v5 over every validated admissions input. Frontend build, API typecheck and Worker dry-run passed; no browser or live Gemini check. Nothing was pushed or deployed. The production Worker still strips new fields and does not return the expanded schema; publish only after end-to-end validation, and do not claim source verification while grounding is off. Previous local typography and correction edits are preserved.
 
 

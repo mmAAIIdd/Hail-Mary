@@ -1,5 +1,10 @@
 # Change history
 
+## 2026-09-18 — Exam results, Liter typography and sourced university images
+
+Moved the custom-data button to the first questionnaire step, added structured IELTS/TOEFL/SAT/ЕНТ scores with a not-taken state and exam-specific validation, self-hosted the requested Liter font, and added sourced university imagery through exact Wikidata matching plus Commons metadata. Validated Pages build, API types and Worker dry-run; not deployed.
+
+
 ## 2026-09-18 — History and explained university recommendations
 
 Added compact cookie-indexed history with local full-plan snapshots, university detail expansion, richer applicant and custom-aspect inputs, model personalization explanations, and modular prompt-writing rules for evidence, text and roadmap. Updated API contract and cache version. Frontend build, API typecheck and Worker dry-run passed; not deployed.

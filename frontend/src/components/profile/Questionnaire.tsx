@@ -94,7 +94,13 @@ const COUNTRIES = [
 ];
 
 const ACTIVITY_OPTIONS = ['Исследование', 'Волонтёрство', 'Школьный клуб', 'Олимпиады', 'Личный проект', 'Стажировка'];
-const EXAM_NAMES: ExamName[] = ['IELTS', 'TOEFL', 'SAT', 'ЕНТ'];
+const EXAM_CONFIG: Record<ExamName, { min: number; max: number; step: number; hint: string }> = {
+  IELTS: { min: 0, max: 9, step: 0.5, hint: '0–9' },
+  TOEFL: { min: 0, max: 120, step: 1, hint: '0–120' },
+  SAT: { min: 400, max: 1600, step: 10, hint: '400–1600' },
+  ЕНТ: { min: 0, max: 140, step: 1, hint: '0–140' },
+};
+const EXAM_NAMES = Object.keys(EXAM_CONFIG) as ExamName[];
 
 function initialExamResults(profile: UserProfile | null): QuestionnaireDraft['examResults'] {
   return Object.fromEntries(EXAM_NAMES.map((name) => {
@@ -319,8 +325,9 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
       if (!draft.performance) return 'Выберите текущую успеваемость.';
       for (const name of EXAM_NAMES) {
         const result = draft.examResults[name];
-        if (result.status === 'taken' && (!result.score.trim() || !Number.isFinite(Number(result.score)) || Number(result.score) < 0 || Number(result.score) > 2000)) {
-          return `Укажите числовой балл ${name} или выберите «Не сдавал(а)».`;
+        const config = EXAM_CONFIG[name];
+        if (result.status === 'taken' && (!result.score.trim() || !Number.isFinite(Number(result.score)) || Number(result.score) < config.min || Number(result.score) > config.max)) {
+          return `Укажите балл ${name} в диапазоне ${config.hint} или выберите «Не сдавал(а)».`;
         }
       }
     }
@@ -580,13 +587,14 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
                 <p className="mt-1 text-sm text-slate-600">Если не сдавали экзамен, так и оставьте. Баллы — ваши данные, не подтверждённые сертификатом.</p>
                 <div className="mt-4 divide-y divide-slate-200 border-y border-slate-200">{EXAM_NAMES.map((name) => {
                   const result = draft.examResults[name];
+                  const config = EXAM_CONFIG[name];
                   return <div key={name} className="grid gap-3 py-4 sm:grid-cols-[90px_1fr_150px] sm:items-center">
                     <span className="text-sm font-semibold text-slate-950">{name}</span>
                     <div className="flex flex-wrap gap-2">
                       <button type="button" aria-pressed={result.status === 'not_taken'} onClick={() => updateDraft('examResults', { ...draft.examResults, [name]: { status: 'not_taken', score: '' } })} className={result.status === 'not_taken' ? 'border border-slate-950 bg-slate-950 px-3 py-2 text-xs font-semibold text-white' : 'border border-slate-300 px-3 py-2 text-xs text-slate-700'}>Не сдавал(а)</button>
                       <button type="button" aria-pressed={result.status === 'taken'} onClick={() => updateDraft('examResults', { ...draft.examResults, [name]: { ...result, status: 'taken' } })} className={result.status === 'taken' ? 'border border-slate-950 bg-slate-950 px-3 py-2 text-xs font-semibold text-white' : 'border border-slate-300 px-3 py-2 text-xs text-slate-700'}>Есть результат</button>
                     </div>
-                    {result.status === 'taken' && <label className="block"><span className="sr-only">Балл {name}</span><input type="number" inputMode="decimal" min={0} max={2000} step="any" value={result.score} onChange={(event) => updateDraft('examResults', { ...draft.examResults, [name]: { status: 'taken', score: event.target.value } })} placeholder="Ваш балл" className="h-11 w-full border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" /></label>}
+                    {result.status === 'taken' && <label className="block"><span className="sr-only">Балл {name}</span><input type="number" inputMode="decimal" min={config.min} max={config.max} step={config.step} value={result.score} onChange={(event) => updateDraft('examResults', { ...draft.examResults, [name]: { status: 'taken', score: event.target.value } })} placeholder={`Балл ${config.hint}`} className="h-11 w-full border border-slate-300 px-3 text-sm outline-none focus:border-slate-950" /></label>}
                   </div>;
                 })}</div>
               </fieldset>

@@ -1,5 +1,10 @@
 # Decisions
 
+## 2026-09-18 — Campus images require entity provenance
+
+Do not ask the language model to invent or guess a campus-photo URL. Resolve the university name to an exact Wikidata entity, use its P18 structured image claim, and display Wikimedia Commons author, license and source metadata. If resolution or metadata validation fails, show no image. This reduces false campus attribution but does not implement the hackathon case's complete photo verification and deduplication pipeline.
+
+
 ## 2026-09-18 — Local history storage and response sensitivity
 
 Cookies cannot reliably hold a full AI answer and would send its contents with site requests. Store only up to five opaque IDs and timestamps in a SameSite=Lax cookie; keep the complete plans in browser localStorage and clear both on profile reset. This is same-browser history, not account sync. Hash the entire validated admissions profile for the Worker cache so all meaningful edits miss the previous plan. Do not force a different university list for an irrelevant edit; require explanation tied to changed facts instead.
