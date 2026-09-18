@@ -9,6 +9,7 @@ import { getCampusImage } from '../../lib/campusImages';
 import type { CampusImage } from '../../lib/campusImages';
 import { loadPlannerState, toggleFavoriteUniversity } from '../../lib/plannerStorage';
 import { loadRoadmapProgress, saveRoadmapProgress } from '../../lib/roadmapProgress';
+import { runProfileDiagnosis } from '../../lib/diagnosticEngine';
 
 interface AdmissionsWorkspaceProps {
   profile: UserProfile;
@@ -20,6 +21,26 @@ const fitLabels = {
   balanced: 'Реалистичная цель',
   safer: 'Резервный вариант',
 } as const;
+
+function QuickGuidance({ profile }: { profile: UserProfile }) {
+  const diagnosis = useMemo(() => runProfileDiagnosis(profile), [profile]);
+  const program = profile.academics.target_program?.trim() || diagnosis.goal.main_interest;
+  const nextStep = diagnosis.gaps[0]?.recommended_action
+    || `Выберите программу по направлению «${program}» в одной из указанных стран и выпишите её официальные требования к предметам и языку.`;
+
+  return (
+    <div className="mt-6 max-w-3xl border-l-4 border-khaki bg-white px-5 py-5">
+      <h3 className="text-base font-semibold text-slate-950">Экспресс-разбор анкеты</h3>
+      <p className="mt-1 text-xs text-slate-500">По вашим ответам, без ИИ и без проверки сайтов. Подробный подбор ещё готовится.</p>
+      <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
+        <div><dt className="font-semibold text-slate-950">Направление</dt><dd className="mt-1 text-slate-700">{program}; профильный предмет — {profile.academics.main_subject}.</dd></div>
+        <div><dt className="font-semibold text-slate-950">Ограничения поиска</dt><dd className="mt-1 text-slate-700">{profile.preferences.countries.join(', ')}; бюджет до ${profile.budget.max_total_usd_year.toLocaleString('ru-RU')} в год.</dd></div>
+      </dl>
+      <p className="mt-4 text-sm leading-6 text-slate-700"><span className="font-semibold text-slate-950">Первый шаг:</span> {nextStep}</p>
+      <p className="mt-2 text-xs leading-5 text-slate-500">Это не список рекомендованных университетов: он появится после ответа ИИ.</p>
+    </div>
+  );
+}
 
 const categoryLabels: Record<RoadmapStage['tasks'][number]['category'], string> = {
   general: 'Подготовка',
@@ -427,9 +448,9 @@ export const AdmissionsWorkspace: React.FC<AdmissionsWorkspaceProps> = ({ profil
     return (
       <section className="border-t border-slate-300 py-10" aria-live="polite">
         {isLoading ? (
-          <><LoaderCircle className="h-6 w-6 animate-spin text-slate-700" aria-hidden="true" /><h2 className="mt-4 font-brand text-2xl font-semibold text-slate-950">{mode === 'roadmap' ? 'Составляем ваш путь' : 'Составляем рекомендации'}</h2><p className="mt-2 max-w-xl text-sm leading-6 text-slate-600">{mode === 'roadmap' ? 'Связываем специальность, сроки, экзамены и активности в единый план. Это может занять до минуты.' : 'Подбираем университеты по анкете и собираем сравнение. Это может занять до минуты.'}</p></>
+          <><LoaderCircle className="h-6 w-6 animate-spin text-slate-700" aria-hidden="true" /><h2 className="mt-4 font-brand text-2xl font-semibold text-slate-950">{mode === 'roadmap' ? 'Составляем ваш путь' : 'Составляем рекомендации'}</h2><p className="mt-2 max-w-xl text-sm leading-6 text-slate-600">Первые ориентиры по анкете — ниже. Подробный ответ ИИ зависит от нагрузки сервиса и появится здесь, когда будет готов.</p><QuickGuidance profile={profile} /></>
         ) : (
-          <><h2 className="font-brand text-2xl font-semibold text-slate-950">Рекомендации пока недоступны</h2><p role="alert" className="mt-2 max-w-xl text-sm leading-6 text-rose-700">{error || 'Не удалось загрузить результат.'}</p><button type="button" onClick={requestPlan} disabled={!recommendationsAvailable()} className="mt-5 min-h-11 border-b-2 border-slate-950 text-sm font-semibold text-slate-950 disabled:opacity-50">Попробовать снова</button></>
+          <><h2 className="font-brand text-2xl font-semibold text-slate-950">Рекомендации пока недоступны</h2><p role="alert" className="mt-2 max-w-xl text-sm leading-6 text-rose-700">{error || 'Не удалось загрузить результат.'}</p><button type="button" onClick={requestPlan} disabled={!recommendationsAvailable()} className="mt-5 min-h-11 border-b-2 border-slate-950 text-sm font-semibold text-slate-950 disabled:opacity-50">Попробовать снова</button><QuickGuidance profile={profile} /></>
         )}
         {history.length > 0 && <div className="mt-6 border-t border-slate-200 pt-4"><p className="text-sm font-semibold text-slate-950">Сохранённые ответы</p><div className="mt-2 flex flex-wrap gap-4">{history.map((entry) => <button key={entry.id} type="button" onClick={() => { const saved = loadHistoryPlan(entry.id); if (saved) { setHistoricalPlan(saved); setSelectedId(saved.universities[0]?.id || ''); setDetailOpenId(''); } }} className="text-sm text-slate-700 underline underline-offset-4">{new Date(entry.created_at).toLocaleString('ru-RU')}</button>)}</div></div>}
       </section>
