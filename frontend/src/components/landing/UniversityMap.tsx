@@ -11,10 +11,20 @@ interface UniversityLocation {
 
 const LOCATIONS: UniversityLocation[] = [
   { name: 'University of Toronto', city: 'Торонто', country: 'Канада', description: 'Сильные программы в технологиях, бизнесе и естественных науках.', coordinates: [-79.3957, 43.6629] },
+  { name: 'MIT', city: 'Кембридж', country: 'США', description: 'Инженерия, computer science, предпринимательство и исследования.', coordinates: [-71.0942, 42.3601] },
+  { name: 'Tecnologico de Monterrey', city: 'Монтеррей', country: 'Мексика', description: 'Технологии, дизайн, бизнес и предпринимательские программы.', coordinates: [-100.29, 25.65] },
+  { name: 'University of Sao Paulo', city: 'Сан-Паулу', country: 'Бразилия', description: 'Крупный исследовательский университет с сильными STEM-направлениями.', coordinates: [-46.7305, -23.5614] },
   { name: 'University of Oxford', city: 'Оксфорд', country: 'Великобритания', description: 'Гуманитарные, социальные и исследовательские направления.', coordinates: [-1.2544, 51.7548] },
   { name: 'TU Munich', city: 'Мюнхен', country: 'Германия', description: 'Инженерия, робототехника и прикладные технологии.', coordinates: [11.5674, 48.1508] },
   { name: 'Bocconi University', city: 'Милан', country: 'Италия', description: 'Экономика, финансы и предпринимательство.', coordinates: [9.1899, 45.4505] },
+  { name: 'ETH Zurich', city: 'Цюрих', country: 'Швейцария', description: 'Математика, инженерия, computer science и естественные науки.', coordinates: [8.548, 47.3769] },
+  { name: 'American University of Beirut', city: 'Бейрут', country: 'Ливан', description: 'Международные программы в бизнесе, инженерии и социальных науках.', coordinates: [35.4832, 33.9007] },
+  { name: 'University of Cape Town', city: 'Кейптаун', country: 'ЮАР', description: 'Исследования, инженерия, бизнес и природные науки.', coordinates: [18.4613, -33.9573] },
+  { name: 'IIT Bombay', city: 'Мумбаи', country: 'Индия', description: 'Инженерия, программирование, дизайн и технологические исследования.', coordinates: [72.9156, 19.1334] },
+  { name: 'National University of Singapore', city: 'Сингапур', country: 'Сингапур', description: 'Компьютерные науки, бизнес, дизайн и междисциплинарные программы.', coordinates: [103.7764, 1.2966] },
+  { name: 'University of Tokyo', city: 'Токио', country: 'Япония', description: 'Передовые исследования в технологиях, медицине и инженерии.', coordinates: [139.7624, 35.7126] },
   { name: 'KAIST', city: 'Тэджон', country: 'Южная Корея', description: 'Программирование, робототехника и исследования.', coordinates: [127.366, 36.372] },
+  { name: 'University of Melbourne', city: 'Мельбурн', country: 'Австралия', description: 'Бизнес, биомедицина, дизайн и исследования.', coordinates: [144.9631, -37.7963] },
 ];
 
 const GEO_URL = `${import.meta.env.BASE_URL}world-countries-110m.json`;
