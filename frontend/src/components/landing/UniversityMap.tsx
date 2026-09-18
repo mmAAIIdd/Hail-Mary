@@ -17,7 +17,7 @@ const LOCATIONS: UniversityLocation[] = [
   { name: 'KAIST', city: 'Тэджон', country: 'Южная Корея', description: 'Программирование, робототехника и исследования.', coordinates: [127.366, 36.372] },
 ];
 
-const GEO_URL = '/world-countries-110m.json';
+const GEO_URL = `${import.meta.env.BASE_URL}world-countries-110m.json`;
 
 export const UniversityMap: React.FC = () => {
   const [activeLocation, setActiveLocation] = useState<UniversityLocation | null>(LOCATIONS[1]);
