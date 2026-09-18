@@ -1,12 +1,17 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, CalendarClock } from 'lucide-react';
+import { PlannerReminder } from '../../types/planner';
 
 interface LandingViewProps {
   onStartQuestionnaire: () => void;
+  reminder: PlannerReminder | null;
+  onOpenPlanner: () => void;
 }
 
 export const LandingView: React.FC<LandingViewProps> = ({
   onStartQuestionnaire,
+  reminder,
+  onOpenPlanner,
 }) => {
   return (
     <section
@@ -39,6 +44,17 @@ export const LandingView: React.FC<LandingViewProps> = ({
             Заполните короткую анкету и получите подбор университетов,
             разбор шансов и план подготовки к поступлению.
           </p>
+
+          {reminder && (
+            <button type="button" onClick={onOpenPlanner} className="mt-7 flex w-full max-w-xl items-start gap-3 border-l-2 border-white bg-slate-950/45 px-4 py-3 text-left text-white backdrop-blur-sm">
+              <CalendarClock className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+              <span>
+                <span className="block text-xs font-semibold uppercase tracking-wide text-white/70">Ближайшее напоминание</span>
+                <span className="mt-1 block text-sm font-semibold leading-6">{reminder.title}</span>
+                <span className="block text-xs leading-5 text-white/75">{reminder.university_name} · {reminder.overdue ? `просрочено на ${Math.abs(reminder.days_remaining)} дн.` : reminder.days_remaining === 0 ? 'сегодня' : `осталось ${reminder.days_remaining} дн.`}</span>
+              </span>
+            </button>
+          )}
 
           <div className="mt-10">
             <button

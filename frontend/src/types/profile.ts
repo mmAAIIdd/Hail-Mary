@@ -37,7 +37,10 @@ export interface UserProfile {
   };
   additional_context?: string;
   custom_aspects?: Array<{ title: string; detail: string }>;
-  preferences: { countries: string[] };
+  preferences: {
+    countries: string[];
+    preferred_university?: string;
+  };
   budget: {
     range: BudgetRange;
     max_total_usd_year: number;

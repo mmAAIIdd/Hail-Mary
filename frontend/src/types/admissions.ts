@@ -19,6 +19,20 @@ export interface UniversityRecommendation {
       note: string;
     }>;
   } | null;
+  acceptance_rate: {
+    percent: number | null;
+    scope: 'program' | 'university' | 'not_published';
+    note: string;
+    source_url: string;
+  };
+  competition_analysis: {
+    summary: string;
+    academic_position: string;
+    exam_position: string;
+    activity_position: string;
+    main_differentiator: string;
+    improvement_priorities: string[];
+  };
   why_fit: string[];
   concerns: string[];
   details: {
@@ -26,6 +40,12 @@ export interface UniversityRecommendation {
     choice_reason: string;
     open_questions: string;
     first_step: string;
+    extracurricular_strategy: Array<{
+      activity: string;
+      why_for_program: string;
+      first_30_days: string;
+      evidence: string;
+    }>;
   };
   annual_cost: {
     min_usd: number;
@@ -43,6 +63,8 @@ export interface RoadmapStage {
   id: string;
   period: string;
   title: string;
+  objective: string;
+  checkpoint: string;
   priority: 'now' | 'next' | 'later';
   tasks: Array<{
     category: 'general' | 'deadlines' | 'academics' | 'activities' | 'exams' | 'grades' | 'olympiads' | 'portfolio' | 'personality' | 'documents' | 'finance';
@@ -58,6 +80,7 @@ export interface AdmissionsPlan {
   strategy_summary: string;
   personalization: string[];
   universities: UniversityRecommendation[];
+  roadmap_target_university: string;
   roadmap: RoadmapStage[];
   next_actions: string[];
   sources: Array<{ title: string; url: string }>;

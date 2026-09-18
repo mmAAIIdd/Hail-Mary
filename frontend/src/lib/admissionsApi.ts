@@ -21,6 +21,9 @@ function profileForRecommendations(profile: UserProfile) {
       target_intake_year: profile.basic_info.target_intake_year,
     },
     academics: profile.academics,
+    activities: profile.activities,
+    additional_context: profile.additional_context,
+    custom_aspects: profile.custom_aspects,
     preferences: profile.preferences,
     budget: profile.budget,
     application_preferences: profile.application_preferences,
@@ -73,7 +76,12 @@ export function normalizeAdmissionsPlan(value: unknown): AdmissionsPlan {
     }
     const cost = record(university.annual_cost);
     const details = record(university.details);
+    const extracurricularStrategy = Array.isArray(details?.extracurricular_strategy)
+      ? details.extracurricular_strategy.map(record).filter((item) => item !== null)
+      : [];
     const chance = record(university.admission_chance);
+    const acceptanceRate = record(university.acceptance_rate);
+    const competition = record(university.competition_analysis);
     const factors = Array.isArray(chance?.factors) ? chance.factors.map(record).filter((factor) => factor !== null) : [];
     const percent = chance?.percent;
     const hasChance = typeof percent === 'number' && Number.isFinite(percent) && percent > 0 && percent < 100;
@@ -97,6 +105,20 @@ export function normalizeAdmissionsPlan(value: unknown): AdmissionsPlan {
           note: text(factor.note),
         })).filter((factor) => factor.label),
       } : null,
+      acceptance_rate: {
+        percent: researched && typeof acceptanceRate?.percent === 'number' && acceptanceRate.percent > 0 ? Math.min(100, acceptanceRate.percent) : null,
+        scope: acceptanceRate?.scope === 'program' || acceptanceRate?.scope === 'university' ? acceptanceRate.scope : 'not_published',
+        note: researched ? text(acceptanceRate?.note) : 'Проверенный показатель не найден: без официального источника acceptance rate не показывается.',
+        source_url: researched ? secureUrl(acceptanceRate?.source_url) : '',
+      },
+      competition_analysis: {
+        summary: text(competition?.summary),
+        academic_position: text(competition?.academic_position),
+        exam_position: text(competition?.exam_position),
+        activity_position: text(competition?.activity_position),
+        main_differentiator: text(competition?.main_differentiator),
+        improvement_priorities: stringList(competition?.improvement_priorities),
+      },
       why_fit: stringList(university.why_fit),
       concerns: stringList(university.concerns),
       details: {
@@ -104,6 +126,12 @@ export function normalizeAdmissionsPlan(value: unknown): AdmissionsPlan {
         choice_reason: text(details?.choice_reason),
         open_questions: text(details?.open_questions),
         first_step: text(details?.first_step),
+        extracurricular_strategy: extracurricularStrategy.map((item) => ({
+          activity: text(item.activity),
+          why_for_program: text(item.why_for_program),
+          first_30_days: text(item.first_30_days),
+          evidence: text(item.evidence),
+        })).filter((item) => item.activity),
       },
       annual_cost: {
         min_usd: typeof cost?.min_usd === 'number' ? cost.min_usd : 0,
@@ -126,6 +154,8 @@ export function normalizeAdmissionsPlan(value: unknown): AdmissionsPlan {
       id: text(stage?.id) || `stage-${index}`,
       period,
       title: text(stage?.title) || 'Этап подготовки',
+      objective: text(stage?.objective),
+      checkpoint: text(stage?.checkpoint),
       priority: stage?.priority === 'now' || stage?.priority === 'later' ? stage.priority : 'next',
       tasks: tasks.map((item) => {
         const task = record(item);
@@ -148,6 +178,7 @@ export function normalizeAdmissionsPlan(value: unknown): AdmissionsPlan {
     strategy_summary: text(raw.strategy_summary) || 'Рекомендации по вашей анкете',
     personalization: stringList(raw.personalization),
     universities,
+    roadmap_target_university: text(raw.roadmap_target_university) || universities[0]?.name || 'выбранный университет',
     roadmap,
     next_actions: stringList(raw.next_actions),
     sources: researched ? sources.map((source) => ({ title: text(source.title), url: secureUrl(source.url) })).filter((source) => source.title && source.url) : [],

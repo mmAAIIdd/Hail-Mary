@@ -1,5 +1,27 @@
 # Current state
 
+## 2026-09-19 — My Universities planner, reminders and deeper chance analysis (local)
+
+- A post-questionnaire “Мои университеты” area now stores favorites per local profile. Saving a university creates checklist tasks from its 2–3 AI extracurricular recommendations; users can assign dates, mark completion, write a result note and add their own exam/document/deadline/essay tasks.
+- A navigable local calendar shows task counts by day. The nearest incomplete dated task appears as a reminder on the landing page and opens the planner. Data remains browser-local and is cleared with the profile.
+- Recommendations now use “Мечта / Реалистичная цель / Резервный вариант”, include 5–8 explained chance factors, a program-specific competition analysis and an acceptance-rate field. Acceptance rate is shown only with an official grounded source; otherwise the product says it was not officially found.
+- Fixed a request-boundary bug: `activities`, `additional_context` and `custom_aspects` now reach the Worker instead of being silently omitted from the minimized profile.
+- Frontend builds, API typecheck and Worker dry-run passed. Playwright at 390 × 844 verified save → checklist → date/calendar → landing reminder → completion note/count, with no console errors and no landing-page horizontal overflow. Changes are local; response/cache contract is v9.
+
+## 2026-09-19 — University-specific extracurriculars and mobile results (local)
+
+- Every recommended university now includes 2–3 program-specific extracurricular ideas with rationale, a first-30-days plan and evidence to preserve. The UI labels them as personalized strengthening ideas, not official admission requirements.
+- The main five-stage roadmap identifies its target university. It uses the applicant's preferred university when that option survives matching; otherwise the model chooses the strongest recommended fit.
+- Mobile results now use a horizontal snap list for university selection, stacked comparison blocks, compact timeline markers and tighter reading widths. A 390 × 844 browser fixture confirmed the targeted activities and target roadmap render with no horizontal page overflow or console errors.
+- Frontend builds, API typecheck and Worker dry-run passed. Changes are local; the Worker and frontend need a coordinated deployment because the response contract is now v8.
+
+## 2026-09-18 — Preferred university and full roadmap timeline (local)
+
+- The questionnaire now accepts an optional preferred university and sends it through the profile contract. The recommendation prompt treats it as a hypothesis to evaluate against geography, intended program, budget and known preparation rather than automatically raising its score.
+- Newly generated plans contain exactly five chronological roadmap stages. Every stage has an objective, a measurable checkpoint and 4–8 detailed tasks with category, deadline, rationale and tangible result.
+- The results page renders the roadmap as a numbered vertical timeline that runs from the next seven days through preparation, application submission, status checks, financing and final choice.
+- Frontend GitHub Pages build, API typecheck and Worker dry-run passed. Browser automation was unavailable because no browser provider was exposed in the current environment. Changes are local and the production Worker still uses the previous response contract until deployed.
+
 ## 2026-09-18 — Liter, explicit exam scores and sourced campus imagery (local)
 
 - The questionnaire shows a prominent “+ Добавить свои данные” control on its first step and accepts up to six custom aspects.

@@ -3,8 +3,8 @@ import { RotateCcw, Menu, X } from 'lucide-react';
 import { UserProfile } from '../../types/profile';
 
 interface HeaderProps {
-  activeTab: 'landing' | 'profile' | 'diagnosis';
-  setActiveTab: (tab: 'landing' | 'profile' | 'diagnosis') => void;
+  activeTab: 'landing' | 'profile' | 'diagnosis' | 'planner';
+  setActiveTab: (tab: 'landing' | 'profile' | 'diagnosis' | 'planner') => void;
   profile: UserProfile | null;
   onReset: () => void;
 }
@@ -64,6 +64,15 @@ export const Header: React.FC<HeaderProps> = ({
                   Рекомендации
                 </button>
               )}
+              {profile && (
+                <button
+                  onClick={() => setActiveTab('planner')}
+                  aria-current={activeTab === 'planner' ? 'page' : undefined}
+                  className={activeTab === 'planner' ? 'border-b-2 border-slate-950 py-2 text-sm font-semibold text-slate-950' : 'py-2 text-sm text-slate-600 hover:text-black'}
+                >
+                  Мои университеты
+                </button>
+              )}
             </nav>
 
             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
@@ -85,7 +94,6 @@ export const Header: React.FC<HeaderProps> = ({
                   <RotateCcw className="w-3.5 h-3.5" />
                 </button>
               )}
-
               <button
                 type="button"
                 aria-label={isMobileMenuOpen ? 'Закрыть меню' : 'Открыть меню'}
@@ -129,6 +137,18 @@ export const Header: React.FC<HeaderProps> = ({
                   className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
                 >
                   Рекомендации {activeTab === 'diagnosis' && '•'}
+                </button>
+              )}
+              {profile && (
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setActiveTab('planner');
+                  }}
+                  aria-current={activeTab === 'planner' ? 'page' : undefined}
+                  className="min-h-11 rounded-lg px-3 text-left hover:bg-white"
+                >
+                  Мои университеты {activeTab === 'planner' && '•'}
                 </button>
               )}
               {profile && (

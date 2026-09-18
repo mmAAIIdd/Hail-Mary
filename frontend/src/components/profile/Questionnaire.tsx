@@ -38,6 +38,7 @@ interface QuestionnaireDraft {
   additionalContext: string;
   customAspects: Array<{ title: string; detail: string }>;
   countries: string[];
+  preferredUniversity: string;
   timeline: ApplicationTimeline | '';
   foundation: PreferenceAnswer | '';
   budgetRange: BudgetRange | '';
@@ -227,6 +228,7 @@ function createDraft(profile: UserProfile | null): QuestionnaireDraft {
     additionalContext: profile?.additional_context ?? '',
     customAspects: profile?.custom_aspects ?? [],
     countries: profile?.preferences.countries ?? [],
+    preferredUniversity: profile?.preferences.preferred_university ?? '',
     timeline: profile?.application_preferences.timeline ?? '',
     foundation: profile?.application_preferences.foundation ?? '',
     budgetRange: profile?.budget.range ?? '',
@@ -396,6 +398,7 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
       custom_aspects: draft.customAspects.map((aspect) => ({ title: aspect.title.trim(), detail: aspect.detail.trim() })),
       preferences: {
         countries: draft.countries,
+        preferred_university: draft.preferredUniversity.trim(),
       },
       budget: {
         range: budgetRange,
@@ -618,6 +621,11 @@ export const Questionnaire: React.FC<QuestionnaireProps> = ({
 
           {currentStep === 3 && (
             <div className="space-y-9">
+              <label className="block">
+                <span className="mb-2 block text-sm font-semibold text-slate-800">Целевой университет</span>
+                <input type="text" maxLength={160} value={draft.preferredUniversity} onChange={(event) => updateDraft('preferredUniversity', event.target.value)} placeholder="Например, University of Toronto" className="h-14 w-full border border-slate-300 px-4 text-base outline-none focus:border-slate-950" />
+                <span className="mt-2 block text-sm leading-6 text-slate-500">Необязательно. Если университет подходит, мы построим под него roadmap и предложим исследования, проекты, волонтёрство, клубы или олимпиады, которые могут усилить заявку именно на выбранную программу.</span>
+              </label>
               <fieldset>
                 <legend className="mb-1 text-sm font-semibold text-slate-800">
                   Какие страны вы рассматриваете?

@@ -73,7 +73,7 @@ function isRateLimited(request: Request): boolean {
 }
 
 async function cacheKey(profile: unknown): Promise<Request> {
-  const encoded = new TextEncoder().encode(`v6:${JSON.stringify(profile)}`);
+  const encoded = new TextEncoder().encode(`v9:${JSON.stringify(profile)}`);
   const digest = await crypto.subtle.digest('SHA-256', encoded);
   const hash = [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
   return new Request(`https://hail-mary-cache.internal/${hash}`);
@@ -114,7 +114,7 @@ async function generateAdmissionsPlan(
       ...(useGoogleSearch ? { tools: [{ googleSearch: {} }] } : {}),
       responseMimeType: 'application/json',
       responseJsonSchema: compactResponseJsonSchema,
-      maxOutputTokens: 12_288,
+      maxOutputTokens: 16_384,
     },
   });
 
@@ -204,6 +204,12 @@ async function handlePlan(request: Request, env: Env, origin: string | null): Pr
         ...university,
         annual_cost: { min_usd: 0, max_usd: 0, note: 'Не подтверждено официальным источником' },
         scholarships: [],
+        acceptance_rate: {
+          percent: null,
+          scope: 'not_published' as const,
+          note: 'Проверенный показатель не найден: без официального источника acceptance rate не показывается.',
+          source_url: '',
+        },
         deadline_note: 'Уточнить на официальном сайте программы',
         deadline_source_url: '',
         foundation_note: 'Не подтверждено',

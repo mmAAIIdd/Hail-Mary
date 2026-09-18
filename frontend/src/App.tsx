@@ -5,6 +5,7 @@ import { Footer } from './components/layout/Footer';
 import { LandingView } from './components/landing/LandingView';
 import { Questionnaire } from './components/profile/Questionnaire';
 import { DiagnosisView } from './components/diagnosis/DiagnosisView';
+import { MyUniversitiesView } from './components/planner/MyUniversitiesView';
 import {
   loadStoredProfile,
   saveStoredProfile,
@@ -12,10 +13,15 @@ import {
 } from './lib/storage';
 import { clearAdmissionsPlan } from './lib/admissionsStorage';
 import { clearAdmissionsHistory } from './lib/admissionsHistory';
+import { clearPlannerState, getNextPlannerReminder, PLANNER_UPDATED_EVENT } from './lib/plannerStorage';
+import { PlannerReminder } from './types/planner';
+
+type ActiveTab = 'landing' | 'profile' | 'diagnosis' | 'planner';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'landing' | 'profile' | 'diagnosis'>('landing');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('landing');
   const [profile, setProfile] = useState<UserProfile | null>(() => loadStoredProfile());
+  const [reminder, setReminder] = useState<PlannerReminder | null>(() => profile ? getNextPlannerReminder(profile.id) : null);
 
   useEffect(() => {
     if (profile) {
@@ -24,7 +30,14 @@ export function App() {
   }, [profile]);
 
   useEffect(() => {
-    const pageNames = { landing: 'Главная', profile: 'Анкета', diagnosis: 'Рекомендации' };
+    const refreshReminder = () => setReminder(profile ? getNextPlannerReminder(profile.id) : null);
+    refreshReminder();
+    window.addEventListener(PLANNER_UPDATED_EVENT, refreshReminder);
+    return () => window.removeEventListener(PLANNER_UPDATED_EVENT, refreshReminder);
+  }, [profile]);
+
+  useEffect(() => {
+    const pageNames = { landing: 'Главная', profile: 'Анкета', diagnosis: 'Рекомендации', planner: 'Мои университеты' };
     document.title = `${pageNames[activeTab]} — Hail Mary`;
   }, [activeTab]);
 
@@ -50,6 +63,7 @@ export function App() {
       clearStoredProfile();
       clearAdmissionsPlan();
       clearAdmissionsHistory();
+      if (profile) clearPlannerState(profile.id);
       setProfile(null);
       setActiveTab('landing');
     }
@@ -71,6 +85,8 @@ export function App() {
               setActiveTab('profile');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
+            reminder={reminder}
+            onOpenPlanner={() => setActiveTab('planner')}
           />
         )}
 
@@ -107,6 +123,13 @@ export function App() {
               </button>
             </div>
           )
+        )}
+
+        {activeTab === 'planner' && profile && (
+          <MyUniversitiesView profile={profile} onGoToRecommendations={() => {
+            setActiveTab('diagnosis');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }} />
         )}
       </main>
 

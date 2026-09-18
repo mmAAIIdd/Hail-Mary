@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowUpRight, LoaderCircle, RefreshCw } from 'lucide-react';
+import { ArrowUpRight, Heart, LoaderCircle, RefreshCw } from 'lucide-react';
 import { UserProfile } from '../../types/profile';
 import { AdmissionsPlan, RoadmapStage, UniversityRecommendation } from '../../types/admissions';
 import { AdmissionsApiError, generateAdmissionsPlan, recommendationsAvailable } from '../../lib/admissionsApi';
@@ -7,15 +7,16 @@ import { loadAdmissionsPlan, saveAdmissionsPlan } from '../../lib/admissionsStor
 import { listAdmissionsHistory, loadHistoryPlan, saveHistoryPlan } from '../../lib/admissionsHistory';
 import { getCampusImage } from '../../lib/campusImages';
 import type { CampusImage } from '../../lib/campusImages';
+import { loadPlannerState, toggleFavoriteUniversity } from '../../lib/plannerStorage';
 
 interface AdmissionsWorkspaceProps {
   profile: UserProfile;
 }
 
 const fitLabels = {
-  ambitious: 'Амбициозный',
-  balanced: 'Основной',
-  safer: 'Более реалистичный',
+  ambitious: 'Мечта',
+  balanced: 'Реалистичная цель',
+  safer: 'Резервный вариант',
 } as const;
 
 const categoryLabels: Record<RoadmapStage['tasks'][number]['category'], string> = {
@@ -91,7 +92,7 @@ function CampusPhoto({ universityName }: { universityName: string }) {
   );
 }
 
-function UniversityDetail({ university, plan, expanded }: { university: UniversityRecommendation; plan: AdmissionsPlan; expanded: boolean }) {
+function UniversityDetail({ university, plan, expanded, isFavorite, onToggleFavorite }: { university: UniversityRecommendation; plan: AdmissionsPlan; expanded: boolean; isFavorite: boolean; onToggleFavorite: () => void }) {
   const relatedSources = plan.sources.filter((source) => {
     try {
       const site = new URL(university.official_url).hostname;
@@ -104,13 +105,14 @@ function UniversityDetail({ university, plan, expanded }: { university: Universi
 
   return (
     <article id="university-detail" className="min-w-0 border-t border-slate-300 pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
-      <div className="flex flex-wrap items-start justify-between gap-5">
+      <div className="flex flex-col items-start justify-between gap-5 sm:flex-row">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">{fitLabels[university.fit_level]} вариант · {university.country}</p>
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Категория: {fitLabels[university.fit_level]} · {university.country}</p>
           <h3 className="mt-2 font-brand text-3xl font-semibold leading-tight text-slate-950 sm:text-4xl">{university.name}</h3>
           <p className="mt-2 text-sm text-slate-600">{university.program_name} · {university.city}</p>
-          <div className="mt-4">
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
             {university.official_url ? <SourceLink href={university.official_url}>{plan.research_mode === 'google_search' ? 'Сайт университета' : 'Указанный сайт — проверьте адрес'}</SourceLink> : <span className="text-sm text-amber-800">Ссылка на университет не подтверждена</span>}
+            <button type="button" onClick={onToggleFavorite} className={`inline-flex min-h-11 items-center gap-2 text-sm font-semibold ${isFavorite ? 'text-rose-700' : 'text-slate-700 hover:text-slate-950'}`}><Heart className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} aria-hidden="true" />{isFavorite ? 'В моих университетах' : 'Сохранить университет'}</button>
           </div>
         </div>
         <Chance university={university} large />
@@ -119,6 +121,11 @@ function UniversityDetail({ university, plan, expanded }: { university: Universi
       <div className="mt-8 border-t border-slate-200 pt-6">
         <h4 className="text-sm font-bold text-slate-950">Почему этот вариант в подборке</h4>
         <p className="mt-3 text-sm leading-7 text-slate-700">{university.why_fit.join(' ')} {university.admission_chance?.explanation}</p>
+      </div>
+
+      <div className="mt-6 grid gap-4 border-y border-slate-200 py-5 sm:grid-cols-[180px_minmax(0,1fr)]">
+        <div><p className="text-xs font-bold uppercase tracking-wide text-slate-500">Acceptance rate</p><p className="mt-2 text-2xl font-semibold text-slate-950">{university.acceptance_rate.percent !== null ? `${university.acceptance_rate.percent}%` : 'Не опубликован'}</p></div>
+        <div><p className="text-sm leading-6 text-slate-600">{university.acceptance_rate.note}</p>{university.acceptance_rate.source_url && <p className="mt-2"><SourceLink href={university.acceptance_rate.source_url}>{university.acceptance_rate.scope === 'program' ? 'Источник по программе' : 'Источник по университету'}</SourceLink></p>}<p className="mt-2 text-xs leading-5 text-slate-500">Общий acceptance rate не является вашим персональным шансом и может не отражать конкурс на выбранный факультет.</p></div>
       </div>
 
       <CampusPhoto universityName={university.name} />
@@ -130,6 +137,42 @@ function UniversityDetail({ university, plan, expanded }: { university: Universi
           <div><h4 className="text-sm font-bold text-slate-950">Что проверить перед решением</h4><p className="mt-2 text-sm leading-7 text-slate-700">{university.details.open_questions || university.concerns.join(' ')}</p></div>
           <div><h4 className="text-sm font-bold text-slate-950">Первый шаг</h4><p className="mt-2 text-sm leading-7 text-slate-700">{university.details.first_step || 'Откройте страницу программы и выпишите актуальные требования и срок подачи.'}</p></div>
         </div>
+        {university.details.extracurricular_strategy.length > 0 && (
+          <section className="mt-8 border-t border-slate-300 pt-6" aria-labelledby={`activities-${university.id}`}>
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">Стратегия профиля</p>
+            <h4 id={`activities-${university.id}`} className="mt-2 font-brand text-2xl font-semibold leading-tight text-slate-950">Что начать для поступления именно в {university.name}</h4>
+            <p className="mt-3 text-sm leading-6 text-slate-600">Это персональные идеи для усиления заявки на программу, а не официальные обязательные требования университета.</p>
+            <ol className="mt-5 divide-y divide-slate-200 border-y border-slate-200">
+              {university.details.extracurricular_strategy.map((item, index) => (
+                <li key={`${university.id}-activity-${index}`} className="py-5">
+                  <div className="flex items-start gap-3">
+                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-slate-950 text-xs font-semibold text-white">{index + 1}</span>
+                    <div className="min-w-0">
+                      <h5 className="text-sm font-semibold leading-6 text-slate-950">{item.activity}</h5>
+                      <p className="mt-2 text-sm leading-7 text-slate-700">{item.why_for_program}</p>
+                      <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                        <div><dt className="font-semibold text-slate-950">Первые 30 дней</dt><dd className="mt-1 leading-6 text-slate-600">{item.first_30_days}</dd></div>
+                        <div><dt className="font-semibold text-slate-950">Что сохранить в портфолио</dt><dd className="mt-1 leading-6 text-slate-600">{item.evidence}</dd></div>
+                      </dl>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+        <section className="mt-8 border-t border-slate-300 pt-6" aria-labelledby={`competition-${university.id}`}>
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">Конкуренция и ваши шансы</p>
+          <h4 id={`competition-${university.id}`} className="mt-2 font-brand text-2xl font-semibold text-slate-950">Детальный разбор по {university.program_name}</h4>
+          <p className="mt-3 text-sm leading-7 text-slate-700">{university.competition_analysis.summary || university.admission_chance?.explanation}</p>
+          <dl className="mt-5 divide-y divide-slate-200 border-y border-slate-200 text-sm">
+            <div className="grid gap-2 py-4 sm:grid-cols-[170px_minmax(0,1fr)]"><dt className="font-semibold text-slate-950">Академическая позиция</dt><dd className="leading-6 text-slate-600">{university.competition_analysis.academic_position || 'Нужны точные оценки по профильным предметам.'}</dd></div>
+            <div className="grid gap-2 py-4 sm:grid-cols-[170px_minmax(0,1fr)]"><dt className="font-semibold text-slate-950">Экзамены и язык</dt><dd className="leading-6 text-slate-600">{university.competition_analysis.exam_position || 'Нужно проверить требования программы и результаты диагностики.'}</dd></div>
+            <div className="grid gap-2 py-4 sm:grid-cols-[170px_minmax(0,1fr)]"><dt className="font-semibold text-slate-950">Extracurriculars</dt><dd className="leading-6 text-slate-600">{university.competition_analysis.activity_position || 'Нужно подтвердить глубину и результат текущих активностей.'}</dd></div>
+            <div className="grid gap-2 py-4 sm:grid-cols-[170px_minmax(0,1fr)]"><dt className="font-semibold text-slate-950">Чем выделиться</dt><dd className="leading-6 text-slate-600">{university.competition_analysis.main_differentiator || 'Связать интерес к программе с одним продолжительным проектом и измеримым вкладом.'}</dd></div>
+          </dl>
+          {university.competition_analysis.improvement_priorities.length > 0 && <div className="mt-5"><h5 className="text-sm font-semibold text-slate-950">Главные приоритеты улучшения</h5><ol className="mt-3 space-y-2 text-sm leading-6 text-slate-700">{university.competition_analysis.improvement_priorities.map((priority, index) => <li key={priority} className="flex gap-3"><span className="font-semibold text-slate-400">{String(index + 1).padStart(2, '0')}</span><span>{priority}</span></li>)}</ol></div>}
+        </section>
       {university.admission_chance && university.admission_chance.factors.length > 0 && (
         <div className="mt-7">
           <h4 className="text-sm font-bold text-slate-950">Что влияет на ориентир</h4>
@@ -158,6 +201,7 @@ function UniversityDetail({ university, plan, expanded }: { university: Universi
         <div className="grid gap-2 py-3 sm:grid-cols-[160px_1fr]"><dt className="font-semibold text-slate-600">Стипендия</dt><dd>Условия не подтверждены страницей программы</dd></div>
       </dl>
       {university.deadline_source_url && <p className="mt-3"><SourceLink href={university.deadline_source_url}>Источник срока подачи</SourceLink></p>}
+      {university.scholarships.length > 0 && <div className="mt-6 border-t border-slate-200 pt-5"><h4 className="text-sm font-bold text-slate-950">Стипендии для проверки</h4><ul className="mt-3 space-y-2 text-sm leading-6 text-slate-700">{university.scholarships.map((scholarship) => <li key={scholarship}>— {scholarship}</li>)}</ul></div>}
       {relatedSources.length > 0 && (
         <div className="mt-5">
           <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Ссылки по университету</p>
@@ -176,14 +220,26 @@ function Comparison({ plan }: { plan: AdmissionsPlan }) {
     { title: 'Категория', value: (university: UniversityRecommendation) => fitLabels[university.fit_level] },
     { title: 'Соответствие анкете', value: (university: UniversityRecommendation) => `${university.fit_score}/100` },
     { title: 'Ориентир поступления', value: (university: UniversityRecommendation) => university.admission_chance ? `${university.admission_chance.percent}% · низкая точность` : 'Нет оценки' },
+    { title: 'Acceptance rate', value: (university: UniversityRecommendation) => university.acceptance_rate.percent !== null ? `${university.acceptance_rate.percent}% · ${university.acceptance_rate.scope === 'program' ? 'программа' : 'университет'}` : 'Официально не найден' },
     { title: 'Подача', value: (university: UniversityRecommendation) => university.deadline_source_url ? university.deadline_note : 'Срок не подтверждён' },
   ];
   return (
     <section className="mt-14" id="comparison" aria-labelledby="comparison-title">
       <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Сравнение</p>
       <h2 id="comparison-title" className="mt-2 font-brand text-3xl font-semibold text-slate-950">Все варианты рядом</h2>
-      <p className="mt-2 text-sm text-slate-600">Таблица прокручивается по горизонтали на узком экране. Балл соответствия не равен шансу поступления.</p>
-      <div className="mt-5 overflow-x-auto border-y border-slate-300">
+      <p className="mt-2 text-sm leading-6 text-slate-600">На телефоне варианты показаны отдельными блоками, на большом экране — общей таблицей. Балл соответствия не равен шансу поступления.</p>
+      <div className="mt-5 grid gap-5 sm:hidden">
+        {plan.universities.map((university) => (
+          <article key={university.id} className="border-y border-slate-300 py-5">
+            <h3 className="text-base font-semibold leading-6 text-slate-950">{university.name}</h3>
+            <p className="mt-1 text-sm text-slate-600">{university.program_name} · {university.country}</p>
+            <dl className="mt-4 divide-y divide-slate-200 text-sm">
+              {rows.slice(2).map((row) => <div key={row.title} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3 py-3"><dt className="font-semibold text-slate-600">{row.title}</dt><dd className="text-right leading-5 text-slate-800">{row.value(university)}</dd></div>)}
+            </dl>
+          </article>
+        ))}
+      </div>
+      <div className="mt-5 hidden overflow-x-auto border-y border-slate-300 sm:block">
         <table className="min-w-[920px] w-full border-collapse text-left text-sm">
           <thead><tr><th scope="col" className="w-40 p-3 text-xs font-bold uppercase text-slate-500">Критерий</th>{plan.universities.map((university) => <th scope="col" key={university.id} className="min-w-36 p-3 align-top font-semibold text-slate-950">{university.name}</th>)}</tr></thead>
           <tbody>{rows.map((row) => <tr key={row.title} className="border-t border-slate-200"><th scope="row" className="p-3 align-top font-semibold text-slate-600">{row.title}</th>{plan.universities.map((university) => <td key={university.id} className="p-3 align-top leading-5 text-slate-700">{row.value(university)}</td>)}</tr>)}</tbody>
@@ -194,23 +250,56 @@ function Comparison({ plan }: { plan: AdmissionsPlan }) {
 }
 
 function Roadmap({ plan }: { plan: AdmissionsPlan }) {
+  const priorityLabels = { now: 'Начать сейчас', next: 'Следующий этап', later: 'Позже' } as const;
+  const taskCount = plan.roadmap.reduce((total, stage) => total + stage.tasks.length, 0);
+
   return (
-    <section className="mt-14" id="roadmap" aria-labelledby="roadmap-title">
+    <section className="mt-10 sm:mt-14" id="roadmap" aria-labelledby="roadmap-title">
       <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">План подготовки</p>
-      <h2 id="roadmap-title" className="mt-2 font-brand text-3xl font-semibold text-slate-950">От анкеты до подачи</h2>
-      {plan.roadmap.map((stage, index) => (
-        <div key={stage.id} className="grid gap-4 border-t border-slate-300 py-7 first:mt-6 lg:grid-cols-[220px_1fr]">
-          <div><p className="text-xs font-bold uppercase tracking-wide text-slate-500">Этап {index + 1} · {stage.period}</p><h3 className="mt-2 text-lg font-semibold text-slate-950">{stage.title}</h3></div>
-          <ol className="divide-y divide-slate-200">
-            {stage.tasks.map((task, taskIndex) => (
-              <li key={`${stage.id}-${taskIndex}`} className="grid gap-2 py-3 first:pt-0 sm:grid-cols-[140px_1fr]">
-                <div><span className="text-xs font-bold uppercase tracking-wide text-slate-500">{categoryLabels[task.category]}</span><p className="mt-1 text-xs text-slate-600">{task.deadline}</p></div>
-                <div><h4 className="text-sm font-semibold text-slate-950">{task.title}</h4><p className="mt-1 text-sm leading-6 text-slate-600">{task.reason}</p>{task.result && <p className="mt-1 text-xs text-slate-500">Результат: {task.result}</p>}{task.source_url && <p className="mt-2"><SourceLink href={task.source_url}>Источник требования</SourceLink></p>}</div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      ))}
+      <h2 id="roadmap-title" className="mt-2 font-brand text-2xl font-semibold leading-tight text-slate-950 sm:text-3xl">Путь к поступлению в {plan.roadmap_target_university}</h2>
+      <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600 sm:leading-7">Пять последовательных этапов и {taskCount} конкретных действий. Активности, проекты и олимпиады подобраны для усиления заявки именно в целевой университет. Фактические требования и дедлайны проверяйте на официальной странице программы.</p>
+
+      <ol className="relative mt-7 before:absolute before:bottom-4 before:left-[13px] before:top-4 before:w-px before:bg-slate-300 sm:mt-8 sm:before:left-[23px]">
+        {plan.roadmap.map((stage, index) => (
+          <li key={stage.id} className="relative grid grid-cols-[28px_minmax(0,1fr)] gap-2.5 pb-10 last:pb-0 sm:grid-cols-[48px_minmax(0,1fr)] sm:gap-6 sm:pb-12">
+            <div className="relative z-10 grid h-7 w-7 place-items-center rounded-full border-2 border-slate-950 bg-slate-50 text-xs font-semibold text-slate-950 sm:h-12 sm:w-12 sm:text-base">{index + 1}</div>
+            <article className="min-w-0 border-t border-slate-300 pt-4 sm:pt-6">
+              <div className="grid gap-5 lg:grid-cols-[220px_minmax(0,1fr)]">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">{priorityLabels[stage.priority]}</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-950">{stage.period}</p>
+                </div>
+                <div>
+                  <h3 className="font-brand text-xl font-semibold leading-tight text-slate-950 sm:text-2xl">{stage.title}</h3>
+                  <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-700 sm:leading-7">{stage.objective || 'Выполнить задачи этапа и зафиксировать результат перед переходом к следующему шагу.'}</p>
+                </div>
+              </div>
+
+              <ol className="mt-6 divide-y divide-slate-200 border-y border-slate-200">
+                {stage.tasks.map((task, taskIndex) => (
+                  <li key={`${stage.id}-${taskIndex}`} className="grid gap-2 py-4 sm:grid-cols-[150px_minmax(0,1fr)] sm:gap-3 sm:py-5">
+                    <div>
+                      <span className="text-xs font-bold uppercase tracking-wide text-slate-500">{categoryLabels[task.category]}</span>
+                      <p className="mt-1 text-xs leading-5 text-slate-600">{task.deadline}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-950">{task.title}</h4>
+                      <p className="mt-2 text-sm leading-6 text-slate-600 sm:leading-7">{task.reason}</p>
+                      {task.result && <p className="mt-2 border-l-2 border-slate-300 pl-3 text-sm leading-6 text-slate-700"><span className="font-semibold">Готовый результат:</span> {task.result}</p>}
+                      {task.source_url && <p className="mt-3"><SourceLink href={task.source_url}>Источник требования</SourceLink></p>}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+
+              <div className="mt-5 bg-slate-100 px-4 py-4 text-sm leading-6 text-slate-700">
+                <span className="font-semibold text-slate-950">Контрольная точка этапа:</span>{' '}
+                {stage.checkpoint || 'Проверьте выполненные результаты и скорректируйте следующий этап.'}
+              </div>
+            </article>
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }
@@ -221,6 +310,7 @@ export const AdmissionsWorkspace: React.FC<AdmissionsWorkspaceProps> = ({ profil
   const [history, setHistory] = useState(listAdmissionsHistory);
   const [historicalPlan, setHistoricalPlan] = useState<AdmissionsPlan | null>(null);
   const [detailOpenId, setDetailOpenId] = useState('');
+  const [favoriteIds, setFavoriteIds] = useState(() => loadPlannerState(profile.id).favorite_university_ids);
   const [isLoading, setIsLoading] = useState(() => !plan && recommendationsAvailable());
   const [error, setError] = useState('');
   const abortRef = useRef<AbortController | null>(null);
@@ -304,17 +394,18 @@ export const AdmissionsWorkspace: React.FC<AdmissionsWorkspaceProps> = ({ profil
       <section className="mt-9" id="universities" aria-labelledby="universities-title">
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Подборка по анкете</p>
         <h2 id="universities-title" className="mt-2 font-brand text-3xl font-semibold text-slate-950">Университеты</h2>
-        <div className="mt-7 grid gap-8 lg:grid-cols-[340px_minmax(0,1fr)]">
-          <nav aria-label="Подобранные университеты" className="divide-y divide-slate-200 border-y border-slate-300">
+        <p className="mt-3 text-sm leading-6 text-slate-600 lg:hidden">Проведите в сторону, чтобы увидеть все варианты. Нажмите «Подробнее» для персональной стратегии поступления.</p>
+        <div className="mt-6 grid gap-8 lg:mt-7 lg:grid-cols-[340px_minmax(0,1fr)]">
+          <nav aria-label="Подобранные университеты" className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 lg:mx-0 lg:block lg:divide-y lg:divide-slate-200 lg:overflow-visible lg:border-y lg:border-slate-300 lg:px-0 lg:pb-0">
             {displayedPlan.universities.map((university, index) => (
-              <div key={university.id} className="flex items-center gap-3 py-4">
+              <div key={university.id} className={`flex min-w-[82vw] snap-start items-center gap-3 border border-slate-200 p-4 sm:min-w-[320px] lg:min-w-0 lg:border-0 lg:py-4 lg:px-0 ${selectedUniversity?.id === university.id ? 'bg-slate-50 lg:bg-transparent' : 'bg-white'}`}>
                 <span className="w-5 shrink-0 text-xs font-semibold text-slate-400">{String(index + 1).padStart(2, '0')}</span>
-                <div className="min-w-0 flex-1"><button type="button" aria-pressed={selectedUniversity?.id === university.id} onClick={() => { setSelectedId(university.id); setDetailOpenId(''); }} className={`block min-w-0 text-left ${selectedUniversity?.id === university.id ? 'text-slate-950' : 'text-slate-600 hover:text-slate-950'}`}><span className="block text-sm font-semibold leading-5">{university.name}</span><span className="mt-1 block text-xs">{fitLabels[university.fit_level]} · {university.country}</span></button><button type="button" aria-controls="university-detail" aria-expanded={selectedUniversity?.id === university.id && detailOpenId === university.id} onClick={() => { setSelectedId(university.id); setDetailOpenId(university.id); }} className="mt-2 text-xs font-semibold text-slate-700 underline decoration-slate-300 underline-offset-4 hover:text-slate-950">Подробнее</button></div>
+                <div className="min-w-0 flex-1"><button type="button" aria-pressed={selectedUniversity?.id === university.id} onClick={() => { setSelectedId(university.id); setDetailOpenId(''); }} className={`block min-h-11 min-w-0 text-left ${selectedUniversity?.id === university.id ? 'text-slate-950' : 'text-slate-600 hover:text-slate-950'}`}><span className="block text-sm font-semibold leading-5">{university.name}</span><span className="mt-1 block text-xs">{fitLabels[university.fit_level]} · {university.country}</span></button><button type="button" aria-controls="university-detail" aria-expanded={selectedUniversity?.id === university.id && detailOpenId === university.id} onClick={() => { setSelectedId(university.id); setDetailOpenId(university.id); }} className="mt-1 min-h-11 text-xs font-semibold text-slate-700 underline decoration-slate-300 underline-offset-4 hover:text-slate-950">Подробнее</button></div>
                 <Chance university={university} />
               </div>
             ))}
           </nav>
-          {selectedUniversity && <UniversityDetail university={selectedUniversity} plan={displayedPlan} expanded={detailOpenId === selectedUniversity.id} />}
+          {selectedUniversity && <UniversityDetail university={selectedUniversity} plan={displayedPlan} expanded={detailOpenId === selectedUniversity.id} isFavorite={favoriteIds.includes(selectedUniversity.id)} onToggleFavorite={() => setFavoriteIds(toggleFavoriteUniversity(profile.id, selectedUniversity).favorite_university_ids)} />}
         </div>
       </section>
 

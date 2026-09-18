@@ -1,5 +1,17 @@
 # Decisions
 
+## 2026-09-19 — Planner is local and acceptance rate is source-gated
+
+Favorites, checklist progress, user notes and calendar dates are stored per profile in localStorage; they do not imply account sync, background push notifications or cross-device persistence. A reminder is shown inside the product for the nearest incomplete dated task. Acceptance rate is displayed only when grounded retrieval provides an official URL and explicit scope (`program` or `university`); otherwise it is “not published/found”. This statistic remains separate from the low-confidence personalized admission estimate.
+
+## 2026-09-19 — Activities are tailored per proposed university
+
+Do not present one generic extracurricular list as suitable for every application. Each proposed university receives 2–3 actions tied to its program and the applicant's interests, current experience and available time. Each action explains the signal it can demonstrate, a feasible 30-day start and honest evidence to retain. These are strategy suggestions, not official university requirements unless an official source explicitly supports that claim. The global roadmap targets the accepted preferred university or otherwise the best-fit recommendation.
+
+## 2026-09-18 — Preferred university is evaluated, not endorsed
+
+The user's preferred university is optional and is treated as an admissions hypothesis. It may enter the six recommendations only when its bachelor level and geography fit the questionnaire; the desire itself must not increase fit or admission-chance estimates. The roadmap uses five explicit stages with measurable checkpoints so progress can be reviewed before moving forward. The timeline continues beyond submission to status requests, financing and final choice.
+
 ## 2026-09-18 — Campus images require entity provenance
 
 Do not ask the language model to invent or guess a campus-photo URL. Resolve the university name to an exact Wikidata entity, use its P18 structured image claim, and display Wikimedia Commons author, license and source metadata. If resolution or metadata validation fails, show no image. This reduces false campus attribution but does not implement the hackathon case's complete photo verification and deduplication pipeline.

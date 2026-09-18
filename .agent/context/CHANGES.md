@@ -86,6 +86,42 @@ Validation: `npm run build` passed.
 
 Record significant changes only. For each entry include date, goal, changed paths, reason, validation and remaining issue. Do not copy full diffs or logs here; use Git history when a future project has Git.
 
+## 2026-09-19 — Persistent university planner and comprehensive chance explanation
+
+Goal: turn recommendations into an actionable post-questionnaire workspace with saved universities, trackable extracurricular tasks, dates and honest competition analysis.
+
+Changed: added planner types/storage and `MyUniversitiesView`; extended App/Header/Landing with planner navigation and reminders; added favorite controls to recommendations; expanded university response contracts with source-gated acceptance rate and program competition analysis; raised chance factors to 5–8; renamed fit categories; fixed missing activities/context/custom aspects in the API request; bumped cache to v9.
+
+Reason: recommendations must lead to sustained action. Users need to know what to do for a particular program, schedule it, record completion and distinguish a general published acceptance rate from their own uncertain admissions estimate.
+
+Validation: standard and Pages-compatible frontend builds passed; API typecheck and Worker dry-run passed. Playwright at 390 × 844 completed save favorite → generated checklist → assign date → calendar marker → landing reminder → write result → mark complete. Console was clean and the checked landing viewport had no horizontal overflow.
+
+Remaining: run a live Gemini generation against the expanded v9 response schema and deploy Worker/frontend together. Planner history is device-local and does not send notifications while the site is closed.
+
+## 2026-09-19 — Targeted extracurricular strategy and mobile admissions layout
+
+Goal: make extracurricular recommendations strengthen admission to each proposed university, and improve the long result page on phones.
+
+Changed: expanded university details with a 2–3 item `extracurricular_strategy`; added `roadmap_target_university`; updated Worker schema, prompt skills and cache v8; clarified the questionnaire's target-university field; changed mobile university navigation to a snap carousel, comparison to stacked blocks and roadmap to a compact timeline.
+
+Reason: a generic activities list does not explain how a project, research topic, club, volunteering or olympiad supports the selected program. Wide tables and desktop timeline spacing were also inefficient on mobile.
+
+Validation: GitHub Pages and standard frontend builds passed; API typecheck and Worker dry-run passed; Playwright at 390 × 844 rendered the targeted activity section and target roadmap with `scrollWidth === clientWidth` and zero console errors/warnings.
+
+Remaining: run one live Gemini generation against the v8 schema before coordinated Worker/frontend deployment.
+
+## 2026-09-18 — Full admissions timeline and preferred university
+
+Goal: let an applicant name a desired university and receive a comprehensive graphical plan from today through the final admissions decision.
+
+Changed: extended the profile, Worker and questionnaire contracts with `preferred_university`; added evaluation rules to the recommendation prompt; expanded roadmap stages with `objective` and `checkpoint`; required five stages with 4–8 tasks each; rebuilt `AdmissionsWorkspace` roadmap as a numbered vertical timeline; bumped the Worker cache format to v7.
+
+Reason: a desired university must influence analysis without being treated as suitable by default, and the preparation plan must expose sequence, timing, outputs and stage-completion criteria instead of a short task list.
+
+Validation: GitHub Pages-mode frontend build, API typecheck and Worker dry-run passed. Browser automation could not run because no browser provider was available.
+
+Remaining: deploy the Worker and frontend together, then run one live Gemini generation to validate the stricter five-stage schema and visually inspect desktop/mobile output.
+
 ## 2026-09-18 — Production polish and GitHub Pages
 
 Goal: turn the repository into a complete public site with concise product copy and reliable automatic deployment.
