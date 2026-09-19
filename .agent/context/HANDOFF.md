@@ -1,5 +1,7 @@
 # Handoff
 
+LATEST (2026-09-19, latency guard): Deployed Worker `c49e67cf-eb58-49c6-a3b9-a7b27d10d2a4` with Gemini minimal thinking, compact prompt input and a 23-second upstream timeout; frontend timeout is 25 seconds. API typecheck passed. A fresh live request ended with the enforced timeout rather than a completed plan, so the provider still does not guarantee a full response inside 25 seconds.
+
 LATEST (2026-09-19, faster responses): Published immediate non-AI profile guidance while Gemini loads (commit `8d93485`). Reduced generated recommendations from six to three differentiated universities while keeping five roadmap stages; shorter factor/task arrays are accepted without inventing missing content. Current Worker v14 is `5db8ca9e-731d-4f27-b3e3-ad6f3a332d41`, API/frontend source published in `b881e46`, Pages run `35400875538` passed. Current-contract full-profile live test returned 200 in 21.9s; this is a measured result, not a 25s guarantee. Local main remains diverged from origin; a separate clean worktree was used for publishing to avoid the earlier token-like string in local Git history.
 
 LATEST (2026-09-19, secret verification): Cloudflare `Secret Change` deployed as version `7994dac9-1e6a-4ef2-b623-6a52d1a3ba99`. A new uncached production request returned 200, six universities and five roadmap stages via Gemini 3.5 Flash Lite. Removed a token-like string from `CURRENT_STATE.md`; it remains in prior Git history and must be revoked if genuine. No frontend deployment was made.

@@ -83,3 +83,6 @@ The browser never receives the Gemini key. GitHub Pages calls a Cloudflare Worke
 Google Search grounding is controlled by `ENABLE_GOOGLE_SEARCH`. It remains disabled while the Gemini project is on the free tier because the provider does not expose Search grounding there. Model-only results carry an explicit warning to verify costs, deadlines and requirements on official sites.
 
 Recommendations provide six options across ambitious, balanced and more realistic categories. The score means fit with known questionnaire facts and never represents admission probability. Current costs, deadlines and rules remain linked to official sources for user verification.
+# 2026-09-19
+
+- Preserve the complete three-university and five-stage response contract; enforce a bounded wait instead of silently returning a lower-quality or partial AI plan.

@@ -1,4 +1,4 @@
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import {
   admissionsPlanSchema,
   profileSchema,
@@ -29,6 +29,20 @@ function compactJsonSchema(value: unknown): unknown {
 }
 
 const compactResponseJsonSchema = compactJsonSchema(responseJsonSchema);
+const GEMINI_TIMEOUT_MS = 23_000;
+
+class GenerationTimeoutError extends Error {
+  constructor() {
+    super('Время ожидания Gemini истекло');
+    this.name = 'GenerationTimeoutError';
+  }
+}
+
+function isTimeoutError(error: unknown): boolean {
+  if (!(error instanceof Error)) return false;
+  const details = `${error.name} ${error.message}`.toLowerCase();
+  return details.includes('timeout') || details.includes('timed out') || details.includes('aborted');
+}
 
 function edgeCache(): Cache {
   return (caches as unknown as { default: Cache }).default;
@@ -73,14 +87,14 @@ function isRateLimited(request: Request): boolean {
 }
 
 async function cacheKey(profile: unknown): Promise<Request> {
-  const encoded = new TextEncoder().encode(`v14:${JSON.stringify(profile)}`);
+  const encoded = new TextEncoder().encode(`v15:${JSON.stringify(profile)}`);
   const digest = await crypto.subtle.digest('SHA-256', encoded);
   const hash = [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
   return new Request(`https://hail-mary-cache.internal/${hash}`);
 }
 
-function sanitizePlan(rawText: string) {
-  const parsed = admissionsPlanSchema.parse(JSON.parse(rawText));
+function sanitizePlan(rawPlan: unknown) {
+  const parsed = admissionsPlanSchema.parse(rawPlan);
   const sources = parsed.sources.filter(
     (source, index, items) => items.findIndex((item) => item.url === source.url) === index,
   );
@@ -115,11 +129,13 @@ async function generateAdmissionsPlan(
       responseMimeType: 'application/json',
       responseJsonSchema: compactResponseJsonSchema,
       maxOutputTokens: 16_384,
+      thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+      httpOptions: { timeout: GEMINI_TIMEOUT_MS },
     },
   });
 
   if (!response.text) throw new Error('Gemini returned an empty response');
-  return sanitizePlan(response.text);
+  return sanitizePlan(JSON.parse(response.text));
 }
 
 async function handlePlan(request: Request, env: Env, origin: string | null): Promise<Response> {
@@ -175,6 +191,7 @@ async function handlePlan(request: Request, env: Env, origin: string | null): Pr
         plan = await generateAdmissionsPlan(validation.data, env, primaryModel, true);
         usedGoogleSearch = true;
       } catch (error) {
+        if (isTimeoutError(error)) throw new GenerationTimeoutError();
         lastError = error;
         console.warn('Google Search grounding unavailable; using model-only fallback');
       }
@@ -187,6 +204,7 @@ async function handlePlan(request: Request, env: Env, origin: string | null): Pr
           modelUsed = model;
           break;
         } catch (error) {
+          if (isTimeoutError(error)) throw new GenerationTimeoutError();
           lastError = error;
           console.warn(
             `Admissions generation failed with ${model}`,
@@ -249,6 +267,9 @@ async function handlePlan(request: Request, env: Env, origin: string | null): Pr
     });
   } catch (error) {
     console.error('Admissions plan generation failed', error instanceof Error ? error.message : error);
+    if (error instanceof GenerationTimeoutError) {
+      return jsonResponse({ error: 'ИИ не успел завершить полный план за 23 секунды. Повторите ещё раз.' }, 504, origin, env);
+    }
     return jsonResponse({ error: 'Не удалось построить рекомендации. Попробуйте ещё раз позже.' }, 502, origin, env);
   }
 }

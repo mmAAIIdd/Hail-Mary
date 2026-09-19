@@ -413,7 +413,7 @@ export const AdmissionsWorkspace: React.FC<AdmissionsWorkspaceProps> = ({ profil
     const timeout = window.setTimeout(() => {
       timedOut = true;
       controller.abort();
-    }, 90_000);
+    }, 25_000);
     setIsLoading(true);
     setError('');
     try {

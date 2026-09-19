@@ -254,3 +254,6 @@ Goal: Simplify landing layout to match editorial 2-column aesthetic (Photo 3):
 - Added top navigation items: "Советы" (modal with verified admission tips) and "Университеты" (modal with verified programs)
 - Replaced brand name with "Hail Mary" set in luxury editorial Cormorant Garamond typography
 - Build verified with `npm run build` (exit 0).
+# 2026-09-19
+
+- Added a 23-second Gemini request limit, explicit minimal thinking and compact profile serialization; reduced the frontend wait limit from 90 to 25 seconds.

@@ -1,5 +1,10 @@
 # Current state
 
+## 2026-09-19 — AI latency guard (published Worker)
+
+- Gemini now uses explicit minimal thinking, a compact questionnaire payload in the prompt and a 23-second provider timeout. The browser stops waiting after 25 seconds instead of 90.
+- Worker version `c49e67cf-eb58-49c6-a3b9-a7b27d10d2a4` is deployed. API typecheck passed. A fresh full-plan test hit the 23-second timeout, so the limit is enforced but a successful full answer within 25 seconds is not guaranteed by the provider.
+
 ## 2026-09-19 — Compact AI plans and immediate guidance (published)
 
 - The public frontend now shows an explicitly non-AI quick profile assessment immediately while full recommendations load, including during provider errors (Pages commit `8d93485`).

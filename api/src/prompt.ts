@@ -29,7 +29,7 @@ export function buildAdmissionsPrompt(profile: AdmissionsProfile, useGoogleSearc
 Составь персональный список университетов, сравнимые факты и план подготовки.
 
 Анкета:
-${JSON.stringify(profile, null, 2)}
+${JSON.stringify(profile)}
 
 Требования к результату:
 - бюджет указан как общие расходы за учебный год, включая обучение и проживание;
